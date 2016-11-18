@@ -1,0 +1,5 @@
+/* homescreen background image */
+.background.scroll-content {
+    background: url('../img/backgrounds/dotted-green.png') no-repeat;
+    background-size: cover;
+}

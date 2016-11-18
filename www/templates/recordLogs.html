@@ -1,0 +1,73 @@
+<ion-view view-title="Doggy records">
+   <ion-nav-buttons side="right">
+			<button class="button button-icon" ng-click="newRecord()">
+			<i class="icon ion-compose"></i>
+			</button>
+    </ion-nav-buttons>
+	<ion-content>
+    <ion-list>
+      <ion-item ng-repeat="record in records">
+        {{record.location}} {{record.date.getDate()}}/{{record.date.getMonth()}}/{{record.date.getFullYear()}}
+				{{record.time.getHours()}}:{{record.time.getMinutes()}}
+      </ion-item>
+    </ion-list>
+		
+		<script id="newRecord.html" type="text/ng-template">
+
+			<div class="modal">
+
+				<!-- Modal header bar -->
+				<ion-header-bar class="bar-secondary">
+					<h1 class="title">
+						New doggy finding 
+						<i class="icon ion-trash-a"></i> 
+					</h1>
+					<button class="button button-clear button-positive" ng-click="closeNewRecord()" side="right">Cancel</button>
+				</ion-header-bar>
+
+				<!-- Modal content area -->
+				<ion-content>
+
+					<form name="newRecord" ng-submit="createRecord(record)">
+						<div class="list">
+							<label class="item item-input">
+								<span class="input-label">Date</span>
+								
+
+								<input type="date" name="date" ng-model="record.date">
+								
+							</label>
+							<label class="item item-input">
+								<span class="input-label">Time</span>
+								<input type="time" name="time" ng-model="record.time">
+							</label>
+							<label class="item item-input">
+								<span class="input-label">Location</span>
+								<input type="text" name="location" ng-model="record.location" ng-minlength="4" required>
+							</label>
+							<div class="padding">								
+								<button type="button" class="button button-block button-balanced" ng-click="findLocation()">
+									<i class="icon ion-ios-search"></i>
+									Find my location
+								</button>
+							</div>
+							
+						</div>
+						<div class="padding">
+							<p ng-show="newRecord.location.$error.required">* Location is required</p>
+						</div>
+						<div class="padding">
+							<button type="submit" class="button button-block button-positive" ng-disabled="newRecord.$invalid">
+								Create record
+							</button>
+						</div>
+					</form>
+					
+				</ion-content>
+
+			</div>
+
+		</script>
+		
+  </ion-content>
+</ion-view>
