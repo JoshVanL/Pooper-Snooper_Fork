@@ -6,11 +6,8 @@
 // 'PooperSnooper.controllers' is found in controllers.js
 angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordova'])
 
-.run(function(DB) {
-    DB.init();
-});
-
-.run(function($ionicPlatform) {
+.run(function($ionicPlatform, $cordovaSQLite) {
+  var db = null;
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -23,6 +20,8 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
+    db = $cordovaSQLite.openDB("testDB.db");
+    $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS dogFindings (id integer primary key, Date text, Time text, Location text)");
   });
 })
 

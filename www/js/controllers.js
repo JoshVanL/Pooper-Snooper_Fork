@@ -1,6 +1,6 @@
 angular.module('PooperSnooper.controllers', [])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, $cordovaSQLite) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -45,9 +45,9 @@ angular.module('PooperSnooper.controllers', [])
 })
 
 .controller('RecordLogsCtrl', function($scope, $ionicModal) {
-	
+
 	$scope.records = [];
-	
+
 	// Create and load the Modal
   $ionicModal.fromTemplateUrl('newRecord.html', function(modal) {
     $scope.recordModal = modal;
@@ -55,7 +55,7 @@ angular.module('PooperSnooper.controllers', [])
     scope: $scope,
     animation: 'slide-in-up'
   });
-	
+
 	// Called when the form is submitted
   $scope.createRecord = function(record) {
 		if (record.location.length > 0){
@@ -64,6 +64,12 @@ angular.module('PooperSnooper.controllers', [])
 				time: record.time,
 				location: record.location
 			});
+      var query = "INSERT INTO dogFindings (Date, Time, Location) VALUES (?,?,?)";
+      $cordovaSQLite.execute(db, query, [record.date, record.time, record.location]).then(function(res) {
+            console.log("INSERT ID -> " + res.insertId);
+        }, function (err) {
+            console.error(err);
+        });
 			console.log("Record created!");
 			$scope.recordModal.hide();
 			record.date = null;
@@ -84,7 +90,7 @@ angular.module('PooperSnooper.controllers', [])
   $scope.closeNewRecord = function() {
     $scope.recordModal.hide();
   };
-	
+
 	// Finds current location using GPS
 	$scope.findLocation = function() {
 		console.log("findLocation pressed!");
