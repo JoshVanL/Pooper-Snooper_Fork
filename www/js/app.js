@@ -4,7 +4,11 @@
 // 'PooperSnooper' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'PooperSnooper.controllers' is found in controllers.js
-angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers'])
+angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordova'])
+
+.run(function(DB) {
+    DB.init();
+});
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -39,8 +43,8 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers'])
 			templateUrl: 'templates/welcome.html'
 		}
 	}
-  })	
-  
+  })
+
   .state('app.about', {
     url: '/about',
     views: {
@@ -62,12 +66,12 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers'])
 		url: '/recordLogs',
 		views: {
 			'menuContent': {
-				templateUrl: 'templates/recordLogs.html',			
+				templateUrl: 'templates/recordLogs.html',
 				controller: 'RecordLogsCtrl'
-			}		
+			}
 		}
 	})
-	
+
   .state('app.record', {
     url: '/recordList/:recordId',
     views: {
@@ -77,7 +81,7 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers'])
       }
     }
   })
-	
+
   // if none of the above states are matched, use this as the fall back
   $urlRouterProvider.otherwise('/app/welcome');
 });
