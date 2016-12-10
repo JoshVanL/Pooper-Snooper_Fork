@@ -44,11 +44,11 @@ angular.module('PooperSnooper.controllers', [])
 .controller('RecordCtrl', function($scope, $stateParams) {
 })
 
-.controller('RecordLogsCtrl', function($scope, $ionicModal) {
+.controller('RecordLogsCtrl', function($scope, $ionicModal, $cordovaSQLite) {
 
-	$scope.records = [];
+  $scope.records = [];
 
-	// Create and load the Modal
+  // Create and load the Modal
   $ionicModal.fromTemplateUrl('newRecord.html', function(modal) {
     $scope.recordModal = modal;
   }, {
@@ -56,29 +56,50 @@ angular.module('PooperSnooper.controllers', [])
     animation: 'slide-in-up'
   });
 
-	// Called when the form is submitted
+
+  $scope.selectAll = function() {
+    var query = "SELECT Date, Time, Location FROM dogFindings";
+    $cordovaSQLite.execute(db, query, []).then(function(res) {
+      if(res.rows.length > 0){
+        for (vari=0; i<res.rows.length; i++){
+
+          $scope.records.push({
+            date : res.rows.item(i).Date,
+            time : res.rows.item(i).Time,
+            location : res.rows.item(i).Location
+          });
+
+        }
+      }
+    }, function(error){
+    });
+  }
+
+  // Called when the form is submitted
   $scope.createRecord = function(record) {
-		if (record.location.length > 0){
-			$scope.records.push({
-				date: record.date,
-				time: record.time,
-				location: record.location
-			});
+    if (record.location.length > 0){
+      $scope.records.push({
+        date: record.date,
+        time: record.time,
+        location: record.location
+      });
+      $scope.recordModal.hide();
+      //insert record in database
       var query = "INSERT INTO dogFindings (Date, Time, Location) VALUES (?,?,?)";
       $cordovaSQLite.execute(db, query, [record.date, record.time, record.location]).then(function(res) {
-            console.log("INSERT ID -> " + res.insertId);
-        }, function (err) {
-            console.error(err);
-        });
-			console.log("Record created!");
-			$scope.recordModal.hide();
-			record.date = null;
-			record.time = null;
-			record.location = null;
-		}
-		else {
-			console.log("Location not entered!");
-		}
+        console.log("INSERT ID -> " + res.insertId);
+      }, function (err) {
+        console.error(err);
+      });
+
+      console.log("Record created!");
+      record.date = null;
+      record.time = null;
+      record.location = null;
+    }
+    else {
+      console.log("Location not entered!");
+    }
   };
 
   // Open our new record modal
@@ -91,8 +112,8 @@ angular.module('PooperSnooper.controllers', [])
     $scope.recordModal.hide();
   };
 
-	// Finds current location using GPS
-	$scope.findLocation = function() {
-		console.log("findLocation pressed!");
-	};
+  // Finds current location using GPS
+  $scope.findLocation = function() {
+    console.log("findLocation pressed!");
+  };
 });

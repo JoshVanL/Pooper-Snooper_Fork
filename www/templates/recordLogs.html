@@ -7,11 +7,10 @@
 	<ion-content>
     <ion-list>
       <ion-item ng-repeat="record in records">
-        {{record.location}} {{record.date.getDate()}}/{{record.date.getMonth()}}/{{record.date.getFullYear()}}
-				{{record.time.getHours()}}:{{record.time.getMinutes()}}
+        {{record.location}} {{record.date}} {{record.time}}
       </ion-item>
     </ion-list>
-		
+
 		<script id="newRecord.html" type="text/ng-template">
 
 			<div class="modal">
@@ -19,8 +18,8 @@
 				<!-- Modal header bar -->
 				<ion-header-bar class="bar-secondary">
 					<h1 class="title">
-						New doggy finding 
-						<i class="icon ion-trash-a"></i> 
+						New doggy finding
+						<i class="icon ion-trash-a"></i>
 					</h1>
 					<button class="button button-clear button-positive" ng-click="closeNewRecord()" side="right">Cancel</button>
 				</ion-header-bar>
@@ -32,10 +31,10 @@
 						<div class="list">
 							<label class="item item-input">
 								<span class="input-label">Date</span>
-								
+
 
 								<input type="date" name="date" ng-model="record.date">
-								
+
 							</label>
 							<label class="item item-input">
 								<span class="input-label">Time</span>
@@ -45,13 +44,13 @@
 								<span class="input-label">Location</span>
 								<input type="text" name="location" ng-model="record.location" ng-minlength="4" required>
 							</label>
-							<div class="padding">								
+							<div class="padding">
 								<button type="button" class="button button-block button-balanced" ng-click="findLocation()">
 									<i class="icon ion-ios-search"></i>
 									Find my location
 								</button>
 							</div>
-							
+
 						</div>
 						<div class="padding">
 							<p ng-show="newRecord.location.$error.required">* Location is required</p>
@@ -62,12 +61,12 @@
 							</button>
 						</div>
 					</form>
-					
+
 				</ion-content>
 
 			</div>
 
 		</script>
-		
+
   </ion-content>
 </ion-view>

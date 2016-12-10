@@ -61,6 +61,7 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
         }
       }
     })
+
 	.state('app.recordLogs', {
 		url: '/recordLogs',
 		views: {
