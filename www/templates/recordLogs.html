@@ -7,7 +7,8 @@
 	<ion-content>
     <ion-list>
       <ion-item ng-repeat="record in records">
-        {{record.location}} {{record.date}} {{record.time}}
+        {{record.location}} {{record.date.getDate()}}/{{record.date.getMonth()}}/{{record.date.getFullYear()}}
+				{{record.time.getHours()}}:{{record.time.getMinutes()}}
       </ion-item>
     </ion-list>
 

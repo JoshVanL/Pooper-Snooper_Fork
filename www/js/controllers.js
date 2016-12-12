@@ -56,22 +56,22 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
     animation: 'slide-in-up'
   });
 
-    var query = "SELECT Date, Time, Location FROM dogFindings";
-    $cordovaSQLite.execute(db, query, []).then(function(res) {
-      if(res.rows.length > 0){
-        for (var i=0; i<res.rows.length; i++){
+  var query = "SELECT Date, Time, Location FROM dogFindings";
+  $cordovaSQLite.execute(db, query, []).then(function(res) {
+    if(res.rows.length > 0){
+      for (var i=0; i<res.rows.length; i++){
 
-          $scope.records.push({
-            date : res.rows.item(i).Date,
-            time : res.rows.item(i).Time,
-            location : res.rows.item(i).Location
-          });
+        $scope.records.push({
+          date : res.rows.item(i).Date,
+          time : res.rows.item(i).Time,
+          location : res.rows.item(i).Location
+        });
 
-        }
       }
-    }, function(error){
-      console.error();(error);
-    });
+    }
+  }, function(error){
+    console.error();(error);
+  });
 
   // Called when the form is submitted
   $scope.createRecord = function(record) {
