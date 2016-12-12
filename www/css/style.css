@@ -3,3 +3,10 @@
     background: url('../img/backgrounds/dotted-green.png') no-repeat;
     background-size: cover;
 }
+
+.aboutCompany{
+	font-family: 'Amatica SC', sans-serif;
+	text-align: center;
+    font-size: 30px;
+	line-height: 1.7em; 
+}
