@@ -20,7 +20,7 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
       StatusBar.styleDefault();
     }
     db = $cordovaSQLite.openDB({name:'tester.db',location:'default'});
-    $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS dogFindings (id integer primary key, Date date, Time time, Location text)");
+    $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS dogFindings (id integer primary key, Date text, Time text, Location text)");
   });
 })
 
@@ -56,7 +56,8 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
       url: '/map',
       views: {
         'menuContent': {
-          templateUrl: 'templates/map.html'
+          templateUrl: 'templates/map.html',
+          controller: 'MapCtrl'
         }
       }
     })
@@ -72,7 +73,7 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 	})
 
   .state('app.record', {
-    url: '/recordList/:recordId',
+    url: '/record',
     views: {
       'menuContent': {
         templateUrl: 'templates/record.html',
