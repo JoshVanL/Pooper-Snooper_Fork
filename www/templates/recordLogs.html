@@ -33,17 +33,28 @@
 
 					<form name="newRecord" ng-submit="createRecord(record)">
 						<div class="list">
+            <label class="item item-input">
+              <span class="input-label">Date</span>
+              {{record.dateTime.getDay()}}/{{record.dateTime.getMonth()}}/{{record.dateTime.getYear()}}
+            </label>
 							<label class="item item-input">
 								<span class="input-label">Date</span>
-
-
-								<input type="date" name="date" ng-model="record.date">
-
+								{{record.dateTime.getHours()}}:{{record.dateTime.getMinutes()}}
 							</label>
-							<label class="item item-input">
-								<span class="input-label">Time</span>
-								<input type="time" name="time" ng-model="record.time">
-							</label>
+              <label class="item item-input">
+                <span class="input-label">Photo</span>
+                {{record.ImageURI}}
+              </label>
+              <div class="button-bar">
+                <button type="button" class="button  button-balanced" ng-click="takePhoto()">
+                  <i class="icon ion-camera"></i>
+                  Take Photo
+                </button>
+                <button type="button" side="right" class="button button-balanced" ng-click="getPhoto()">
+                  <i class="icon ion-android-image"></i>
+                  Find Photo
+                </button>
+              </div>
 							<label class="item item-input">
 								<span class="input-label">Location</span>
 								<input type="text" name="location" ng-model="record.location" ng-minlength="4" required>
@@ -59,6 +70,7 @@
 						<div class="padding">
 							<p ng-show="newRecord.location.$error.required">* Location is required</p>
 						</div>
+
 						<div class="padding">
 							<button type="submit" class="button button-block button-positive" ng-disabled="newRecord.$invalid">
 								Create record

@@ -20,7 +20,7 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
       StatusBar.styleDefault();
     }
     db = $cordovaSQLite.openDB({name:'tester.db',location:'default'});
-    $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS dogFindings (id integer primary key, Date text, Time text, Location text)");
+    $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS dogFindings (id integer primary key, DateTime text, Location text, Image blob)");
   });
 })
 
