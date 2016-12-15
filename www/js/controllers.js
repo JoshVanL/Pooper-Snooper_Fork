@@ -127,8 +127,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 	 
 		});
 
-		// Adds a marker to the map and push to the array.
-		$scope.addDoggyMarker = function() {
+		// Adds doggy marker to the current location and push to the array.
+		$scope.addToCurrentLoc = function() {
 			var marker = new google.maps.Marker({
 					map: $scope.map,
 					animation: google.maps.Animation.DROP,
@@ -146,13 +146,31 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 					infoWindow.open($scope.map, marker);
 			});
 		};
-
+		
+		// Adds doggy marker to a location on 'click' and push to the array.
+		google.maps.event.addListener($scope.map, 'click', function(event) {
+				var marker = new google.maps.Marker({
+					position: event.latLng,
+					map: $scope.map,
+					animation: google.maps.Animation.DROP,
+					icon: poop_icon
+				});
+				DoggyMarkers.push(marker);
+						var infoWindow = new google.maps.InfoWindow({
+					content: "Date of poop"
+				});
+		 
+				google.maps.event.addListener(marker, 'click', function () {
+						infoWindow.open($scope.map, marker);
+				});
+		});
+		
 		// Sets the map on all markers in the array.
 		$scope.setDoggyMarkers = function(map){
 			for (var i = 0; i < DoggyMarkers.length; i++) {
 				DoggyMarkers[i].setMap($scope.map);
 			}
-		}
+		};
 		
 		// Removes the markers from the map, but keeps them in the array.
 		$scope.clearDoggyMarkers = function() {
