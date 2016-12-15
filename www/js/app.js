@@ -4,7 +4,7 @@
 // 'PooperSnooper' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'PooperSnooper.controllers' is found in controllers.js
-angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers'])
+angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordova'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -25,7 +25,7 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers'])
 .config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
 
-    .state('app', {
+	.state('app', {
     url: '/app',
     abstract: true,
     templateUrl: 'templates/menu.html',
@@ -33,8 +33,8 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers'])
   })
 
   .state('app.welcome', {
-	url: '/welcome',
-	views: {
+		url: '/welcome',
+		views: {
 		'menuContent': {
 			templateUrl: 'templates/welcome.html'
 		}
@@ -50,34 +50,26 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers'])
     }
   })
 
-  .state('app.map', {
-      url: '/map',
-      views: {
-        'menuContent': {
-          templateUrl: 'templates/map.html'
-        }
-      }
-    })
+	.state('app.map', {
+    url: '/map',
+    views: {
+			'menuContent': {
+				templateUrl: 'templates/map.html',
+				controller: 'MapCtrl'
+			}
+		}
+  })
+
 	.state('app.recordLogs', {
 		url: '/recordLogs',
 		views: {
 			'menuContent': {
 				templateUrl: 'templates/recordLogs.html',			
-				controller: 'RecordLogsCtrl'
+				controller: 'RecordLogsCtrl',
 			}		
 		}
 	})
 	
-  .state('app.record', {
-    url: '/recordList/:recordId',
-    views: {
-      'menuContent': {
-        templateUrl: 'templates/record.html',
-        controller: 'RecordCtrl'
-      }
-    }
-  })
-	
   // if none of the above states are matched, use this as the fall back
   $urlRouterProvider.otherwise('/app/welcome');
-});
+})//;

@@ -1,4 +1,4 @@
-angular.module('PooperSnooper.controllers', [])
+angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 
 .controller('AppCtrl', function($scope, $ionicModal, $timeout) {
 
@@ -39,9 +39,6 @@ angular.module('PooperSnooper.controllers', [])
       $scope.closeLogin();
     }, 1000);
   };
-})
-
-.controller('RecordCtrl', function($scope, $stateParams) {
 })
 
 .controller('RecordLogsCtrl', function($scope, $ionicModal) {
@@ -89,4 +86,118 @@ angular.module('PooperSnooper.controllers', [])
 	$scope.findLocation = function() {
 		console.log("findLocation pressed!");
 	};
+
+})
+
+.controller('MapCtrl', function($scope, $state, $cordovaGeolocation) {
+  var options = {timeout: 10000, enableHighAccuracy: true};
+ 
+  $cordovaGeolocation.getCurrentPosition(options).then(function(position){
+ 
+		var DoggyMarkers = [];
+ 
+		var poop_icon = "/img/Assets/poop_small.png";
+ 
+    var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+ 
+    var mapOptions = {
+      center: latLng,
+      zoom: 15,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+ 
+    $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+		
+		//Wait until the map is loaded
+		google.maps.event.addListenerOnce($scope.map, 'idle', function(){
+	 
+			var marker = new google.maps.Marker({
+					map: $scope.map,
+					animation: google.maps.Animation.DROP,
+					position: latLng
+			});      
+		 
+			var infoWindow = new google.maps.InfoWindow({
+					content: "Here I am!"
+			});
+		 
+			google.maps.event.addListener(marker, 'click', function () {
+					infoWindow.open($scope.map, marker);
+			});
+	 
+		});
+
+		// Adds a marker to the map and push to the array.
+		$scope.addDoggyMarker = function() {
+			var marker = new google.maps.Marker({
+					map: $scope.map,
+					animation: google.maps.Animation.DROP,
+					icon: poop_icon,
+					position: latLng
+			});      
+		 
+			DoggyMarkers.push(marker);
+		 
+			var infoWindow = new google.maps.InfoWindow({
+					content: "Date of poop"
+			});
+		 
+			google.maps.event.addListener(marker, 'click', function () {
+					infoWindow.open($scope.map, marker);
+			});
+		};
+
+		// Sets the map on all markers in the array.
+		$scope.setDoggyMarkers = function(map){
+			for (var i = 0; i < DoggyMarkers.length; i++) {
+				DoggyMarkers[i].setMap($scope.map);
+			}
+		}
+		
+		// Removes the markers from the map, but keeps them in the array.
+		$scope.clearDoggyMarkers = function() {
+			setMapOnAll(null);
+		};
+
+		// Shows any markers currently in the array.
+		$scope.showDoggyMarkers = function() {
+			setMapOnAll($scope.map);
+		};
+		
+		// Deletes all markers in the array by removing references to them.
+		$scope.deleteDoggyMarkers = function() {
+			clearDoggyMarkers();
+			DoggyMarkers = [];
+		};
+		   
+  }, function(error){
+    console.log("Could not get location");
+  });
 });
+
+/*
+.controller('MapCtrl', function($scope, $ionicLoading) {
+ 
+	google.maps.event.addDomListener(window, 'load', function() {
+
+		var map = new google.maps.Map(document.getElementById("map"), {
+			center: new google.maps.LatLng(48.878065, 2.372106),
+			zoom: 16,
+			mapTypeId: google.maps.MapTypeId.ROADMAP
+		});
+ 
+		navigator.geolocation.getCurrentPosition(function(pos) {
+			map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
+			var myLocation = new google.maps.Marker({
+				position: new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude),
+				map: map,
+				title: "My Location"
+			});
+			console.log ("My location is "+ myLocation);
+		});
+ 
+		$scope.map = map;
+		
+	});
+});
+*/
