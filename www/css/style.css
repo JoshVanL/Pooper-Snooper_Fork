@@ -1,3 +1,5 @@
+/* --- Screen resolution : 667px * 375px --- */
+
 .background.scroll-content {
     background: url('../img/backgrounds/dotted-green.png') no-repeat;
     background-size: cover;
@@ -10,5 +12,67 @@
  
 #map {
     width: 100%;
-    height: 100%;
+    height: 85%;
+}
+
+.aboutCompany{
+	font-family: 'Amatica SC', sans-serif;
+	text-align: center;
+  font-size: 30px;
+	line-height: 1.7em; 
+}
+
+#offset{
+	width: 16%;
+	height: 0.15%;
+	opacity: 0%;
+}
+
+/* --- Icon-panel --- */
+#icon_panel {
+		position: fixed;
+		top: 88%;
+		left: 25%;
+    width: 50%;
+    height: 8%;
+ 		padding-top: 0.5%;
+		padding-bottom: 0.5%;
+    padding-right: 1%;
+    padding-left: 1%;
+    border: 1px solid black;
+}
+/* --- Icon_panel spacer --- */
+#icon_panel_spacer {
+		float: left;
+    width: 50%;
+		height: 98%
+}
+/* --- Draggable Poop --- */
+#poopDraggable {
+		float: left;
+    width: 25%;
+    height: 98%;
+		padding-top: 1.5%;
+    padding-bottom: 1%;
+		padding-right: 1%;
+    padding-left: 1%;
+		border: 1px solid white
+}
+/* --- Draggable Bin --- */
+#binDraggable {
+		float: left;
+    width: 25%;
+    height: 98%;
+		padding-top: 1.5%;
+    padding-bottom: 1%;
+		padding-right: 1%;
+    padding-left: 1%;
+		border: 1px solid white
+}
+
+.drag {
+  opacity: 0.2;
+}
+.over {
+  background: #F0F8FF;
 }

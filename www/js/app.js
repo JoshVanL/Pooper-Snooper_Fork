@@ -22,6 +22,7 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
   });
 })
 
+// Navigate through page states
 .config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
 
@@ -65,11 +66,123 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 		views: {
 			'menuContent': {
 				templateUrl: 'templates/recordLogs.html',			
-				controller: 'RecordLogsCtrl',
+				controller: 'RecordLogsCtrl'
 			}		
 		}
 	})
 	
+	.state('app.drag-drop', {
+		url: '/drag-drop',
+		views: {
+			'menuContent': {
+				templateUrl: 'templates/drag-drop.html',
+				controller: 'MapCtrl'
+			}
+		}
+	})
+	
   // if none of the above states are matched, use this as the fall back
-  $urlRouterProvider.otherwise('/app/welcome');
-})//;
+  
+	$urlRouterProvider.otherwise('/app/drag-drop');
+	//$urlRouterProvider.otherwise('/app/welcome');
+})
+
+//'Draggable' and 'droppable' directions
+.directive('draggable', ['MapDropService', function(MapDropService) {
+  return {
+    scope: {
+      click: '&' // parent
+    },
+    link: function(scope, element) {
+			scope.model = MapDropService.sharedObject;
+			
+			// This gives us the native JS object
+			var el = element[0];
+			
+			el.draggable = true;	  
+			
+			el.addEventListener(
+				'click',
+				function(e) {
+					this.classList.add('drag');
+					
+					scope.model.iconSelected = true; 
+					scope.model.iconType = this.id;				
+					
+					// Call the click passed click function
+					scope.$apply('click()');
+									
+					return false;
+				},
+				false
+			);
+			
+		}
+	}
+}])
+
+.directive('droppable', ['MapDropService', function(MapDropService) {
+  return {
+    scope: {
+      click: '&' // parent
+    },
+    link: function(scope, element) {
+			scope.model = MapDropService.sharedObject;
+		
+      //We need the native object
+      var el = element[0];
+			
+      el.addEventListener(
+        'click',
+        function(e) {
+          // Stops some browsers from redirecting.
+          if (e.stopPropagation) e.stopPropagation();
+          
+					//Grab screen coordinates to convert into to latLng
+					scope.model.x_cord = event.x;
+          scope.model.y_cord = event.y;
+					
+					var poopItem = document.getElementById("poopDraggable");
+					var binItem = document.getElementById("binDraggable");
+					
+					//'Poop' panel icon selected
+					if (scope.model.iconSelected == true){
+										
+						if (scope.model.iconType == "poopDraggable"){							
+							//Passes data to our service for the controller 
+							//and calls the click passed click function
+							scope.model.iconType = poopItem.id;
+							scope.$apply('click()');
+							
+							//Reset states
+							poopItem.classList.remove('drag');
+							scope.model.iconSelected == false;
+						}
+						else if (scope.model.iconType == "binDraggable"){							
+							scope.model.iconType = binItem.id;
+							scope.$apply('click()');
+							
+							binItem.classList.remove('drag');
+							scope.model.iconSelected == false;
+						}
+					}
+          return false;
+        },
+        false
+      );
+    }
+  }
+}])
+
+//Service between Droppable and the MapCtrl to convert screen coordinate data into latLng
+.factory('MapDropService', [function(){
+	
+	return {
+		sharedObject: {
+			x_cord : '',
+			y_cord : '',
+			iconSelected : '',
+			iconType : ''
+		}
+	};
+}]);

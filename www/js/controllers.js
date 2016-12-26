@@ -89,14 +89,29 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 
 })
 
-.controller('MapCtrl', function($scope, $state, $cordovaGeolocation) {
+.controller('DragDropCtrl', function($scope) {
+  $scope.handleDrop = function() {
+    console.log("Item dropped!");
+		//alert('Item has been dropped');
+  }
+	
+	$scope.handleDragStart = function(){
+		console.log("Item dragged!");
+		}
+})
+
+
+.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, MapDropService) {
   var options = {timeout: 10000, enableHighAccuracy: true};
- 
+	
+	$scope.model = MapDropService.sharedObject;
+	
   $cordovaGeolocation.getCurrentPosition(options).then(function(position){
  
 		var DoggyMarkers = [];
  
-		var poop_icon = "/img/Assets/poop_small.png";
+		var poop_icon = "img/Assets/poop_small.png";
+		var bin_icon = "img/Assets/bin_small.png";
  
     var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
  
@@ -108,7 +123,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
  
     $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
 		
-		//Wait until the map is loaded
+		//Wait until the map is loaded and add Marker to current location (center)
 		google.maps.event.addListenerOnce($scope.map, 'idle', function(){
 	 
 			var marker = new google.maps.Marker({
@@ -127,43 +142,48 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 	 
 		});
 
-		// Adds doggy marker to the current location and push to the array.
-		$scope.addToCurrentLoc = function() {
-			var marker = new google.maps.Marker({
-					map: $scope.map,
-					animation: google.maps.Animation.DROP,
-					icon: poop_icon,
-					position: latLng
-			});      
-		 
-			DoggyMarkers.push(marker);
-		 
-			var infoWindow = new google.maps.InfoWindow({
-					content: "Date of poop"
-			});
-		 
-			google.maps.event.addListener(marker, 'click', function () {
-					infoWindow.open($scope.map, marker);
-			});
-		};
-		
-		// Adds doggy marker to a location on 'click' and push to the array.
-		google.maps.event.addListener($scope.map, 'click', function(event) {
+		// Special panel click event function to add markers
+		$scope.handleDrop = function() {	
+			
+			//Converts screen coordinates to latLng
+			var topRight = $scope.map.getProjection().fromLatLngToPoint($scope.map.getBounds().getNorthEast());
+			var bottomLeft = $scope.map.getProjection().fromLatLngToPoint($scope.map.getBounds().getSouthWest());
+			var scale = Math.pow(2, $scope.map.getZoom());
+			var worldPoint = new google.maps.Point($scope.model.x_cord / scale + bottomLeft.x, $scope.model.y_cord / scale + topRight.y);
+			latLng = $scope.map.getProjection().fromPointToLatLng(worldPoint);
+				
+			//Poop panel icon selected -> add poop marker
+			if ($scope.model.iconType == "poopDraggable"){
 				var marker = new google.maps.Marker({
-					position: event.latLng,
+					position: latLng,
 					map: $scope.map,
 					animation: google.maps.Animation.DROP,
 					icon: poop_icon
 				});
-				DoggyMarkers.push(marker);
-						var infoWindow = new google.maps.InfoWindow({
-					content: "Date of poop"
+				
+				$scope.model.iconSelected = "neutral";
+			}
+			//Bin panel icon selected -> add bin marker
+			else if ($scope.model.iconType == "binDraggable"){
+				var marker = new google.maps.Marker({
+					position: latLng,
+					map: $scope.map,
+					animation: google.maps.Animation.DROP,
+					icon: bin_icon
 				});
+				
+				$scope.model.iconSelected = "neutral";
+			}
+			
+			var infoWindow = new google.maps.InfoWindow({
+				content: "Date information to be implemented!"
+			});
 		 
-				google.maps.event.addListener(marker, 'click', function () {
-						infoWindow.open($scope.map, marker);
-				});
-		});
+			google.maps.event.addListener(marker, 'click', function () {
+				infoWindow.open($scope.map, marker);
+			});
+			
+		}
 		
 		// Sets the map on all markers in the array.
 		$scope.setDoggyMarkers = function(map){
@@ -193,29 +213,26 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
   });
 });
 
-/*
-.controller('MapCtrl', function($scope, $ionicLoading) {
- 
-	google.maps.event.addDomListener(window, 'load', function() {
 
-		var map = new google.maps.Map(document.getElementById("map"), {
-			center: new google.maps.LatLng(48.878065, 2.372106),
-			zoom: 16,
-			mapTypeId: google.maps.MapTypeId.ROADMAP
-		});
- 
-		navigator.geolocation.getCurrentPosition(function(pos) {
-			map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
-			var myLocation = new google.maps.Marker({
-				position: new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude),
-				map: map,
-				title: "My Location"
+/* Click event listener to add special markers
+		google.maps.event.addListener($scope.map, 'click', function(event) {
+			
+			var marker = new google.maps.Marker({
+				position: event.latLng,
+				map: $scope.map,
+				animation: google.maps.Animation.DROP,
+				icon: poop_icon
 			});
-			console.log ("My location is "+ myLocation);
+			
+			DoggyMarkers.push(marker);
+			var infoWindow = new google.maps.InfoWindow({
+				content: "Date of poop"
+			});
+	 
+			google.maps.event.addListener(marker, 'click', function () {
+					infoWindow.open($scope.map, marker);
+			});
+
 		});
- 
-		$scope.map = map;
 		
-	});
-});
 */
