@@ -73,8 +73,8 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 	
   // if none of the above states are matched, use this as the fall back
   
-	//$urlRouterProvider.otherwise('/app/map');
-	$urlRouterProvider.otherwise('/app/welcome');
+	$urlRouterProvider.otherwise('/app/map');
+	//$urlRouterProvider.otherwise('/app/welcome');
 })
 
 //'Draggable' and 'droppable' directions

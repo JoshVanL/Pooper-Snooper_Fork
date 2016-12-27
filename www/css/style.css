@@ -87,6 +87,7 @@
 }
 /* --- Map attributes ---*/
 #map {
+	position: fixed;
 	width: 100%;
 	height: 85%;
 }
@@ -97,4 +98,11 @@
 /* --- Text allignment in confirmation popups ---*/
 .popup-body{
 	text-align: center;
+}
+
+#pinPoint {
+	position: fixed;
+	left: 87%;
+	z-index: 1;
+	color: NavajoWhite;
 }

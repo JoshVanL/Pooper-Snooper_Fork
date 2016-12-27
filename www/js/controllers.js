@@ -204,14 +204,12 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 		//------------------------------------------------->
 
 		var DoggyMarkers = [];
+	
+		var myLocationMarker; 
  
 		var poop_icon = "img/Assets/poop_small.png";
 		var bin_icon = "img/Assets/bin_small.png";
  
-		// $scope.$on('$ionicView.enter', function() {
-			
-		// });
-		
     var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
  
     var mapOptions = {
@@ -222,7 +220,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 		
     $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
 		
-		// Wait until the map is loaded and add Marker to current location (center)
+		// Wait until the map is loaded and add Marker to current location
 		google.maps.event.addListenerOnce($scope.map, 'idle', function(){
 	 
 			var marker = new google.maps.Marker({
@@ -238,9 +236,34 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 			google.maps.event.addListener(marker, 'click', function () {
 					infoWindow.open($scope.map, marker);
 			});
-	 
+			
+			myLocationMarker = marker;
 		});
 
+		// Refreshes the map
+		$scope.refreshMap = function(){
+			myLocationMarker.setMap(null);
+			google.maps.event.trigger(map, 'resize');
+			
+			latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+			
+			var marker = new google.maps.Marker({
+					map: $scope.map,
+					animation: google.maps.Animation.DROP,
+					position: latLng
+			});      
+		 
+			var infoWindow = new google.maps.InfoWindow({
+					content: "My location!"
+			});
+		 
+			google.maps.event.addListener(marker, 'click', function () {
+					infoWindow.open($scope.map, marker);
+			});
+			
+			myLocationMarker = marker;
+		}
+	
 		// Special panel click event function to add markers
 		$scope.handleIconPress = function() {	
 		
@@ -316,6 +339,10 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 			confirmation = false;
 		}
 		
+		/* ---------------------------- */
+		/* ----- Marker functions ----- */
+		/* ---------------------------- */
+		
 		// Sets the map on all markers in the array.
 		$scope.setDoggyMarkers = function(map){
 			for (var i = 0; i < DoggyMarkers.length; i++) {
@@ -325,7 +352,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 		
 		// Removes the markers from the map, but keeps them in the array.
 		$scope.clearDoggyMarkers = function() {
-			setMapOnAll(null);
+			setDoggyMarkers(null);
 		};
 
 		// Shows any markers currently in the array.

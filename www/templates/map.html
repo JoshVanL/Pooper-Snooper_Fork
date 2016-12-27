@@ -1,14 +1,18 @@
 <ion-view view-title="Doggy map!">
 	
-	<!--
-	<ion-nav-buttons side="right">
-		<button class="button button-balanced" ng-click="someFunction()">
-			Mark a poop
-		</button>
+  <ion-nav-buttons side="right">
+			<button class="button button-icon" ng-mouseup="refreshMap()">
+				<i class="icon ion-pinpoint"></i>
+			</button>
 	</ion-nav-buttons>
-	-->
+	
 	
 	<ion-content scroll="false">
+		
+		<button id="pinPoint" class="button button-icon" ng-mouseup="refreshMap()">
+			<i class="icon ion-pinpoint"></i>
+		</button>
+		
 		<body>
 			<div id="map" droppable data-tap-disabled="true" click="handleIconPress()"></div>
 		
