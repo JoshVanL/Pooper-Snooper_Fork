@@ -4,11 +4,11 @@
 			<i class="icon ion-compose"></i>
 			</button>
     </ion-nav-buttons>
-	<ion-content>
+	<ion-content class="background-DoggyRecords">
 
     <ion-list>
-      <ion-item ng-repeat="record in records">
-				{{ record.date | date:"dd-MM-yy"}}
+      <ion-item class="record" ng-repeat="record in records">
+				{{ record.date | date:"dd-MM-yy"}} {{record.location}}
 			
 				<!--  {{record.location}} {{record.date.getDate()}}/{{record.date.getMonth()}}/{{record.date.getFullYear()}}
 				{{record.time.getHours()}}:{{record.time.getMinutes()}} -->

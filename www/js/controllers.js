@@ -41,6 +41,10 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
   };
 })
 
+
+/* ------------------------------------------------ */
+/* ------------ Record Logs Controller ------------ */
+/* ------------------------------------------------ */
 .controller('RecordLogsCtrl', function($scope, $ionicModal, $filter, GlobalService) {
 	
 	//Update record logs from the factory service upon entering page
@@ -103,21 +107,32 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 
 })
 
-//Note : removed $state from dependencies (dunno what it did!)
+/* ----------------------------------------------------------- */
+/* --------------------- Map Controller ---------------------- */
+/* ----------------------------------------------------------- */
 
+//Note : removed $state from dependencies (dunno what it did!)
 .controller('MapCtrl', function($scope, $cordovaGeolocation, $ionicModal,
-$window, $ionicPopup, $ionicLoading, $rootScope, $cordovaNetwork, GlobalService,
-ConnectivityMonitor) {
+$window, $ionicPopup, $ionicLoading, $rootScope, $cordovaNetwork, $ionicSideMenuDelegate,
+GlobalService, ConnectivityMonitor) {
 	
-	/* ------------------------- */
-	/* --- Initial resources --- */
-	/* ------------------------- */
+	//Disables swipe to side menu feature on entering page
+	$scope.$on('$ionicView.enter', function () { 
+		$ionicSideMenuDelegate.canDragContent(false);
+	});
+	//Re-enables swipe to side menu feature on exit page
+	$scope.$on('$ionicView.leave', function () { 
+		$ionicSideMenuDelegate.canDragContent(true); 
+	});
+	
+	//------------------------->
+	//--- Initial resources --->
+	//------------------------>
 	var apiKey = "AIzaSyD1-OU4tSucidW9oHkB5CCpLqSUT5fcl-E";
 	var map = null;
 	var latLng = null;
 	
-	var DoggyMarkers = [];				// Currently replaced by GlobalService.get_doggyMarkers()
-																// Will later be replaced again by Database.
+	var markerCache = [];
 	
 	var myLocationMarker; 				// Used to remove old marker to update current location
 	
@@ -130,9 +145,9 @@ ConnectivityMonitor) {
 		ionic.trigger('resize');
 	});
 
-	/* ------------------------- */
-	/* --- Initializing. . . --- */
-	/* ------------------------- */
+	//------------------------->
+	//--- Initializing phase--->
+	//------------------------>
 	
 	if(typeof google == "undefined" || typeof google.maps == "undefined"){
 
@@ -154,7 +169,6 @@ ConnectivityMonitor) {
 	}
 
 	addConnectivityListeners();
-	
 	
 	// Initialises Map element and gets current location
 	function initMap(){
@@ -180,6 +194,16 @@ ConnectivityMonitor) {
 			// Wait until the map is loaded and add Marker to current location
 			google.maps.event.addListenerOnce($scope.map, 'idle', function(){
 		 
+				//Reload markers every time the map moves
+        google.maps.event.addListener($scope.map, 'dragend', function(){
+          //loadMarkers();
+        });
+ 
+        //Reload markers every time the zoom changes
+        google.maps.event.addListener($scope.map, 'zoom_changed', function(){
+          //loadMarkers();
+        });
+				
 				enableMap();
 				
 				var marker = new google.maps.Marker({
@@ -196,14 +220,16 @@ ConnectivityMonitor) {
 		});
 	}
 	
-	// ------------------------------------------>
-	// ---------- Map related Functions ---------->
-	// ------------------------------------------>
+	//------------------------------->
+	//---- Map related Functions ---->
+	//------------------------------>
 	
 	// Refreshes the map - currently has some unknown stutter ...
 	$scope.refreshMap = function(){
 		
 		myLocationMarker.setMap(null);
+		
+		//document.getElementById("pinPointContainer").style.opacity = 0.3;
 		
 		var options = {timeout: 10000, enableHighAccuracy: true};
 		
@@ -219,7 +245,7 @@ ConnectivityMonitor) {
 			});      
 			
 			myLocationMarker = marker;
-
+			
 		}, function(error){
 			console.log("Could not get location");
 		});
@@ -302,63 +328,33 @@ ConnectivityMonitor) {
 		confirmation = false;
 	}
 	
-	/* ---------------------------- */
-	/* ----- Marker functions ----- CURRENTLY NOT USED! */
-	/* ---------------------------- */
-	
-	// Sets the map on all markers in the array.
-	$scope.setDoggyMarkers = function(map){
-		for (var i = 0; i < DoggyMarkers.length; i++) {
-			DoggyMarkers[i].setMap($scope.map);
-		}
-	};
-	
-	// Removes the markers from the map, but keeps them in the array.
-	$scope.clearDoggyMarkers = function() {
-		setDoggyMarkers(null);
-	};
-
-	// Shows any markers currently in the array.
-	$scope.showDoggyMarkers = function() {
-		setMapOnAll($scope.map);
-	};
-	
-	// Deletes all markers in the array by removing references to them.
-	$scope.deleteDoggyMarkers = function() {
-		clearDoggyMarkers();
-		DoggyMarkers = [];
-	};
-	
-	/* ------------------------------------------ */
-	/* ----- Connectivity related functions ----- */
-	/* ------------------------------------------ */
+	//---------------------------------------->
+	//---- Connectivity related functions ---->
+	//--------------------------------------->
 	
 	function enableMap(){
 		$ionicLoading.hide();
-		// $scope.dataLoading = true;
 	}	
 
 	function disableMap(){
 		$ionicLoading.show({
 			template: 'You must be connected to the Internet to view this map.'
 		});
-		// $scope.dataLoading = true;
 	}
 	
 	function noLocationMap(){
-		// $ionicLoading.show({
-			// template: 'Could not get your location. Please check your connection.'
-		// });
+		$ionicLoading.show({
+			template: 'Could not get your location. Please check your connection.'
+		});
 	}
 	
+	// Attempts to load the map
 	function loadGoogleMaps(){
  
     $ionicLoading.show({
       template: 'Loading Google Maps'
     });
 		
-		// $scope.dataLoading = true;
- 
     //This function will be called once the SDK has been loaded
     window.mapInit = function(){
       initMap();
@@ -376,6 +372,7 @@ ConnectivityMonitor) {
     document.body.appendChild(script);
   }
 	
+	// Checks if the Map has been loaded. Attempts to load otherwise.
 	function checkLoaded(){
     if(typeof google == "undefined" || typeof google.maps == "undefined"){
       loadGoogleMaps();
@@ -384,33 +381,120 @@ ConnectivityMonitor) {
     }       
   }
 	
+	//---------------------------->
+	//----- Marker functions -----> 
+	//--------------------------->
+	
+	// Load markers (Only load on screen Markers)
 	function loadMarkers(){
  
-      //Get all of the markers from our Markers factory
-      GlobalService.get_doggyMarkers().then(function(markers){
+		var center = $scope.map.getCenter();
+		var bounds = $scope.map.getBounds();
+		var zoom = $scope.map.getZoom();
+		
+		//Convert objects returned by Google to be more readable
+		var centerNorm = {
+			lat: center.lat(),
+			lng: center.lng()
+		};
+	
+	  var boundsNorm = {
+			northeast: {
+				lat: bounds.getNorthEast().lat(),
+				lng: bounds.getNorthEast().lng()
+			},
+			southwest: {
+				lat: bounds.getSouthWest().lat(),
+				lng: bounds.getSouthWest().lng()
+			}
+		};
+	
+		var boundingRadius = getBoundingRadius(centerNorm, boundsNorm);
  
-        console.log("Markers: ", markers);
- 
-        for (var i = 0; i < markers.length; i++) {
-    
-          // Add the markerto the map
-          var marker = new google.maps.Marker({
-              map: map,
-              animation: google.maps.Animation.DROP,
-              position: markers[i].getPosition()
-          });
- 
-          var infoWindowContent = "<h4>" + "some info.." + "</h4>";          
- 
-          addInfoWindow(marker, infoWindowContent, record);
- 
-        }
- 
-      }); 
- 
+		//Use these parameters to grab only nearby markers (onscreen)
+		var params = {
+			"centre": centerNorm,
+			"bounds": boundsNorm,
+			"zoom": zoom,
+			"boundingRadius": boundingRadius
+		};
+	
+		//Get all of the markers from our Markers factory
+		GlobalService.get_doggyMarkers().then(function(markers){
+			for (var i = 0; i < markers.length; i++) {
+				if (!markerExists(markers[i].getPosition().lat, markers[i].getPosition().lng)){
+					// Adds the (new) marker to the map
+					var marker = new google.maps.Marker({
+							map: map,
+							animation: google.maps.Animation.DROP,
+							position: markers[i].getPosition()
+					});
+					// Adds the marker to markerCache (so it won't be re-added)
+					var markerData = {
+						lat: markers[i].getPosition().lat,
+						lng: markers[i].getPosition().lng,
+						marker: marker
+					};
+					markerCache.push(markerData);
+				}
+			}
+		}); 
   }
 	
-	function addInfoWindow(marker, message, record) {
+	// Checks if the Marker exists on the Map already (via our Cache)
+	function markerExists(lat, lng){
+		var exists = false;
+		var cache = markerCache;
+		for(var i = 0; i < cache.length; i++){
+			if(cache[i].lat === lat && cache[i].lng === lng){
+				exists = true;
+			}
+		}
+		return exists;
+  }
+ 
+	// Gets bounding radius
+  function getBoundingRadius(center, bounds){
+    return getDistanceBetweenPoints(center, bounds.northeast, 'miles');    
+  }
+ 
+	// Calculates the distance between two points
+  function getDistanceBetweenPoints(pos1, pos2, units){
+ 
+    var earthRadius = {
+        miles: 3958.8,
+        km: 6371
+    };
+ 
+    var R = earthRadius[units || 'miles'];
+    var lat1 = pos1.lat;
+    var lon1 = pos1.lng;
+    var lat2 = pos2.lat;
+    var lon2 = pos2.lng;
+ 
+    var dLat = toRad((lat2 - lat1));
+    var dLon = toRad((lon2 - lon1));
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+    Math.sin(dLon / 2) *
+    Math.sin(dLon / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var d = R * c;
+ 
+    return d;
+  }
+ 
+	// Converts degrees to Radians
+  function toRad(x){
+      return x * Math.PI / 180;
+  }
+	
+	//--------------------------->
+	//----- Other functions ----->
+	//-------------------------->
+	
+	// Add info Window to Marker
+	function addInfoWindow(marker, message) {
  
       var infoWindow = new google.maps.InfoWindow({
           content: message
@@ -422,6 +506,7 @@ ConnectivityMonitor) {
  
   }
 	
+	// Connection checker
 	function addConnectivityListeners(){
  
     if(ionic.Platform.isWebView()){
@@ -452,9 +537,9 @@ ConnectivityMonitor) {
     }
   }
 	
-	//---------------------------------------------------------->
-	// ---------- Record modal resources and Functions ---------->
-	//---------------------------------------------------------->
+	//-------------------------------------->
+	//---- New Record (Modal) Functions ---->
+	//------------------------------------->
 	
 	// Blank form used reset fields
 	$scope.record = {
@@ -462,7 +547,6 @@ ConnectivityMonitor) {
 		time: "",
 		location: ""
 	}
-	// Blank form used to reset fields
 	var emptyForm = angular.copy($scope.record);
 	
 	// Create and load the Modal
@@ -503,9 +587,9 @@ ConnectivityMonitor) {
 		}
 	};
 	
-	//------------------------------------------------------>
-	// ------- Confirm dialog resources and Functions ------->
-	//------------------------------------------------------>
+	//------------------------------------------------>
+	//---- Confirm dialog resources and Functions ---->
+	//----------------------------------------------->
 
 	// Confirm dialog for adding Poop to the map
 	$scope.showPConfirm = function() {
@@ -532,5 +616,4 @@ ConnectivityMonitor) {
 			}
 		});
 	};
-	
 });
