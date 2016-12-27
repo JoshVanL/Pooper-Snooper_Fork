@@ -14,6 +14,11 @@
 		</button>
 		
 		<body>
+		
+			<!-- ionicLoading must freeze the entire app so an alternative may be to display a 
+					 message and cover the map with another element. Currently not fully implemented -->
+			<!-- <div id='mapLoading' ng-show="loadingData" class="button button-icon icon ion-load-c"></div> -->
+			
 			<div id="map" droppable data-tap-disabled="true" click="handleIconPress()"></div>
 		
 			<div id="icon_panel">
