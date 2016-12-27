@@ -41,13 +41,11 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
   };
 })
 
-.controller('RecordLogsCtrl', function($scope, $ionicModal, MapDropService) {
-	
-	$scope.model = MapDropService.sharedObject;
+.controller('RecordLogsCtrl', function($scope, $ionicModal, $filter, GlobalService) {
 	
 	//Update record logs from the factory service upon entering page
 	$scope.$on('$ionicView.afterEnter', function() {
-		$scope.records = angular.copy($scope.model.doggyRecords);
+		$scope.records = angular.copy(GlobalService.get_doggyRecords());
 	});
 	
 	// Blank form used reset fields
@@ -70,13 +68,13 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 	// Called when the form is submitted
   $scope.createRecord = function(record) {
 		if (record.location.length > 0){
-			$scope.model.doggyRecords.push({
+			GlobalService.push_doggyRecords({
 				date: record.date,
 				time: record.time,
 				location: record.location
 			});
 			
-			$scope.records = angular.copy($scope.model.doggyRecords);
+			$scope.records = angular.copy(GlobalService.get_doggyRecords());
 			
 			//Close Modal and reset fields
 			$scope.recordModal.hide();
@@ -105,11 +103,9 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 
 })
 
-.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $ionicModal, $window, $ionicPopup, MapDropService) {
+.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $ionicModal, $window, $ionicPopup, GlobalService) {
   var options = {timeout: 10000, enableHighAccuracy: true};
 	
-	$scope.model = MapDropService.sharedObject;
-  
 	$cordovaGeolocation.getCurrentPosition(options).then(function(position){
 		
 		//Fixes the error where opening a modal would cause the map to 'break' 
@@ -152,7 +148,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 		// Create record item
 		$scope.createRecord = function(record) {
 			if (record.location.length > 0){
-				$scope.model.doggyRecords.push({
+				GlobalService.push_doggyRecords({
 					date: record.date,
 					time: record.time,
 					location: record.location
@@ -276,26 +272,26 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 			
 			var scale = Math.pow(2, $scope.map.getZoom());
 			
-			var worldPoint = new google.maps.Point($scope.model.x_cord /scale + bottomLeft.x,(
-			$scope.model.y_cord-(0.0676 * $window.innerHeight)) / scale + topRight.y);	
+			var worldPoint = new google.maps.Point(GlobalService.get_onScreenX() /scale + bottomLeft.x,(
+			GlobalService.get_onScreenY() -(0.0676 * $window.innerHeight)) / scale + topRight.y);	
 			//6.76% = Nav bar portion size of the Screen
 			
 			latLng = $scope.map.getProjection().fromPointToLatLng(worldPoint);
 		
 			//Poop panel icon selected -> add poop marker
-			if ($scope.model.iconType == "poopDraggable"){
+			if (GlobalService.get_iconType() == "poopDraggable"){
 				$scope.showPConfirm();
 
 			}
 			//Bin panel icon selected -> add bin marker
-			else if ($scope.model.iconType == "binDraggable"){
+			else if (GlobalService.get_iconType() == "binDraggable"){
 				$scope.showBConfirm();
 			}
 		}
 		
 		//Adds the poop Marker to the map (after record has been created)
 		$scope.addPoopMarker = function(){
-			$scope.model.poopLatLng.push(latLng);
+			GlobalService.push_poopLatLng(latLng);
 			
 			var marker = new google.maps.Marker({
 				position: latLng,
@@ -312,13 +308,13 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 				infoWindow.open($scope.map, marker);
 			});
 			
-			$scope.model.iconSelected = "";
+			GlobalService.set_activeIcon("");
 			confirmation = false;
 		}
 		
 		//Adds the bin Marker to the map
 		$scope.addBinMarker = function() {
-			$scope.model.binLatLng.push(latLng);
+			GlobalService.push_binLatLng(latLng);
 			
 			var marker = new google.maps.Marker({
 				position: latLng,
@@ -335,7 +331,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 				infoWindow.open($scope.map, marker);
 			});
 			
-			$scope.model.iconSelected = "";
+			GlobalService.set_activeIcon("");
 			confirmation = false;
 		}
 		

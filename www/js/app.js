@@ -78,13 +78,12 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 })
 
 //'Draggable' and 'droppable' directions
-.directive('draggable', ['MapDropService', function(MapDropService) {
+.directive('draggable', ['GlobalService', function(GlobalService) {
   return {
     scope: {
       click: '&' // parent
     },
     link: function(scope, element) {
-			scope.model = MapDropService.sharedObject;
 			
 			// This gives us the native JS object
 			var el = element[0];
@@ -94,15 +93,13 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 			el.addEventListener(
 				'click',
 				function(e) {
-					if (scope.model.iconSelected == false){
+					if (GlobalService.get_activeIcon() == false){
 						
 						this.classList.add('iconSelected');	//For CSS opacity change
 						
-						scope.model.iconSelected = true; 
-						scope.model.iconType = this.id;				
+						GlobalService.set_activeIcon(true); 
+						GlobalService.set_iconType(this.id);				
 						
-						// Call the click passed click function
-						// scope.$apply('click()');
 					}
 					return false;
 				},
@@ -113,13 +110,12 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 	}
 }])
 
-.directive('droppable', ['MapDropService', function(MapDropService) {
+.directive('droppable', ['GlobalService', function(GlobalService) {
   return {
     scope: {
       click: '&' // parent
     },
     link: function(scope, element) {
-			scope.model = MapDropService.sharedObject;
 		
       //We need the native object
       var el = element[0];
@@ -131,31 +127,31 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
           if (e.stopPropagation) e.stopPropagation();
           
 					//Grab screen coordinates to convert into to latLng
-					scope.model.x_cord = event.x;
-          scope.model.y_cord = event.y;
+					GlobalService.set_onScreenX(event.x);
+          GlobalService.set_onScreenY(event.y);
 										
 					var poopItem = document.getElementById("poopDraggable");
 					var binItem = document.getElementById("binDraggable");
 					
 					//'Poop' panel icon selected
-					if (scope.model.iconSelected == true){
+					if (GlobalService.get_activeIcon() == true){
 										
-						if (scope.model.iconType == "poopDraggable"){							
+						if (GlobalService.get_iconType() == "poopDraggable"){							
 							//Passes data to our service for the controller 
 							//and calls the click passed click function
-							scope.model.iconType = poopItem.id;
+							GlobalService.set_iconType(poopItem.id);
 							scope.$apply('click()');
 							
 							//Reset states
 							poopItem.classList.remove('iconSelected');
-							scope.model.iconSelected = false;
+							GlobalService.set_activeIcon(false);
 						}
-						else if (scope.model.iconType == "binDraggable"){							
-							scope.model.iconType = binItem.id;
+						else if (GlobalService.get_iconType() == "binDraggable"){							
+							GlobalService.set_iconType(binItem.id);
 							scope.$apply('click()');
 							
 							binItem.classList.remove('iconSelected');
-							scope.model.iconSelected = false;
+							GlobalService.set_activeIcon(false);
 						}
 					}
           return false;
@@ -167,17 +163,62 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 }])
 
 //Service between Droppable and the MapCtrl to convert screen coordinate data into latLng
-.factory('MapDropService', [function(){
-	
+.factory('GlobalService', [function(){
+		var onScreenX = '';
+		var onScreenY = '';
+		var activeIcon = '';
+		var iconType = '';
+		var doggyRecords = [];
+		var poopLatLng = [];
+		var binLatLng = [];
 	return {
-		sharedObject: {
-			x_cord : '',
-			y_cord : '',
-			iconSelected : '',
-			iconType : '',
-			doggyRecords : [],
-			poopLatLng : [],
-			binLatLng : []
+		get_onScreenX : function(){
+			return onScreenX;
+		},
+		set_onScreenX : function(t){
+			onScreenX = t;
+		},
+		
+		get_onScreenY : function(){
+			return onScreenY;
+		},
+		set_onScreenY : function(t){
+			onScreenY = t;
+		},
+		
+		get_activeIcon : function(){
+			return activeIcon;
+		},
+		set_activeIcon : function(t){
+			activeIcon = t;
+		},
+		
+		get_iconType : function(){
+			return iconType;
+		},
+		set_iconType : function(t){
+			iconType = t;
+		},
+		
+		get_doggyRecords : function(){
+			return doggyRecords;
+		},
+		push_doggyRecords : function(t){
+			doggyRecords.push(t);
+		},
+		
+		get_poopLatLng : function(){
+			return poopLatLng;
+		},
+		push_poopLatLng : function(t){
+			poopLatLng.push(t);
+		},
+		
+		get_binLatLng : function(){
+			return binLatLng;
+		},
+		push_binLatLng : function(t){
+			binLatLng.push(t);
 		}
 	};
 }]);
