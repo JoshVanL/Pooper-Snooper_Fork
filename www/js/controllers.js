@@ -181,7 +181,6 @@ ConnectivityMonitor) {
 			google.maps.event.addListenerOnce($scope.map, 'idle', function(){
 		 
 				enableMap();
-				// disableMap();
 				
 				var marker = new google.maps.Marker({
 						map: $scope.map,
@@ -201,22 +200,29 @@ ConnectivityMonitor) {
 	// ---------- Map related Functions ---------->
 	// ------------------------------------------>
 	
-	// Refreshes the map
+	// Refreshes the map - currently has some unknown stutter ...
 	$scope.refreshMap = function(){
+		
 		myLocationMarker.setMap(null);
 		
-		google.maps.event.trigger(map, 'resize');
+		var options = {timeout: 10000, enableHighAccuracy: true};
 		
-		latLng = new google.maps.LatLng(position.coords.latitude, 
-						 position.coords.longitude);
-		
-		var marker = new google.maps.Marker({
-				map: $scope.map,
-				animation: google.maps.Animation.DROP,
-				position: latLng
-		});      
-	 
-		myLocationMarker = marker;
+		$cordovaGeolocation.getCurrentPosition(options).then(function(position){
+			
+			latLng = new google.maps.LatLng(position.coords.latitude,
+									 position.coords.longitude);
+			
+			var marker = new google.maps.Marker({
+					map: $scope.map,
+					animation: google.maps.Animation.DROP,
+					position: latLng
+			});      
+			
+			myLocationMarker = marker;
+
+		}, function(error){
+			console.log("Could not get location");
+		});
 	}
 
 	// Special panel click event function to add markers
