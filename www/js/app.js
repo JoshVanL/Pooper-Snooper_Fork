@@ -71,20 +71,10 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 		}
 	})
 	
-	.state('app.drag-drop', {
-		url: '/drag-drop',
-		views: {
-			'menuContent': {
-				templateUrl: 'templates/drag-drop.html',
-				controller: 'MapCtrl'
-			}
-		}
-	})
-	
   // if none of the above states are matched, use this as the fall back
   
-	$urlRouterProvider.otherwise('/app/drag-drop');
-	//$urlRouterProvider.otherwise('/app/welcome');
+	//$urlRouterProvider.otherwise('/app/map');
+	$urlRouterProvider.otherwise('/app/welcome');
 })
 
 //'Draggable' and 'droppable' directions
@@ -104,14 +94,16 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 			el.addEventListener(
 				'click',
 				function(e) {
-					this.classList.add('drag');
-					
-					scope.model.iconSelected = true; 
-					scope.model.iconType = this.id;				
-					
-					// Call the click passed click function
-					scope.$apply('click()');
-									
+					if (scope.model.iconSelected == false){
+						
+						this.classList.add('iconSelected');	//For CSS opacity change
+						
+						scope.model.iconSelected = true; 
+						scope.model.iconType = this.id;				
+						
+						// Call the click passed click function
+						// scope.$apply('click()');
+					}
 					return false;
 				},
 				false
@@ -141,7 +133,7 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 					//Grab screen coordinates to convert into to latLng
 					scope.model.x_cord = event.x;
           scope.model.y_cord = event.y;
-					
+										
 					var poopItem = document.getElementById("poopDraggable");
 					var binItem = document.getElementById("binDraggable");
 					
@@ -155,15 +147,15 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 							scope.$apply('click()');
 							
 							//Reset states
-							poopItem.classList.remove('drag');
-							scope.model.iconSelected == false;
+							poopItem.classList.remove('iconSelected');
+							scope.model.iconSelected = false;
 						}
 						else if (scope.model.iconType == "binDraggable"){							
 							scope.model.iconType = binItem.id;
 							scope.$apply('click()');
 							
-							binItem.classList.remove('drag');
-							scope.model.iconSelected == false;
+							binItem.classList.remove('iconSelected');
+							scope.model.iconSelected = false;
 						}
 					}
           return false;
@@ -182,7 +174,10 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 			x_cord : '',
 			y_cord : '',
 			iconSelected : '',
-			iconType : ''
+			iconType : '',
+			doggyRecords : [],
+			poopLatLng : [],
+			binLatLng : []
 		}
 	};
 }]);

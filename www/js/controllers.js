@@ -41,12 +41,26 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
   };
 })
 
-.controller('RecordLogsCtrl', function($scope, $ionicModal) {
+.controller('RecordLogsCtrl', function($scope, $ionicModal, MapDropService) {
 	
-	$scope.records = [];
+	$scope.model = MapDropService.sharedObject;
+	
+	//Update record logs from the factory service upon entering page
+	$scope.$on('$ionicView.afterEnter', function() {
+		$scope.records = angular.copy($scope.model.doggyRecords);
+	});
+	
+	// Blank form used reset fields
+	$scope.record = {
+    date: "",
+    time: "",
+		location: ""
+  }
+	// Blank form used to reset fields
+	var emptyForm = angular.copy($scope.record);
 	
 	// Create and load the Modal
-  $ionicModal.fromTemplateUrl('newRecord.html', function(modal) {
+  $ionicModal.fromTemplateUrl('templates/newRecord.html', function(modal) {
     $scope.recordModal = modal;
   }, {
     scope: $scope,
@@ -56,16 +70,17 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 	// Called when the form is submitted
   $scope.createRecord = function(record) {
 		if (record.location.length > 0){
-			$scope.records.push({
+			$scope.model.doggyRecords.push({
 				date: record.date,
 				time: record.time,
 				location: record.location
 			});
-			console.log("Record created!");
+			
+			$scope.records = angular.copy($scope.model.doggyRecords);
+			
+			//Close Modal and reset fields
 			$scope.recordModal.hide();
-			record.date = null;
-			record.time = null;
-			record.location = null;
+			$scope.record = angular.copy(emptyForm);
 		}
 		else {
 			console.log("Location not entered!");
@@ -80,6 +95,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
   // Close the new record modal
   $scope.closeNewRecord = function() {
     $scope.recordModal.hide();
+		$scope.record = angular.copy(emptyForm);
   };
 	
 	// Finds current location using GPS
@@ -89,30 +105,113 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 
 })
 
-.controller('DragDropCtrl', function($scope) {
-  $scope.handleDrop = function() {
-    console.log("Item dropped!");
-		//alert('Item has been dropped');
-  }
-	
-	$scope.handleDragStart = function(){
-		console.log("Item dragged!");
-		}
-})
-
-
-.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, MapDropService) {
+.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $ionicModal, $window, $ionicPopup, MapDropService) {
   var options = {timeout: 10000, enableHighAccuracy: true};
 	
 	$scope.model = MapDropService.sharedObject;
-	
-  $cordovaGeolocation.getCurrentPosition(options).then(function(position){
+  
+	$cordovaGeolocation.getCurrentPosition(options).then(function(position){
+		
+		//Fixes the error where opening a modal would cause the map to 'break' 
+		$scope.$on('$ionicView.afterEnter', function() {
+			ionic.trigger('resize');
+		});
+		
+		//---------------------------------------------------------->
+		// ---------- Record modal resources and Functions ---------->
+		//---------------------------------------------------------->
+		
+		// Blank form used reset fields
+		$scope.record = {
+			date: "",
+			time: "",
+			location: ""
+		}
+		// Blank form used to reset fields
+		var emptyForm = angular.copy($scope.record);
+		
+		// Create and load the Modal
+		$ionicModal.fromTemplateUrl('templates/newPoop.html', function(modal) {
+			$scope.poopModal = modal;
+		}, {
+			scope: $scope,
+			animation: 'slide-in-up'
+		});
+		
+		// Open our new record modal
+		$scope.newRecord = function() {
+			$scope.poopModal.show();
+		};
+		
+		// Close the new record modal
+		$scope.closeNewRecord = function(record) {
+			$scope.poopModal.hide();
+			$scope.record = angular.copy(emptyForm);
+		};
  
+		// Create record item
+		$scope.createRecord = function(record) {
+			if (record.location.length > 0){
+				$scope.model.doggyRecords.push({
+					date: record.date,
+					time: record.time,
+					location: record.location
+				});
+				$scope.poopModal.hide();
+				$scope.record = angular.copy(emptyForm);
+				
+				//Adds the marker to your map upon creating the Record
+				$scope.addPoopMarker();
+			}
+			else {
+				console.log("Location not entered!");
+			}
+		};
+		
+		//------------------------------------------------------>
+		// ------- Confirm dialog resources and Functions ------->
+		//------------------------------------------------------>
+	
+		// Confirm dialog for adding Poop to the map
+		$scope.showPConfirm = function() {
+			var confirmPopup = $ionicPopup.confirm({
+				title: 'Add a doggy record?',
+		 	  template: 'This logs your dog\'s mess. You can view all logs from your Doggy Records page.' 
+			});
+		  confirmPopup.then(function(res) {
+			  if(res) {
+					$scope.newRecord();
+			  }
+		  });
+	  };
+		
+		// Confirm dialog for adding Bin to the map
+		$scope.showBConfirm = function() {
+			var confirmPopup = $ionicPopup.confirm({
+				title: 'Add a Bin to this location?',
+		 	  template: 'It will be added to your Bin DataBase used to find your nearest bins.' 
+			});
+		  confirmPopup.then(function(res) {
+			  if(res) {
+					$scope.addBinMarker();
+				}
+		  });
+	  };
+
+		
+		// ------------------------------------------------>
+		// ---------- Map resources and Functions ---------->
+		//------------------------------------------------->
+
 		var DoggyMarkers = [];
  
 		var poop_icon = "img/Assets/poop_small.png";
 		var bin_icon = "img/Assets/bin_small.png";
  
+		// $scope.$on('$ionicView.enter', function() {
+			
+		// });
+		
     var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
  
     var mapOptions = {
@@ -120,10 +219,10 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
       zoom: 15,
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
- 
+		
     $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
 		
-		//Wait until the map is loaded and add Marker to current location (center)
+		// Wait until the map is loaded and add Marker to current location (center)
 		google.maps.event.addListenerOnce($scope.map, 'idle', function(){
 	 
 			var marker = new google.maps.Marker({
@@ -133,7 +232,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 			});      
 		 
 			var infoWindow = new google.maps.InfoWindow({
-					content: "Here I am!"
+					content: "My location!"
 			});
 		 
 			google.maps.event.addListener(marker, 'click', function () {
@@ -143,46 +242,78 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 		});
 
 		// Special panel click event function to add markers
-		$scope.handleDrop = function() {	
-			
+		$scope.handleIconPress = function() {	
+		
 			//Converts screen coordinates to latLng
-			var topRight = $scope.map.getProjection().fromLatLngToPoint($scope.map.getBounds().getNorthEast());
-			var bottomLeft = $scope.map.getProjection().fromLatLngToPoint($scope.map.getBounds().getSouthWest());
+			var topRight = $scope.map.getProjection().fromLatLngToPoint(
+			$scope.map.getBounds().getNorthEast());
+			
+			var bottomLeft = $scope.map.getProjection().fromLatLngToPoint(
+			$scope.map.getBounds().getSouthWest());
+			
 			var scale = Math.pow(2, $scope.map.getZoom());
-			var worldPoint = new google.maps.Point($scope.model.x_cord / scale + bottomLeft.x, $scope.model.y_cord / scale + topRight.y);
+			
+			var worldPoint = new google.maps.Point($scope.model.x_cord /scale + bottomLeft.x,(
+			$scope.model.y_cord-(0.0676 * $window.innerHeight)) / scale + topRight.y);	
+			//6.76% = Nav bar portion size of the Screen
+			
 			latLng = $scope.map.getProjection().fromPointToLatLng(worldPoint);
-				
+		
 			//Poop panel icon selected -> add poop marker
 			if ($scope.model.iconType == "poopDraggable"){
-				var marker = new google.maps.Marker({
-					position: latLng,
-					map: $scope.map,
-					animation: google.maps.Animation.DROP,
-					icon: poop_icon
-				});
-				
-				$scope.model.iconSelected = "neutral";
+				$scope.showPConfirm();
+
 			}
 			//Bin panel icon selected -> add bin marker
 			else if ($scope.model.iconType == "binDraggable"){
-				var marker = new google.maps.Marker({
-					position: latLng,
-					map: $scope.map,
-					animation: google.maps.Animation.DROP,
-					icon: bin_icon
-				});
-				
-				$scope.model.iconSelected = "neutral";
+				$scope.showBConfirm();
 			}
+		}
+		
+		//Adds the poop Marker to the map (after record has been created)
+		$scope.addPoopMarker = function(){
+			$scope.model.poopLatLng.push(latLng);
+			
+			var marker = new google.maps.Marker({
+				position: latLng,
+				map: $scope.map,
+				animation: google.maps.Animation.DROP,
+				icon: poop_icon
+			});
 			
 			var infoWindow = new google.maps.InfoWindow({
-				content: "Date information to be implemented!"
+				content: "Some information!"
 			});
 		 
 			google.maps.event.addListener(marker, 'click', function () {
 				infoWindow.open($scope.map, marker);
 			});
 			
+			$scope.model.iconSelected = "";
+			confirmation = false;
+		}
+		
+		//Adds the bin Marker to the map
+		$scope.addBinMarker = function() {
+			$scope.model.binLatLng.push(latLng);
+			
+			var marker = new google.maps.Marker({
+				position: latLng,
+				map: $scope.map,
+				animation: google.maps.Animation.DROP,
+				icon: bin_icon
+			});
+			
+			var infoWindow = new google.maps.InfoWindow({
+				content: "Some information!"
+			});
+		 
+			google.maps.event.addListener(marker, 'click', function () {
+				infoWindow.open($scope.map, marker);
+			});
+			
+			$scope.model.iconSelected = "";
+			confirmation = false;
 		}
 		
 		// Sets the map on all markers in the array.
@@ -212,27 +343,3 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
     console.log("Could not get location");
   });
 });
-
-
-/* Click event listener to add special markers
-		google.maps.event.addListener($scope.map, 'click', function(event) {
-			
-			var marker = new google.maps.Marker({
-				position: event.latLng,
-				map: $scope.map,
-				animation: google.maps.Animation.DROP,
-				icon: poop_icon
-			});
-			
-			DoggyMarkers.push(marker);
-			var infoWindow = new google.maps.InfoWindow({
-				content: "Date of poop"
-			});
-	 
-			google.maps.event.addListener(marker, 'click', function () {
-					infoWindow.open($scope.map, marker);
-			});
-
-		});
-		
-*/

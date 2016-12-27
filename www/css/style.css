@@ -1,78 +1,100 @@
-/* --- Screen resolution : 667px * 375px --- */
+/*------------------------------------------------*/
+/* ----- Screen dimensions (px) : 667 * 375 ----- */
+/*------------------------------------------------*/
 
-.background.scroll-content {
-    background: url('../img/backgrounds/dotted-green.png') no-repeat;
-    background-size: cover;
-}
-
-
-.scroll {
-    height: 100%;
-}
- 
-#map {
-    width: 100%;
-    height: 85%;
-}
+/*---------------------------*/
+/* ----- About us page ----- */
+/*---------------------------*/
 
 .aboutCompany{
 	font-family: 'Amatica SC', sans-serif;
 	text-align: center;
-  font-size: 30px;
+	font-size: 30px;
 	line-height: 1.7em; 
 }
 
-#offset{
-	width: 16%;
-	height: 0.15%;
-	opacity: 0%;
+/*--------------------------*/
+/* ----- Welcome page ----- */
+/*--------------------------*/
+
+#welcomeImageDiv{
+	position: fixed;
+	top: 20%;
+	left: 5%;
+	width: 90%;
+	height: 50%;
 }
+#welcomeImage{
+	width: 100%;
+	height: 100%;
+}
+
+.background.scroll-content {
+    background: url('../img/backgrounds/dog-paws2.jpg') no-repeat;
+    background-size: cover;
+		left: -40%;
+		top: 5%;
+}
+
+/*----------------------------*/
+/* ----- Doggy Map page ----- */
+/*----------------------------*/
 
 /* --- Icon-panel --- */
 #icon_panel {
-		position: fixed;
-		top: 88%;
-		left: 25%;
-    width: 50%;
-    height: 8%;
- 		padding-top: 0.5%;
-		padding-bottom: 0.5%;
-    padding-right: 1%;
-    padding-left: 1%;
-    border: 1px solid black;
+	position: fixed;
+	top: 88%;
+	left: 25%;
+	width: 50%;
+	height: 8%;
+	padding-top: 0.5%;
+	padding-bottom: 0.5%;
+	padding-right: 1%;
+	padding-left: 1%;
+	border: 1px solid black;
 }
 /* --- Icon_panel spacer --- */
 #icon_panel_spacer {
-		float: left;
-    width: 50%;
-		height: 98%
+	float: left;
+	width: 50%;
+	height: 98%
 }
 /* --- Draggable Poop --- */
 #poopDraggable {
-		float: left;
-    width: 25%;
-    height: 98%;
-		padding-top: 1.5%;
-    padding-bottom: 1%;
-		padding-right: 1%;
-    padding-left: 1%;
-		border: 1px solid white
+	float: left;
+	width: 25%;
+	height: 98%;
+	padding-top: 1.5%;
+	padding-bottom: 1%;
+	padding-right: 1%;
+	padding-left: 1%;
+	border: 1px solid white
 }
 /* --- Draggable Bin --- */
 #binDraggable {
-		float: left;
-    width: 25%;
-    height: 98%;
-		padding-top: 1.5%;
-    padding-bottom: 1%;
-		padding-right: 1%;
-    padding-left: 1%;
-		border: 1px solid white
+	float: left;
+	width: 25%;
+	height: 98%;
+	padding-top: 1.5%;
+	padding-bottom: 1%;
+	padding-right: 1%;
+	padding-left: 1%;
+	border: 1px solid white
 }
-
-.drag {
+/* --- icon Selected state --- */
+.iconSelected {
   opacity: 0.2;
 }
-.over {
-  background: #F0F8FF;
+/* --- Map attributes ---*/
+#map {
+	width: 100%;
+	height: 85%;
+}
+/* ------ ?! ------ */
+.scroll {
+	height: 100%;
+}
+/* --- Text allignment in confirmation popups ---*/
+.popup-body{
+	text-align: center;
 }

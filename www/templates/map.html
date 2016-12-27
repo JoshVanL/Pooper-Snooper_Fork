@@ -1,10 +1,30 @@
-<ion-view view-title="Browse-map">
- <ion-nav-buttons side="right">
-		<button class="button button-balanced" ng-click="addToCurrentLoc()">
+<ion-view view-title="Doggy map!">
+	
+	<!--
+	<ion-nav-buttons side="right">
+		<button class="button button-balanced" ng-click="someFunction()">
 			Mark a poop
 		</button>
 	</ion-nav-buttons>
-	<ion-content>
-		<div id="map" droppable data-tap-disabled="true" drop="handleDrop()"></div>
+	-->
+	
+	<ion-content scroll="false">
+		<body>
+			<div id="map" droppable data-tap-disabled="true" click="handleIconPress()"></div>
+		
+			<div id="icon_panel">
+				<div id="poopDraggable" draggable>
+					<img id="poop" src="img/Assets/poop_small.png">
+				</div>
+				
+				<div id="icon_panel_spacer"></div>
+				
+				<div id="binDraggable" draggable>
+					<img id="bin" src="img/Assets/bin_small.png">
+				</div>
+			</div>
+			
+		</body>
+
   </ion-content>
 </ion-view>
