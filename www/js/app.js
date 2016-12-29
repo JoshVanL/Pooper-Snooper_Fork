@@ -175,6 +175,8 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 	var nearbyPoopMarkers = [];
 	var nearbyBinMarkers = [];
 	
+	var nearestBin = '';
+	
 	var markerCache = [];
 	
 	var markerCount = 0;
@@ -199,7 +201,6 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 			if(cache[i].lat === lat && cache[i].lng === lng && 
 				 cache[i].icon === icon){
 				exists = true;
-				//console.log("Hello..?");
 			}
 		}
 		return exists;
@@ -272,8 +273,51 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 			doggyRecords.push(t);
 		},
 		
-		// Grabs onscreen Pooper Markers (The Database will do this in the future)
-		get_poopMarkers : function(param){
+		// Returns new Markers of type 'markerType' (that have not been Cached) 
+		get_newMarkers : function(param, markerType){
+			
+			if (markerType == "poop"){
+				markerArray = poopMarkers;
+				nearbyMarkers = nearbyPoopMarkers;
+			}
+			else if (markerType == "bin"){
+				markerArray = binMarkers;
+				nearbyMarkers = nearbyBinMarkers;
+			}
+			
+			// Reset the nearbyPoopMarker array
+			nearbyMarkers = [];
+			
+			for (i = 0; i < markerArray.length ; i++){
+				var pos1 = {
+					lat: markerArray[i].getPosition().lat(),
+					lng: markerArray[i].getPosition().lng()
+				}
+				
+				var pos2 = param.centre;
+				
+				var dist = getDistanceBetweenPoints(pos1,pos2,'miles');
+
+				if (markerCount < markerLimit){ 
+					if (!markerExists(markerArray[i].getPosition().lat(),
+							markerArray[i].getPosition().lng(), markerArray[i].getIcon())){
+						
+						if (dist < 0.7*param.boundingRadius){
+							nearbyMarkers.push(markerArray[i]);
+							addMarkerToCache(markerArray[i]);
+							markerCount++;
+						}	
+					}
+				}
+			}
+			markerCount = 0;	
+			
+			return nearbyMarkers;
+		},
+		
+		// Returns new Poop Markers (The Database will do this in the future)
+		/*
+		get_newPoopMarkers : function(param){
 			
 			// Reset the nearbyPoopMarker array
 			nearbyPoopMarkers = [];
@@ -301,14 +345,16 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 				}
 			}
 			markerCount = 0;
-			//console.log(markerCache.length);
 			return nearbyPoopMarkers;
 		},
+		*/
 		push_poopMarkers : function(t){
 			poopMarkers.push(t);
 		},
 		
-		get_binMarkers : function(param){
+		// Returns new Bin Markers (The Database will do this in the future)
+		/*
+		get_newBinMarkers : function(param){
 			// Reset the nearbyPoopMarker array
 			nearbyBinMarkers = [];
 			
@@ -338,6 +384,35 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 			
 			return nearbyBinMarkers;
 		},
+		*/
+		
+		// Return closest bin Marker
+		get_NearestBin : function(param){
+			// Reset the nearbyPoopMarker array
+			nearbyBinMarkers = [];
+			var nearestDist = param.boundingRadius;
+			
+			for (i = 0; i < binMarkers.length ; i++){
+				var pos1 = {
+					lat: binMarkers[i].getPosition().lat(),
+					lng: binMarkers[i].getPosition().lng()
+				}
+				
+				var pos2 = param.centre;
+				
+				var dist = getDistanceBetweenPoints(pos1,pos2,'miles');
+				
+				if (markerCount < markerLimit){ 
+					if (dist < nearestDist){
+						nearestBin = binMarkers[i];
+						nearestDist = dist;
+					}
+				}
+			}
+			
+			return nearestBin;
+		},
+		
 		push_binMarkers : function(t){
 			binMarkers.push(t);
 		}

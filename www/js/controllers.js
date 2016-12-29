@@ -135,6 +135,7 @@ GlobalService, ConnectivityMonitor) {
 	var markerCache = [];
 	
 	var myLocationMarker; 				// Used to remove old marker to update current location
+	var nearestBinMarker;
 	
 	// Icon resources
 	var poop_icon = {
@@ -142,9 +143,14 @@ GlobalService, ConnectivityMonitor) {
     scaledSize: ''
 	};
 	var bin_icon = {
-    url: "img/Assets/bin_small.png",
+    url: "img/Assets/bin_small_white.png",
     scaledSize: ''
 	};
+	var indicator_icon = {
+		url: "img/Assets/bin_small_selector.png",
+		scaledSize: ''
+	}
+	
 	// var poop_icon = "img/Assets/poop_small.png";
 	// var bin_icon = "img/Assets/bin_small.png";
 	
@@ -182,8 +188,8 @@ GlobalService, ConnectivityMonitor) {
 	function initMap(){
 		var options = {timeout: 10000, enableHighAccuracy: true};
 
-		poop_icon.scaledSize = new google.maps.Size(40, 40);
-		bin_icon.scaledSize = new google.maps.Size(40, 40);
+		poop_icon.scaledSize = new google.maps.Size(25, 25);
+		bin_icon.scaledSize = new google.maps.Size(30, 30);
 		
 		$cordovaGeolocation.getCurrentPosition(options).then(function(position){
 			
@@ -246,7 +252,7 @@ GlobalService, ConnectivityMonitor) {
 				poopLats.push(53.6473343634821);poopLngs.push(-2.994718551635742);
 
 				// BINS
-				binLats.push(53.64986539143778);binLngs.push(2.979719638824463);
+				binLats.push(53.64986539143778);binLngs.push(-2.979719638824463);
 				binLats.push(53.648237410988955);binLngs.push(-2.9790759086608887);
 				binLats.push(53.648046627915676);binLngs.push(-2.976651191711426);
 				binLats.push(53.64901325326107);binLngs.push(-2.972724437713623);
@@ -274,25 +280,21 @@ GlobalService, ConnectivityMonitor) {
 				for (i = 0; i < 23; i++){
 					var myLatLng = new google.maps.LatLng({lat: poopLats[i], lng: poopLngs[i]});
 					var marker = new google.maps.Marker({
-							map: $scope.map,
 							animation: google.maps.Animation.DROP,
 							position: myLatLng,
 							icon: poop_icon
 					});   
 					GlobalService.push_poopMarkers(marker);
-					marker.setMap(null);
 				}
 				
 				for (i = 0; i < 20; i++){
 					var myLatLng = new google.maps.LatLng({lat: binLats[i], lng: binLngs[i]});
 					var marker = new google.maps.Marker({
-							map: $scope.map,
 							animation: google.maps.Animation.DROP,
 							position: myLatLng,
 							icon: bin_icon
 					});   
-					GlobalService.push_poopMarkers(marker);
-					marker.setMap(null);
+					GlobalService.push_binMarkers(marker);
 				}
 				
 				// CURRENT LOCATION Marker
@@ -526,7 +528,7 @@ GlobalService, ConnectivityMonitor) {
 		};
 	
 		var boundingRadius = getBoundingRadius(centerNorm, boundsNorm);
- 
+		
 		//Use these parameters to grab only nearby markers (onscreen)
 		var params = {
 			"centre": centerNorm,
@@ -536,8 +538,12 @@ GlobalService, ConnectivityMonitor) {
 		};
 	
 		//Get all of the markers from our array of Markers
-		var markers = GlobalService.get_poopMarkers(params);
-		markers.push.apply(GlobalService.get_binMarkers(params));
+		var markers = GlobalService.get_newMarkers(params,"poop");
+		
+		var bMarkers = GlobalService.get_newMarkers(params,"bin");
+		for (var i = 0; i < bMarkers.length; i ++){
+			markers.push(bMarkers[i]);
+		}
 		
 		for (var i = 0; i < markers.length; i++) {
 			if (!markerExists(markers[i].getPosition().lat(), 
@@ -556,6 +562,55 @@ GlobalService, ConnectivityMonitor) {
 			}
 		}	
   }
+	
+	// Find the nearest bin and add a Marker to indicate it
+	$scope.findNearestBin = function(){
+		if (!nearestBinMarker == null){
+			nearestBinMarker.setMap(null);
+		}
+
+		var center = myLocationMarker.getPosition();
+		var bounds = $scope.map.getBounds();
+		var zoom = $scope.map.getZoom();
+		
+		//Convert objects returned by Google to be more readable
+		var centerNorm = {
+			lat: center.lat(),
+			lng: center.lng()
+		};
+	
+	  var boundsNorm = {
+			northeast: {
+				lat: bounds.getNorthEast().lat(),
+				lng: bounds.getNorthEast().lng()
+			},
+			southwest: {
+				lat: bounds.getSouthWest().lat(),
+				lng: bounds.getSouthWest().lng()
+			}
+		};
+	
+		var boundingRadius = getBoundingRadius(centerNorm, boundsNorm);
+		
+		//Use these parameters to grab only nearby markers (onscreen)
+		var params = {
+			"centre": centerNorm,
+			"bounds": boundsNorm,
+			"zoom": zoom,
+			"boundingRadius": boundingRadius
+		};
+			
+		indicator_icon.scaledSize = new google.maps.Size(40, 47);
+		
+		var nearestBin = GlobalService.get_NearestBin(params);
+		var marker = new google.maps.Marker({
+			map: $scope.map,
+			position: nearestBin.getPosition(),
+			icon: indicator_icon
+		});
+		
+		nearestBinMarker = marker;
+	}
 	
 	// Adds new Marker to markerCache (so it won't be re-added)
 	function addMarkerToCache(marker){

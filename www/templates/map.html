@@ -1,8 +1,14 @@
 <ion-view view-title="Doggy map!" >
 	<ion-content scroll="false">
-		<div id="pinPointContainer">
-			<button id="pinPoint" class="button button-icon" ng-mouseup="refreshMap()">
+		<div id="pinpointContainer">
+			<button id="pinpoint" class="button button-icon" ng-mouseup="refreshMap()">
 				<i class="icon ion-pinpoint"></i>
+			</button>
+		</div>
+		
+		<div id="nearestBinContainer">
+			<button id="nearestBin" class="button button-icon" ng-mouseup="findNearestBin()">
+				<i class="icon ion-search"></i>
 			</button>
 		</div>
 		

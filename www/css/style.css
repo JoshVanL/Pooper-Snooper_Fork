@@ -118,7 +118,7 @@
 	text-align: center;
 }
 /* --- Pinpoint (refresh) panel --- */
-#pinPointContainer{
+#pinpointContainer{
 	border-radius: 30%;
 	position: fixed;
 	top: 8%;
@@ -128,8 +128,26 @@
 	z-index: 1;
 	background: #D2691E;
 }
-#pinPoint {
+#pinpoint {
 	left: 6.5%;
+	top: 3%;
+	color: white;
+}
+
+/* --- nearBinButton panel --- */
+#nearestBinContainer {
+	border-radius: 30%;
+	position: fixed;
+	bottom: 4%;
+	left: 2.5%;
+	height: 7.5%;
+	width: 13.35%;
+	z-index: 1;
+	background: #D2691E;
+}
+
+#nearestBin {
+	left: 12%;
 	top: 3%;
 	color: white;
 }
