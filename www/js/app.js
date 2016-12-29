@@ -74,7 +74,7 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
   // if none of the above states are matched, use this as the fall back
   
 	$urlRouterProvider.otherwise('/app/map');
-	//$urlRouterProvider.otherwise('/app/welcome');
+	// $urlRouterProvider.otherwise('/app/welcome');
 })
 
 //'Draggable' and 'droppable' directions
@@ -164,13 +164,78 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 
 //Service between Droppable and the MapCtrl to convert screen coordinate data into latLng
 .factory('GlobalService', [function(){
-		var onScreenX = '';
-		var onScreenY = '';
-		var activeIcon = '';
-		var iconType = '';
-		var doggyRecords = [];
-		var poopLatLng = [];
-		var binLatLng = [];
+	var onScreenX = '';
+	var onScreenY = '';
+	var activeIcon = '';
+	var iconType = '';
+	var doggyRecords = [];
+	var poopMarkers = [];
+	var binMarkers = [];
+	
+	var nearbyPoopMarkers = [];
+	var nearbyBinMarkers = [];
+	
+	var markerCache = [];
+	
+	var markerCount = 0;
+	var markerLimit = 25;
+	
+	// Adds new Marker to markerCache (so it won't be re-added)
+	function addMarkerToCache(marker){
+		var markerData = {
+			lat: marker.getPosition().lat(),
+			lng: marker.getPosition().lng(),
+			icon: marker.getIcon(),
+			marker: marker
+		};
+		markerCache.push(markerData);			
+	}
+	
+	// Checks if the Marker exists on the Map already (via our Cache)
+	function markerExists(lat, lng, icon){
+		var exists = false;
+		var cache = markerCache;
+		for(var i = 0; i < cache.length; i++){
+			if(cache[i].lat === lat && cache[i].lng === lng && 
+				 cache[i].icon === icon){
+				exists = true;
+				//console.log("Hello..?");
+			}
+		}
+		return exists;
+  }
+	
+	// Calculates the distance between two points
+	function getDistanceBetweenPoints(pos1, pos2, units){
+ 
+		var earthRadius = {
+				miles: 3958.8,
+				km: 6371
+		};
+ 
+		var R = earthRadius[units || 'miles'];
+		var lat1 = pos1.lat;
+		var lon1 = pos1.lng;
+		var lat2 = pos2.lat;
+		var lon2 = pos2.lng;
+ 
+		var dLat = toRad((lat2 - lat1));
+		var dLon = toRad((lon2 - lon1));
+		var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+		Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+		Math.sin(dLon / 2) *
+		Math.sin(dLon / 2);
+		var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+		var d = R * c;
+ 
+		return d;
+	}
+	 
+	// Converts degrees to Radians
+	function toRad(x){
+			return x * Math.PI / 180;
+	}
+	
 	return {
 		get_onScreenX : function(){
 			return onScreenX;
@@ -207,18 +272,74 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 			doggyRecords.push(t);
 		},
 		
-		get_poopLatLng : function(){
-			return poopLatLng;
+		// Grabs onscreen Pooper Markers (The Database will do this in the future)
+		get_poopMarkers : function(param){
+			
+			// Reset the nearbyPoopMarker array
+			nearbyPoopMarkers = [];
+			
+			for (i = 0; i < poopMarkers.length ; i++){
+				var pos1 = {
+					lat: poopMarkers[i].getPosition().lat(),
+					lng: poopMarkers[i].getPosition().lng()
+				}
+				
+				var pos2 = param.centre;
+				
+				var dist = getDistanceBetweenPoints(pos1,pos2,'miles');
+
+				if (markerCount < markerLimit){ 
+					if (!markerExists(poopMarkers[i].getPosition().lat(),
+							poopMarkers[i].getPosition().lng(), poopMarkers[i].getIcon())){
+						
+						if (dist < 0.7*param.boundingRadius){
+							nearbyPoopMarkers.push(poopMarkers[i]);
+							addMarkerToCache(poopMarkers[i]);
+							markerCount++;
+						}	
+					}
+				}
+			}
+			markerCount = 0;
+			//console.log(markerCache.length);
+			return nearbyPoopMarkers;
 		},
-		push_poopLatLng : function(t){
-			poopLatLng.push(t);
+		push_poopMarkers : function(t){
+			poopMarkers.push(t);
 		},
 		
-		get_binLatLng : function(){
-			return binLatLng;
+		get_binMarkers : function(param){
+			// Reset the nearbyPoopMarker array
+			nearbyBinMarkers = [];
+			
+			for (i = 0; i < binMarkers.length ; i++){
+				var pos1 = {
+					lat: binMarkers[i].getPosition().lat(),
+					lng: binMarkers[i].getPosition().lng()
+				}
+				
+				var pos2 = param.centre;
+				
+				var dist = getDistanceBetweenPoints(pos1,pos2,'miles');
+				
+				if (markerCount < markerLimit){ 
+					if (!markerExists(binMarkers[i].getPosition().lat(),
+							binMarkers[i].getPosition().lng(), binMarkers[i].getIcon())){
+					
+						if (dist < 0.7*param.boundingRadius){
+							nearbyBinMarkers.push(binMarkers[i]);
+							addMarkerToCache(binMarkers[i]);
+							markerCount++;
+						}
+					}
+				}
+			}
+			markerCount = 0;
+			
+			return nearbyBinMarkers;
 		},
-		push_binLatLng : function(t){
-			binLatLng.push(t);
+		push_binMarkers : function(t){
+			binMarkers.push(t);
 		}
 	};
 }])
@@ -245,4 +366,4 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
  
     }
   }
-});
+})

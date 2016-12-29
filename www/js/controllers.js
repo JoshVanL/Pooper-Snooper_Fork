@@ -7,7 +7,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
   // To listen for when this page is active (for example, to refresh data),
   // listen for the $ionicView.enter event:
   //$scope.$on('$ionicView.enter', function(e) {
-  //});
+  //
 
   // Form data for the login modal
   $scope.loginData = {};
@@ -137,8 +137,16 @@ GlobalService, ConnectivityMonitor) {
 	var myLocationMarker; 				// Used to remove old marker to update current location
 	
 	// Icon resources
-	var poop_icon = "img/Assets/poop_small.png";
-	var bin_icon = "img/Assets/bin_small.png";
+	var poop_icon = {
+    url: "img/Assets/poop_small.png",
+    scaledSize: ''
+	};
+	var bin_icon = {
+    url: "img/Assets/bin_small.png",
+    scaledSize: ''
+	};
+	// var poop_icon = "img/Assets/poop_small.png";
+	// var bin_icon = "img/Assets/bin_small.png";
 	
 	// Fixes the error where opening a modal would cause the map to 'break' 
 	$scope.$on('$ionicView.afterEnter', function() {
@@ -174,6 +182,9 @@ GlobalService, ConnectivityMonitor) {
 	function initMap(){
 		var options = {timeout: 10000, enableHighAccuracy: true};
 
+		poop_icon.scaledSize = new google.maps.Size(40, 40);
+		bin_icon.scaledSize = new google.maps.Size(40, 40);
+		
 		$cordovaGeolocation.getCurrentPosition(options).then(function(position){
 			
 			latLng = new google.maps.LatLng(position.coords.latitude,
@@ -181,7 +192,8 @@ GlobalService, ConnectivityMonitor) {
 	 
 			var mapOptions = {
 				center: latLng,
-				zoom: 15,
+				zoom: 16,
+				//zoom: 15,
 				mapTypeId: google.maps.MapTypeId.ROADMAP,
 				mapTypeControl: false,
 				streetViewControl: false
@@ -193,26 +205,118 @@ GlobalService, ConnectivityMonitor) {
 			
 			// Wait until the map is loaded and add Marker to current location
 			google.maps.event.addListenerOnce($scope.map, 'idle', function(){
-		 
+				
+				// -------------------------------------------------
+				// CREATING DUMMY MARKERS TO TEST LOADING FUNCTION
+				// -------------------------------------------------
+				
+				var poopLats = [];
+				var poopLngs = [];
+				
+				var binLats = [];
+				var binLngs = [];
+				
+				//POOPS
+				poopLats.push(53.650705);poopLngs.push(-2.986479);
+				poopLats.push(53.646291);poopLngs.push(-2.975814);
+				poopLats.push(53.648237);poopLngs.push(-2.969313);
+				poopLats.push(53.648924);poopLngs.push(-2.979956);
+				poopLats.push(53.648698);poopLngs.push(-2.978786);
+				
+				poopLats.push(53.650212);poopLngs.push(-2.979301);
+				poopLats.push(53.650428);poopLngs.push(-2.97781);
+				poopLats.push(53.64459966505379);poopLngs.push(-2.994503974914551);
+				poopLats.push(53.647003665191235);poopLngs.push(-3.0152535438537598);
+				poopLats.push(53.63496957119772);poopLngs.push(-2.972745895385742);
+				
+				poopLats.push(53.65099730954873);poopLngs.push(-2.958498001098633);
+				poopLats.push(53.665951037123044);poopLngs.push(-2.9844188690185547);
+				poopLats.push(53.66035672614186);poopLngs.push(-2.9656219482421875);
+				poopLats.push(53.65567727758958);poopLngs.push(-2.994203567504883);
+				poopLats.push(53.65588074267648);poopLngs.push(-2.9915428161621094);
+				
+				poopLats.push(53.652014738097655);poopLngs.push(-3.0062198638916016);
+				poopLats.push(53.64692734983276);poopLngs.push(-3.0028724670410156);
+				poopLats.push(53.64453606530589);poopLngs.push(-3.004159927368164);
+				poopLats.push(53.63980397503522);poopLngs.push(-2.9929161071777344);
+				poopLats.push(53.64061813590609);poopLngs.push(-2.9761791229248047);
+				
+				poopLats.push(53.642551704992265);poopLngs.push(-2.983388900756836);
+				poopLats.push(53.643620218301244);poopLngs.push(-2.9889678955078125);
+				poopLats.push(53.6473343634821);poopLngs.push(-2.994718551635742);
+
+				// BINS
+				binLats.push(53.64986539143778);binLngs.push(2.979719638824463);
+				binLats.push(53.648237410988955);binLngs.push(-2.9790759086608887);
+				binLats.push(53.648046627915676);binLngs.push(-2.976651191711426);
+				binLats.push(53.64901325326107);binLngs.push(-2.972724437713623);
+				binLats.push(53.64952199454264);binLngs.push(-2.9810070991516113);
+				
+				binLats.push(53.65190027861155);binLngs.push(-2.980320453643799);
+				binLats.push(53.645693565705784);binLngs.push(-2.979912757873535);
+				binLats.push(53.644421585517954);binLngs.push(-2.975621223449707);
+				binLats.push(53.647995752283684);binLngs.push(-2.9686689376831055);
+				binLats.push(53.65287953306066);binLngs.push(-2.9754281044006348);
+				
+				binLats.push(53.650908283382584);binLngs.push(-2.9842472076416016);
+				binLats.push(53.651366130234585);binLngs.push(-2.9871439933776855);
+				binLats.push(53.64966189731898);binLngs.push(-2.9906201362609863);
+				binLats.push(53.64691463059291);binLngs.push(-2.9868650436401367);
+				binLats.push(53.64303508341375);binLngs.push(-2.9854488372802734);
+				
+				binLats.push(53.641597652376625);binLngs.push(-2.9799342155456543);
+				binLats.push(53.63975308945901);binLngs.push(-2.9735398292541504);
+				binLats.push(53.636292726261026);binLngs.push(-2.971973419189453);
+				binLats.push(53.63602555406321);binLngs.push(-2.9680681228637695);
+				binLats.push(53.641534048101576);binLngs.push(-2.9661154747009277);
+				
+				
+				for (i = 0; i < 23; i++){
+					var myLatLng = new google.maps.LatLng({lat: poopLats[i], lng: poopLngs[i]});
+					var marker = new google.maps.Marker({
+							map: $scope.map,
+							animation: google.maps.Animation.DROP,
+							position: myLatLng,
+							icon: poop_icon
+					});   
+					GlobalService.push_poopMarkers(marker);
+					marker.setMap(null);
+				}
+				
+				for (i = 0; i < 20; i++){
+					var myLatLng = new google.maps.LatLng({lat: binLats[i], lng: binLngs[i]});
+					var marker = new google.maps.Marker({
+							map: $scope.map,
+							animation: google.maps.Animation.DROP,
+							position: myLatLng,
+							icon: bin_icon
+					});   
+					GlobalService.push_poopMarkers(marker);
+					marker.setMap(null);
+				}
+				
+				// CURRENT LOCATION Marker
+				var marker = new google.maps.Marker({
+					map: $scope.map,
+					animation: google.maps.Animation.DROP,
+					position: latLng
+				});    
+				myLocationMarker = marker;
+				
+				loadMarkers();
+				
 				//Reload markers every time the map moves
         google.maps.event.addListener($scope.map, 'dragend', function(){
-          //loadMarkers();
+          loadMarkers();
         });
  
         //Reload markers every time the zoom changes
         google.maps.event.addListener($scope.map, 'zoom_changed', function(){
-          //loadMarkers();
+					loadMarkers();
         });
 				
 				enableMap();
-				
-				var marker = new google.maps.Marker({
-						map: $scope.map,
-						animation: google.maps.Animation.DROP,
-						position: latLng
-				});      
-				myLocationMarker = marker;
-				
+			
 			});
 
 		}, function(error){
@@ -284,8 +388,6 @@ GlobalService, ConnectivityMonitor) {
 	
 	//Adds the poop Marker to the map (after record has been created)
 	$scope.addPoopMarker = function(){
-		GlobalService.push_poopLatLng(latLng);
-		
 		var marker = new google.maps.Marker({
 			position: latLng,
 			map: $scope.map,
@@ -293,6 +395,12 @@ GlobalService, ConnectivityMonitor) {
 			icon: poop_icon
 		});
 		
+		GlobalService.push_poopMarkers(marker);
+		
+		// Adds the marker to markerCache (so it won't be re-added)
+		addMarkerToCache(marker);
+		
+		/*
 		var infoWindow = new google.maps.InfoWindow({
 			content: "Some information!"
 		});
@@ -300,6 +408,7 @@ GlobalService, ConnectivityMonitor) {
 		google.maps.event.addListener(marker, 'click', function () {
 			infoWindow.open($scope.map, marker);
 		});
+		*/
 		
 		GlobalService.set_activeIcon("");
 		confirmation = false;
@@ -307,7 +416,6 @@ GlobalService, ConnectivityMonitor) {
 	
 	//Adds the bin Marker to the map
 	$scope.addBinMarker = function() {
-		GlobalService.push_binLatLng(latLng);
 		
 		var marker = new google.maps.Marker({
 			position: latLng,
@@ -316,6 +424,12 @@ GlobalService, ConnectivityMonitor) {
 			icon: bin_icon
 		});
 		
+		GlobalService.push_binMarkers(marker);
+		
+		// Adds the marker to markerCache (so it won't be re-added)
+		addMarkerToCache(marker);
+		
+		/*
 		var infoWindow = new google.maps.InfoWindow({
 			content: "Some information!"
 		});
@@ -323,14 +437,14 @@ GlobalService, ConnectivityMonitor) {
 		google.maps.event.addListener(marker, 'click', function () {
 			infoWindow.open($scope.map, marker);
 		});
-		
+		*/
 		GlobalService.set_activeIcon("");
 		confirmation = false;
 	}
 	
-	//---------------------------------------->
-	//---- Connectivity related functions ---->
-	//--------------------------------------->
+	//-------------------------------->
+	//---- Connectivity functions ---->
+	//------------------------------->
 	
 	function enableMap(){
 		$ionicLoading.hide();
@@ -386,6 +500,8 @@ GlobalService, ConnectivityMonitor) {
 	//--------------------------->
 	
 	// Load markers (Only load on screen Markers)
+	// NOTE: Database only requires lngLat data and maybe the marker 
+	//			 information (message) as we create it from scratch
 	function loadMarkers(){
  
 		var center = $scope.map.getCenter();
@@ -419,34 +535,46 @@ GlobalService, ConnectivityMonitor) {
 			"boundingRadius": boundingRadius
 		};
 	
-		//Get all of the markers from our Markers factory
-		GlobalService.get_doggyMarkers().then(function(markers){
-			for (var i = 0; i < markers.length; i++) {
-				if (!markerExists(markers[i].getPosition().lat, markers[i].getPosition().lng)){
-					// Adds the (new) marker to the map
-					var marker = new google.maps.Marker({
-							map: map,
-							animation: google.maps.Animation.DROP,
-							position: markers[i].getPosition()
-					});
-					// Adds the marker to markerCache (so it won't be re-added)
-					var markerData = {
-						lat: markers[i].getPosition().lat,
-						lng: markers[i].getPosition().lng,
-						marker: marker
-					};
-					markerCache.push(markerData);
-				}
+		//Get all of the markers from our array of Markers
+		var markers = GlobalService.get_poopMarkers(params);
+		markers.push.apply(GlobalService.get_binMarkers(params));
+		
+		for (var i = 0; i < markers.length; i++) {
+			if (!markerExists(markers[i].getPosition().lat(), 
+					markers[i].getPosition().lng(), markers[i].getIcon())){
+				// Adds the (new) marker to the map
+				
+				var marker = new google.maps.Marker({
+					map: $scope.map,
+					animation: google.maps.Animation.DROP,
+					position: markers[i].getPosition(),
+					icon: markers[i].getIcon()
+				});
+
+				// Adds the marker to markerCache (so it won't be re-added)
+				addMarkerToCache(markers[i]);
 			}
-		}); 
+		}	
   }
 	
+	// Adds new Marker to markerCache (so it won't be re-added)
+	function addMarkerToCache(marker){
+		var markerData = {
+			lat: marker.getPosition().lat(),
+			lng: marker.getPosition().lng(),
+			icon: marker.getIcon(),
+			marker: marker
+		};
+		markerCache.push(markerData);			
+	}
+	
 	// Checks if the Marker exists on the Map already (via our Cache)
-	function markerExists(lat, lng){
+	function markerExists(lat, lng, icon){
 		var exists = false;
 		var cache = markerCache;
 		for(var i = 0; i < cache.length; i++){
-			if(cache[i].lat === lat && cache[i].lng === lng){
+			if(cache[i].lat === lat && cache[i].lng === lng && 
+				 cache[i].icon === icon){
 				exists = true;
 			}
 		}
@@ -459,6 +587,7 @@ GlobalService, ConnectivityMonitor) {
   }
  
 	// Calculates the distance between two points
+	// google.maps.geometry.spehrical.computeDistanceBetween() ?!
   function getDistanceBetweenPoints(pos1, pos2, units){
  
     var earthRadius = {
@@ -594,7 +723,7 @@ GlobalService, ConnectivityMonitor) {
 	// Confirm dialog for adding Poop to the map
 	$scope.showPConfirm = function() {
 		var confirmPopup = $ionicPopup.confirm({
-			title: 'Add a doggy record?',
+			title: 'Add this doggy record?',
 			template: 'This logs your dog\'s mess. You can view all logs from your Doggy Records page.' 
 		});
 		confirmPopup.then(function(res) {
@@ -607,7 +736,7 @@ GlobalService, ConnectivityMonitor) {
 	// Confirm dialog for adding Bin to the map
 	$scope.showBConfirm = function() {
 		var confirmPopup = $ionicPopup.confirm({
-			title: 'Add a Bin to this location?',
+			title: 'Add this Bin?',
 			template: 'It will be added to your Bin DataBase used to find your nearest bins.' 
 		});
 		confirmPopup.then(function(res) {

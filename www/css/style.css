@@ -55,10 +55,10 @@
 #icon_panel {
 	border-radius: 10%;
 	position: fixed;
-	top: 7%;
-	left: 74%;
+	top: 8%;
+	left: 72.5%;
 	width: 25%;
-	height: 8%;
+	height: 7.5%;
 	padding-top: 0.5%;
 	padding-bottom: 0.5%;
 	padding-right: 1%;
@@ -76,17 +76,17 @@
 	float: left;
 	width: 48%;
 	height: 98%;
-	padding-top: 5%;
+	padding-top: 1%;
 	padding-bottom: 1%;
 	padding-right: 1%;
-	padding-left: 2%;
+	padding-left: 1%;
 }
 /* --- Draggable Bin --- */
 #binDraggable {
 	float: left;
 	width: 48%;
 	height: 98%;
-	padding-top: 5%;
+	padding-top: 1%;
 	padding-bottom: 1%;
 	padding-right: 1%;
 	padding-left: 1%;
@@ -117,18 +117,19 @@
 .popup-body{
 	text-align: center;
 }
+/* --- Pinpoint (refresh) panel --- */
 #pinPointContainer{
 	border-radius: 30%;
 	position: fixed;
-	top: 7.5%;
-	right: 88%;
-	height: 5.7%;
-	width: 10%;
+	top: 8%;
+	left: 2.5%;
+	height: 7.5%;
+	width: 13.35%;
 	z-index: 1;
 	background: #D2691E;
 }
 #pinPoint {
+	left: 6.5%;
+	top: 3%;
 	color: white;
-	bottom: 8%;
-	right: 6%;
 }
