@@ -495,7 +495,7 @@ GlobalService, ConnectivityMonitor) {
 	function loadGoogleMaps(){
  
     $ionicLoading.show({
-      template: 'Loading Google Maps'
+       template: '<p>Loading Google Maps</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
     });
 		
     //This function will be called once the SDK has been loaded
