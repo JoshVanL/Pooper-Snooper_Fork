@@ -132,27 +132,28 @@ GlobalService, ConnectivityMonitor) {
 	var map = null;
 	var latLng = null;
 	
-	var markerCache = [];
+	var markerCache = [];			// Cache of all markerData. THESE ARE NOT REFERENCES TO MARKER OBJECTS!
+	var binMarkerCache = [];	// Cache of all (REFERENCES TO) BIN MARKER OBJECTS (hide/show)
 	
 	var myLocationMarker; 				// Used to remove old marker to update current location
-	var nearestBinMarker;
 	
+	var nearestBinMarker;					// Reference to the nearest bin marker (original) that we hide and
+																// replace with the GIF marker indicating the nearest bin
+	var tempBinMarker;					// Reference to a temp Marker (gif) that indicates where the nearest bin is
+
 	// Icon resources
 	var poop_icon = {
-    url: "img/Assets/poop_small.png",
+    url: "img/Assets/poop.png",
     scaledSize: ''
 	};
 	var bin_icon = {
-    url: "img/Assets/bin_small_white.png",
+    url: "img/Assets/dog_bin.png",
     scaledSize: ''
 	};
 	var indicator_icon = {
-		url: "img/Assets/bin_small_selector.png",
+		url: "img/Assets/nearest-bin.gif",
 		scaledSize: ''
 	}
-	
-	// var poop_icon = "img/Assets/poop_small.png";
-	// var bin_icon = "img/Assets/bin_small.png";
 	
 	// Fixes the error where opening a modal would cause the map to 'break' 
 	$scope.$on('$ionicView.afterEnter', function() {
@@ -187,11 +188,11 @@ GlobalService, ConnectivityMonitor) {
 	// Initialises Map element and gets current location
 	function initMap(){
 		var options = {timeout: 10000, enableHighAccuracy: true};
-
-		poop_icon.scaledSize = new google.maps.Size(25, 25);
-		bin_icon.scaledSize = new google.maps.Size(30, 30);
 		
 		$cordovaGeolocation.getCurrentPosition(options).then(function(position){
+			
+			poop_icon.scaledSize = new google.maps.Size(25, 25);
+			bin_icon.scaledSize = new google.maps.Size(40, 40);
 			
 			latLng = new google.maps.LatLng(position.coords.latitude,
 									 position.coords.longitude);
@@ -276,31 +277,42 @@ GlobalService, ConnectivityMonitor) {
 				binLats.push(53.63602555406321);binLngs.push(-2.9680681228637695);
 				binLats.push(53.641534048101576);binLngs.push(-2.9661154747009277);
 				
+				poop_icon.scaledSize = new google.maps.Size(30, 30);
+				bin_icon.scaledSize = new google.maps.Size(40, 40);
 				
 				for (i = 0; i < 23; i++){
 					var myLatLng = new google.maps.LatLng({lat: poopLats[i], lng: poopLngs[i]});
 					var marker = new google.maps.Marker({
-							animation: google.maps.Animation.DROP,
 							position: myLatLng,
 							icon: poop_icon
 					});   
-					GlobalService.push_poopMarkers(marker);
+					var markerData = {
+						lat: marker.getPosition().lat(),
+						lng: marker.getPosition().lng(),
+						icon: marker.getIcon().url
+					};
+					GlobalService.push_poopMarkers(markerData);
 				}
 				
 				for (i = 0; i < 20; i++){
 					var myLatLng = new google.maps.LatLng({lat: binLats[i], lng: binLngs[i]});
 					var marker = new google.maps.Marker({
-							animation: google.maps.Animation.DROP,
 							position: myLatLng,
 							icon: bin_icon
 					});   
-					GlobalService.push_binMarkers(marker);
+					var markerData = {
+						lat: marker.getPosition().lat(),
+						lng: marker.getPosition().lng(),
+						icon: marker.getIcon().url
+					};
+					GlobalService.push_binMarkers(markerData);
 				}
 				
 				// CURRENT LOCATION Marker
 				var marker = new google.maps.Marker({
 					map: $scope.map,
 					animation: google.maps.Animation.DROP,
+					draggable: true,
 					position: latLng
 				});    
 				myLocationMarker = marker;
@@ -344,11 +356,13 @@ GlobalService, ConnectivityMonitor) {
 			latLng = new google.maps.LatLng(position.coords.latitude,
 									 position.coords.longitude);
 			
+			$scope.map.setCenter(latLng);
+			
 			var marker = new google.maps.Marker({
 					map: $scope.map,
 					animation: google.maps.Animation.DROP,
 					position: latLng
-			});      
+			});
 			
 			myLocationMarker = marker;
 			
@@ -394,10 +408,15 @@ GlobalService, ConnectivityMonitor) {
 			position: latLng,
 			map: $scope.map,
 			animation: google.maps.Animation.DROP,
+			optimized: false,
 			icon: poop_icon
 		});
-		
-		GlobalService.push_poopMarkers(marker);
+		var markerData = {
+			lat: marker.getPosition().lat(),
+			lng: marker.getPosition().lng(),
+			icon: marker.getIcon().url
+		};
+		GlobalService.push_poopMarkers(markerData);
 		
 		// Adds the marker to markerCache (so it won't be re-added)
 		addMarkerToCache(marker);
@@ -423,11 +442,19 @@ GlobalService, ConnectivityMonitor) {
 			position: latLng,
 			map: $scope.map,
 			animation: google.maps.Animation.DROP,
+			optimized: false,
 			icon: bin_icon
 		});
+		var markerData = {
+			lat: marker.getPosition().lat(),
+			lng: marker.getPosition().lng(),
+			icon: marker.getIcon().url
+		};
+		GlobalService.push_binMarkers(markerData);
 		
-		GlobalService.push_binMarkers(marker);
-		
+		// Adds the marker to binMarkerCache so we have a reference to it
+		// to deal with the Nearest bin marker case
+		binMarkerCache.push(marker);
 		// Adds the marker to markerCache (so it won't be re-added)
 		addMarkerToCache(marker);
 		
@@ -505,7 +532,7 @@ GlobalService, ConnectivityMonitor) {
 	// NOTE: Database only requires lngLat data and maybe the marker 
 	//			 information (message) as we create it from scratch
 	function loadMarkers(){
- 
+		
 		var center = $scope.map.getCenter();
 		var bounds = $scope.map.getBounds();
 		var zoom = $scope.map.getZoom();
@@ -539,36 +566,59 @@ GlobalService, ConnectivityMonitor) {
 	
 		//Get all of the markers from our array of Markers
 		var markers = GlobalService.get_newMarkers(params,"poop");
-		
 		var bMarkers = GlobalService.get_newMarkers(params,"bin");
 		for (var i = 0; i < bMarkers.length; i ++){
 			markers.push(bMarkers[i]);
 		}
 		
 		for (var i = 0; i < markers.length; i++) {
-			if (!markerExists(markers[i].getPosition().lat(), 
-					markers[i].getPosition().lng(), markers[i].getIcon())){
-				// Adds the (new) marker to the map
+			if (!markerExists(markers[i].lat, markers[i].lng, markers[i].icon)){
 				
+				if (markers[i].icon == poop_icon.url){
+					currentIcon = poop_icon;
+				}else if (markers[i].icon == bin_icon.url){
+					currentIcon = bin_icon;
+				}
+				
+				
+				latLng = new google.maps.LatLng(markers[i].lat,markers[i].lng);
+				
+				// Adds the (new) marker to the map
 				var marker = new google.maps.Marker({
 					map: $scope.map,
 					animation: google.maps.Animation.DROP,
-					position: markers[i].getPosition(),
-					icon: markers[i].getIcon()
+					position: latLng,
+					optimized: false,
+					icon: currentIcon
 				});
 
 				// Adds the marker to markerCache (so it won't be re-added)
-				addMarkerToCache(markers[i]);
+				addMarkerToCache(marker);
+				
+				// Adds the marker to binMarkerCache so we have a reference to it
+				// to deal with the Nearest bin marker (hide/show)
+				if (marker.getIcon().url == bin_icon.url){
+					binMarkerCache.push(marker);
+				}
 			}
 		}	
   }
 	
 	// Find the nearest bin and add a Marker to indicate it
 	$scope.findNearestBin = function(){
-		if (!nearestBinMarker == null){
-			nearestBinMarker.setMap(null);
+		
+		// (Excluding the first case where these variables are 'null')
+		// We remove the old tempBinMarker from our map (which indicated the old nearest
+		// Bin on the map) and also set the original bin Marker to be visible again.
+		if (tempBinMarker != null){
+			tempBinMarker.setMap(null);
+			
 		}
-
+		if (nearestBinMarker != null){
+			nearestBinMarker.setMap($scope.map);
+			
+		}
+		
 		var center = myLocationMarker.getPosition();
 		var bounds = $scope.map.getBounds();
 		var zoom = $scope.map.getZoom();
@@ -600,16 +650,33 @@ GlobalService, ConnectivityMonitor) {
 			"boundingRadius": boundingRadius
 		};
 			
-		indicator_icon.scaledSize = new google.maps.Size(40, 47);
+		indicator_icon.scaledSize = new google.maps.Size(50, 50);
 		
 		var nearestBin = GlobalService.get_NearestBin(params);
+		
+		// We find the reference to the nearest Bin currently on the map (from binMarkerCache)
+		// and set it to hide temporarily while we replace it with a new indicator
+		for (var i = 0; i < binMarkerCache.length; i++){
+			if ((binMarkerCache[i].getPosition().lat() == nearestBin.lat) && 
+					(binMarkerCache[i].getPosition().lng() == nearestBin.lng) &&
+					(binMarkerCache[i].getIcon().url == nearestBin.icon)){
+					nearestBinMarker = binMarkerCache[i];
+					nearestBinMarker.setMap(null);
+			}
+		}
+		
+		latLng = new google.maps.LatLng(nearestBin.lat,
+						 nearestBin.lng);
+		
 		var marker = new google.maps.Marker({
 			map: $scope.map,
-			position: nearestBin.getPosition(),
-			icon: indicator_icon
+			animation: google.maps.Animation.DROP,
+			position: latLng,
+			icon: indicator_icon,
+			optimized: false
 		});
 		
-		nearestBinMarker = marker;
+		tempBinMarker = marker;
 	}
 	
 	// Adds new Marker to markerCache (so it won't be re-added)
@@ -617,8 +684,7 @@ GlobalService, ConnectivityMonitor) {
 		var markerData = {
 			lat: marker.getPosition().lat(),
 			lng: marker.getPosition().lng(),
-			icon: marker.getIcon(),
-			marker: marker
+			icon: marker.getIcon().url,
 		};
 		markerCache.push(markerData);			
 	}
@@ -631,6 +697,7 @@ GlobalService, ConnectivityMonitor) {
 			if(cache[i].lat === lat && cache[i].lng === lng && 
 				 cache[i].icon === icon){
 				exists = true;
+				console.log("Marker already exists. It has not been added.");
 			}
 		}
 		return exists;
