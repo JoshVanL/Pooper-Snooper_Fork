@@ -135,6 +135,8 @@ GlobalService, ConnectivityMonitor) {
 	$scope.lat = null;
 	$scope.lng = null;
 	
+	//var currentZ = 0;				// Tried fixing marker flickering issue by incrementing zIndex on replacement
+														// Don't think this worked..
 	
 	var markerCache = [];			// Cache of all markerData. THESE ARE NOT REFERENCES TO MARKER OBJECTS!
 														// It stores the MARKER DATA currently containing: 'lat', 'lng', 'icon.url'
@@ -144,9 +146,19 @@ GlobalService, ConnectivityMonitor) {
 														// so we may refactor 'markerCache' to store references instead of data.
 														// This will allow the users to remove delete Markers for instance.
 	
-	var myLocationMarker; 				// Used to reference current location Marker and update to new location
-																// May need two variables overall to hold a bofore and after due to..
-																// !BUG Flickering issue as we remove our Marker and add a new one.
+	var userLoc; 							// Used to reference current location Marker and update to new location
+														// May need two variables overall to hold a bofore and after due to..
+														// !BUG Flickering issue as we remove our Marker and add a new one.
+														
+														// When the afterImage option is enabled
+														// If update is called too quickly then there is an issue with Marker creation/deletion
+	var afterImageOption = false;	
+	var afterImage_1; 
+	var afterImage_2; 
+	var afterImage_3; 
+	var afterImage_4;
+	
+	var updateCount = 0;					// Update counter
 	
 	var nearestBinMarker;					// Reference to the nearest bin marker (original) that we hide and
 																// replace with the GIF marker indicating the nearest bin
@@ -168,9 +180,27 @@ GlobalService, ConnectivityMonitor) {
 		//scaledSize: ''
 	};
 	var circle_icon = {
-		url: "img/Assets/me.png",
+		url: "img/Assets/blue.png",
 		scaledSize: ''
 	};
+	var circle_iconA1 = {
+		url: "img/Assets/blueA1.png",
+		scaledSize: ''
+	};
+	var circle_iconA2 = {
+		url: "img/Assets/blueA2.png",
+		scaledSize: ''
+	};
+	var circle_iconA3 = {
+		url: "img/Assets/blueA3.png",
+		scaledSize: ''
+	};
+	var circle_iconA4 = {
+		url: "img/Assets/blueA4.png",
+		scaledSize: ''
+	};
+	
+	
 	// Fixes the error where opening a modal would cause the map to 'break' 
 	$scope.$on('$ionicView.afterEnter', function() {
 		ionic.trigger('resize');
@@ -210,6 +240,10 @@ GlobalService, ConnectivityMonitor) {
 			poop_icon.scaledSize = new google.maps.Size(30, 30);
 			// bin_icon.scaledSize = new google.maps.Size(40, 40);
 			circle_icon.scaledSize = new google.maps.Size(50,50);
+			circle_iconA1.scaledSize = new google.maps.Size(50,50);
+			circle_iconA2.scaledSize = new google.maps.Size(50,50);
+			circle_iconA3.scaledSize = new google.maps.Size(50,50);
+			circle_iconA4.scaledSize = new google.maps.Size(50,50);
 			
 			latLng = new google.maps.LatLng(position.coords.latitude,
 									 position.coords.longitude);
@@ -292,10 +326,7 @@ GlobalService, ConnectivityMonitor) {
 				binLats.push(53.63975308945901);binLngs.push(-2.9735398292541504);
 				binLats.push(53.636292726261026);binLngs.push(-2.971973419189453);
 				binLats.push(53.63602555406321);binLngs.push(-2.9680681228637695);
-				binLats.push(53.641534048101576);binLngs.push(-2.9661154747009277);
-				
-				// poop_icon.scaledSize = new google.maps.Size(30, 30);
-				// bin_icon.scaledSize = new google.maps.Size(40, 40);
+				binLats.push(53.641534048101576);binLngs.push(-2.9661154747009277);			
 					
 				for (i = 0; i < poopLats.length; i++){
 					var myLatLng = new google.maps.LatLng({lat: poopLats[i], lng: poopLngs[i]});
@@ -325,17 +356,20 @@ GlobalService, ConnectivityMonitor) {
 					GlobalService.push_binMarkers(markerData);
 				}
 				
-				// CURRENT LOCATION Marker
+				// INITIAL USER LOCATION Marker
 				var marker = new google.maps.Marker({
 					map: $scope.map,
 					animation: google.maps.Animation.DROP,
-					// draggable: true,
+					//draggable: true,
 					//optimized: false,
 					zIndex: 0,
 					icon: circle_icon,
 					position: latLng
 				});    
-				myLocationMarker = marker;
+				//if (updateCount == 0){
+				userLoc = marker;
+				//}
+				
 				
 				loadMarkers();
 				
@@ -358,42 +392,112 @@ GlobalService, ConnectivityMonitor) {
 			console.log("Could not get location");
 		});
 	}
+	//------------------------------->
+	//---- Map related Functions ---->
+	//------------------------------>
 	
+	// Auto Updates lngLat and user location
 	function autoUpdate(){
 		var options = {timeout: 10000, enableHighAccuracy: true};
 		
 		$cordovaGeolocation.getCurrentPosition(options).then(function(position){
 			
-		updateLatLng = new google.maps.LatLng(position.coords.latitude,
-									 position.coords.longitude);
+			updateLatLng = new google.maps.LatLng(position.coords.latitude,
+										 position.coords.longitude);
+		
+			// Changing latLng used to test movement
+			
+			// updateLatLng =  new google.maps.LatLng(userLoc.getPosition().lat()+0.0002, 
+											// userLoc.getPosition().lng()+0.0002);
 		
 			// CURRENT LOCATION Marker
 			var marker = new google.maps.Marker({
 				map: $scope.map,
-				//optimized: false,
-				zIndex: 0,
+				zIndex: 1,
 				icon: circle_icon,
 				position: updateLatLng
 			});    
 			
 			//$scope.map.panTo(updateLatLng);
+			if (!afterImageOption){
+				userLoc.setMap(null);
+			}
 			
-			myLocationMarker.setMap(null);
-			myLocationMarker = marker;
+			userLoc = marker;
 		});
 		
+		// Current location after image handling
+		if (afterImageOption){
+			if (updateCount > 3){	
+				afterImage_4.setMap(null);
+				afterImage_4 = afterImage_3;
+				afterImage_4.setIcon(circle_iconA4);
+				afterImage_3 = afterImage_2;
+				afterImage_3.setIcon(circle_iconA3);
+				afterImage_2 = afterImage_1;
+				afterImage_2.setIcon(circle_iconA2);
+				afterImage_1 = userLoc;
+				afterImage_1.setIcon(circle_iconA1);
+				updateCount++;
+			}else if (updateCount == 3){
+				afterImage_4 = afterImage_3;
+				afterImage_4.setIcon(circle_iconA4);
+				afterImage_3 = afterImage_2;
+				afterImage_3.setIcon(circle_iconA3);
+				afterImage_2 = afterImage_1;
+				afterImage_2.setIcon(circle_iconA2);
+				afterImage_1 = userLoc;
+				afterImage_1.setIcon(circle_iconA1);
+				updateCount++;
+			}else if (updateCount == 2){
+				afterImage_3 = afterImage_2;
+				afterImage_3.setIcon(circle_iconA3);
+				afterImage_2 = afterImage_1;
+				afterImage_2.setIcon(circle_iconA2);
+				afterImage_1 = userLoc;
+				afterImage_1.setIcon(circle_iconA1);
+				updateCount++
+			}else if (updateCount == 1){
+				afterImage_2 = afterImage_1;
+				afterImage_2.setIcon(circle_iconA2);
+				afterImage_1 = userLoc;
+				afterImage_1.setIcon(circle_iconA1);
+				updateCount++
+			}else if (updateCount == 0){
+				afterImage_1 = userLoc;
+				afterImage_1.setIcon(circle_iconA1);
+				updateCount++
+			}
+		}
+		
 		// Call the autoUpdate() function every 2 seconds
-		setTimeout(autoUpdate, 2000);
+		setTimeout(autoUpdate, 3000);
 	}
-	
-	//------------------------------->
-	//---- Map related Functions ---->
-	//------------------------------>
 	
 	// Refreshes the map - currently has some unknown stutter ...
 	$scope.refreshMap = function(){
 		
-		myLocationMarker.setMap(null);
+		userLoc.setMap(null);
+		
+		// Flicker markers reset
+		if (afterImageOption){
+			if (updateCount > 3){
+				afterImage_1.setMap(null);
+				afterImage_2.setMap(null);
+				afterImage_3.setMap(null);
+				afterImage_4.setMap(null);
+			}else if (updateCount == 3){
+				afterImage_1.setMap(null);
+				afterImage_2.setMap(null);
+				afterImage_3.setMap(null);
+			}else if (updateCount == 2){
+				afterImage_1.setMap(null);
+				afterImage_2.setMap(null);
+			}else if (updateCount == 1){
+				afterImage_1.setMap(null);
+			}
+			updateCount = 0;
+		}
 		
 		//document.getElementById("pinPointContainer").style.opacity = 0.3;
 		
@@ -409,18 +513,19 @@ GlobalService, ConnectivityMonitor) {
 			
 			var marker = new google.maps.Marker({
 					map: $scope.map,
-					animation: google.maps.Animation.DROP,
+					//animation: google.maps.Animation.DROP,
 					//optimized: false,
 					zIndex: 0,
 					icon: circle_icon,
 					position: latLng
 			});
 			
-			myLocationMarker = marker;
+			userLoc = marker;
 			
 		}, function(error){
 			console.log("Could not get location");
 		});
+	
 	}
 
 	// Special panel click event function to add markers
@@ -673,7 +778,7 @@ GlobalService, ConnectivityMonitor) {
 			
 		}
 		
-		var center = myLocationMarker.getPosition();
+		var center = userLoc.getPosition();
 		var bounds = $scope.map.getBounds();
 		var zoom = $scope.map.getZoom();
 		
