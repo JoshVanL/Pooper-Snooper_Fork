@@ -132,29 +132,45 @@ GlobalService, ConnectivityMonitor) {
 	var map = null;
 	var latLng = null;
 	
-	var markerCache = [];			// Cache of all markerData. THESE ARE NOT REFERENCES TO MARKER OBJECTS!
-	var binMarkerCache = [];	// Cache of all (REFERENCES TO) BIN MARKER OBJECTS (hide/show)
+	$scope.lat = null;
+	$scope.lng = null;
 	
-	var myLocationMarker; 				// Used to remove old marker to update current location
+	
+	var markerCache = [];			// Cache of all markerData. THESE ARE NOT REFERENCES TO MARKER OBJECTS!
+														// It stores the MARKER DATA currently containing: 'lat', 'lng', 'icon.url'
+														
+	var binMarkerCache = [];	// Cache of all (REFERENCES TO) BIN MARKER OBJECTS (hide/show)
+														// It will probably be necessary to also keep references to poop markers
+														// so we may refactor 'markerCache' to store references instead of data.
+														// This will allow the users to remove delete Markers for instance.
+	
+	var myLocationMarker; 				// Used to reference current location Marker and update to new location
+																// May need two variables overall to hold a bofore and after due to..
+																// !BUG Flickering issue as we remove our Marker and add a new one.
 	
 	var nearestBinMarker;					// Reference to the nearest bin marker (original) that we hide and
 																// replace with the GIF marker indicating the nearest bin
 	var tempBinMarker;					// Reference to a temp Marker (gif) that indicates where the nearest bin is
 
-	// Icon resources
+	// Icon resources - NOTE: CURRENT (MAP) PERFORMANCE ISSUES CAN BE SOLVED BY USING LOWER RES IMAGES
+  //												AND SETTING THE MARKER OPTION: 'optimized' to 'true'
+	
 	var poop_icon = {
-    url: "img/Assets/poop.png",
+    url: "img/Assets/poop_small.png",
     scaledSize: ''
 	};
 	var bin_icon = {
-    url: "img/Assets/dog_bin.png",
-    scaledSize: ''
+    url: "img/Assets/dog_bin_small.png",
+    //scaledSize: ''
 	};
 	var indicator_icon = {
-		url: "img/Assets/nearest-bin.gif",
+		url: "img/Assets/nearest-bin-small.gif",
+		//scaledSize: ''
+	};
+	var circle_icon = {
+		url: "img/Assets/me.png",
 		scaledSize: ''
-	}
-	
+	};
 	// Fixes the error where opening a modal would cause the map to 'break' 
 	$scope.$on('$ionicView.afterEnter', function() {
 		ionic.trigger('resize');
@@ -191,8 +207,9 @@ GlobalService, ConnectivityMonitor) {
 		
 		$cordovaGeolocation.getCurrentPosition(options).then(function(position){
 			
-			poop_icon.scaledSize = new google.maps.Size(25, 25);
-			bin_icon.scaledSize = new google.maps.Size(40, 40);
+			poop_icon.scaledSize = new google.maps.Size(30, 30);
+			// bin_icon.scaledSize = new google.maps.Size(40, 40);
+			circle_icon.scaledSize = new google.maps.Size(50,50);
 			
 			latLng = new google.maps.LatLng(position.coords.latitude,
 									 position.coords.longitude);
@@ -277,10 +294,10 @@ GlobalService, ConnectivityMonitor) {
 				binLats.push(53.63602555406321);binLngs.push(-2.9680681228637695);
 				binLats.push(53.641534048101576);binLngs.push(-2.9661154747009277);
 				
-				poop_icon.scaledSize = new google.maps.Size(30, 30);
-				bin_icon.scaledSize = new google.maps.Size(40, 40);
-				
-				for (i = 0; i < 23; i++){
+				// poop_icon.scaledSize = new google.maps.Size(30, 30);
+				// bin_icon.scaledSize = new google.maps.Size(40, 40);
+					
+				for (i = 0; i < poopLats.length; i++){
 					var myLatLng = new google.maps.LatLng({lat: poopLats[i], lng: poopLngs[i]});
 					var marker = new google.maps.Marker({
 							position: myLatLng,
@@ -294,7 +311,7 @@ GlobalService, ConnectivityMonitor) {
 					GlobalService.push_poopMarkers(markerData);
 				}
 				
-				for (i = 0; i < 20; i++){
+				for (i = 0; i < binLats.length; i++){
 					var myLatLng = new google.maps.LatLng({lat: binLats[i], lng: binLngs[i]});
 					var marker = new google.maps.Marker({
 							position: myLatLng,
@@ -312,7 +329,10 @@ GlobalService, ConnectivityMonitor) {
 				var marker = new google.maps.Marker({
 					map: $scope.map,
 					animation: google.maps.Animation.DROP,
-					draggable: true,
+					// draggable: true,
+					//optimized: false,
+					zIndex: 0,
+					icon: circle_icon,
 					position: latLng
 				});    
 				myLocationMarker = marker;
@@ -330,12 +350,40 @@ GlobalService, ConnectivityMonitor) {
         });
 				
 				enableMap();
+				autoUpdate();
 			
 			});
 
 		}, function(error){
 			console.log("Could not get location");
 		});
+	}
+	
+	function autoUpdate(){
+		var options = {timeout: 10000, enableHighAccuracy: true};
+		
+		$cordovaGeolocation.getCurrentPosition(options).then(function(position){
+			
+		updateLatLng = new google.maps.LatLng(position.coords.latitude,
+									 position.coords.longitude);
+		
+			// CURRENT LOCATION Marker
+			var marker = new google.maps.Marker({
+				map: $scope.map,
+				//optimized: false,
+				zIndex: 0,
+				icon: circle_icon,
+				position: updateLatLng
+			});    
+			
+			//$scope.map.panTo(updateLatLng);
+			
+			myLocationMarker.setMap(null);
+			myLocationMarker = marker;
+		});
+		
+		// Call the autoUpdate() function every 2 seconds
+		setTimeout(autoUpdate, 2000);
 	}
 	
 	//------------------------------->
@@ -356,11 +404,15 @@ GlobalService, ConnectivityMonitor) {
 			latLng = new google.maps.LatLng(position.coords.latitude,
 									 position.coords.longitude);
 			
-			$scope.map.setCenter(latLng);
+			$scope.map.panTo(latLng);
+			//$scope.map.setCenter(latLng);
 			
 			var marker = new google.maps.Marker({
 					map: $scope.map,
 					animation: google.maps.Animation.DROP,
+					//optimized: false,
+					zIndex: 0,
+					icon: circle_icon,
 					position: latLng
 			});
 			
@@ -408,7 +460,8 @@ GlobalService, ConnectivityMonitor) {
 			position: latLng,
 			map: $scope.map,
 			animation: google.maps.Animation.DROP,
-			optimized: false,
+			//optimized: false,
+			zIndex: 0,
 			icon: poop_icon
 		});
 		var markerData = {
@@ -442,7 +495,8 @@ GlobalService, ConnectivityMonitor) {
 			position: latLng,
 			map: $scope.map,
 			animation: google.maps.Animation.DROP,
-			optimized: false,
+			//optimized: false,
+			zIndex: 0,
 			icon: bin_icon
 		});
 		var markerData = {
@@ -579,8 +633,7 @@ GlobalService, ConnectivityMonitor) {
 				}else if (markers[i].icon == bin_icon.url){
 					currentIcon = bin_icon;
 				}
-				
-				
+			
 				latLng = new google.maps.LatLng(markers[i].lat,markers[i].lng);
 				
 				// Adds the (new) marker to the map
@@ -588,7 +641,8 @@ GlobalService, ConnectivityMonitor) {
 					map: $scope.map,
 					animation: google.maps.Animation.DROP,
 					position: latLng,
-					optimized: false,
+					//optimized: false,
+					zIndex: 0,
 					icon: currentIcon
 				});
 
@@ -650,7 +704,7 @@ GlobalService, ConnectivityMonitor) {
 			"boundingRadius": boundingRadius
 		};
 			
-		indicator_icon.scaledSize = new google.maps.Size(50, 50);
+		// indicator_icon.scaledSize = new google.maps.Size(50, 50);
 		
 		var nearestBin = GlobalService.get_NearestBin(params);
 		
@@ -660,8 +714,10 @@ GlobalService, ConnectivityMonitor) {
 			if ((binMarkerCache[i].getPosition().lat() == nearestBin.lat) && 
 					(binMarkerCache[i].getPosition().lng() == nearestBin.lng) &&
 					(binMarkerCache[i].getIcon().url == nearestBin.icon)){
-					nearestBinMarker = binMarkerCache[i];
-					nearestBinMarker.setMap(null);
+						
+				nearestBinMarker = binMarkerCache[i];
+				nearestBinMarker.setMap(null);
+				break;
 			}
 		}
 		
@@ -673,6 +729,7 @@ GlobalService, ConnectivityMonitor) {
 			animation: google.maps.Animation.DROP,
 			position: latLng,
 			icon: indicator_icon,
+			zIndex: 1,
 			optimized: false
 		});
 		
@@ -697,7 +754,6 @@ GlobalService, ConnectivityMonitor) {
 			if(cache[i].lat === lat && cache[i].lng === lng && 
 				 cache[i].icon === icon){
 				exists = true;
-				console.log("Marker already exists. It has not been added.");
 			}
 		}
 		return exists;

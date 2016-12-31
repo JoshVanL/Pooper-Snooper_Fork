@@ -169,6 +169,8 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 	var activeIcon = '';
 	var iconType = '';
 	var doggyRecords = [];
+	
+	//NOTE: The marker arrays store MARKER DATA - currently containing: 'lat', 'lng', 'icon.url'
 	var poopMarkers = [];
 	var binMarkers = [];
 	
@@ -198,7 +200,7 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 		var cache = markerCache;
 		for(var i = 0; i < cache.length; i++){
 			if(cache[i].lat === lat && cache[i].lng === lng && 
-				 cache[i].icon.url === icon.url){
+				 cache[i].icon === icon){
 				exists = true;
 			}
 		}
