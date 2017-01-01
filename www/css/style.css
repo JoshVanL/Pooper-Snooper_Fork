@@ -19,22 +19,24 @@
 
 #welcomeImageDiv{
 	position: fixed;
-	top: 20%;
-	left: 5%;
-	width: 90%;
-	height: 50%;
+	top: 25%;
+	left: 9%;
+	width: 100%;
+	height: 56.2%;
 }
 #welcomeImage{
-	width: 100%;
-	height: 100%;
+	width: 80%;
+	height: 80%;
 }
 
 .background.scroll-content {
-    background: url('../img/backgrounds/dog-paws2.jpg') no-repeat;
+    background: url('../img/backgrounds/dog-paws3.jpg') no-repeat;
     background-size: cover;
 		left: -40%;
 		top: 5%;
 }
+
+
 /*--------------------------------*/
 /* ----- Doggy Records page ----- */
 /*--------------------------------*/

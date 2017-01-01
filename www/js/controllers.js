@@ -392,17 +392,17 @@ GlobalService, ConnectivityMonitor) {
 		
 		$cordovaGeolocation.getCurrentPosition(options).then(function(position){
 			
-			// updateLatLng = new google.maps.LatLng(position.coords.latitude,
-										 // position.coords.longitude);
+			updateLatLng = new google.maps.LatLng(position.coords.latitude,
+										 position.coords.longitude);
 		
 			// Changing latLng used to test movement
 			
-			updateLatLng =  new google.maps.LatLng(userLoc.getPosition().lat()+((Math.random()/4)-0.1)*0.0002, 
-											userLoc.getPosition().lng()+((Math.random()/4)-0.1)*0.0002);
+			// updateLatLng =  new google.maps.LatLng(userLoc.getPosition().lat()+((Math.random()/4)-0.1)*0.0002, 
+											// userLoc.getPosition().lng()+((Math.random()/4)-0.1)*0.0002);
 		
 			userLoc.setPosition(updateLatLng);
 			
-			$scope.map.panTo(updateLatLng);
+			//$scope.map.panTo(updateLatLng);
 			
 		});
 		
@@ -451,7 +451,7 @@ GlobalService, ConnectivityMonitor) {
 		}
 		
 		// Call the autoUpdate() function every 2 seconds
-		setTimeout(autoUpdate, 10);
+		setTimeout(autoUpdate, 50);
 	}
 	
 	// Refreshes the map - currently has some unknown stutter ...
@@ -794,6 +794,8 @@ GlobalService, ConnectivityMonitor) {
 			zIndex: 1,
 			optimized: false
 		});
+		
+		$scope.map.panTo(latLng);
 		
 		tempBinMarker = marker;
 	}
