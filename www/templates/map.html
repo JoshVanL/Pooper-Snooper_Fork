@@ -1,26 +1,37 @@
-<ion-view view-title="Doggy map!" >
+<ion-view view-title="<b>Doggy map!</b>" >
 	<ion-content scroll="false">
-		<div id="pinpointContainer"></div>
-		<button id="pinpoint" class="button button-icon" ng-mouseup="refreshMap()">
+		<div id="pinpointHolder" class="animated bounceInLeft"></div>
+		<button id="pinpoint" class="button button-icon animated bounceInLeft" 
+		 ng-mouseup="refreshMap()">
 				<i class="icon ion-pinpoint"></i>
 		</button>
 		
-		<div id="nearestBinContainer"></div>
-		<button id="nearestBin" class="button button-icon" ng-mouseup="findNearestBin(userMarker)">
+		<div id="nearestBinHolder" class="animated bounceInLeft"></div>
+		<button id="nearestBin" class="button button-icon animated bounceInLeft" 
+		 ng-mouseup="findNearestBin(userMarker)">
 				<i class="icon ion-search"></i>
 		</button>
 		
 		<div id="map" droppable data-tap-disabled="true" click="handleIconPress()"></div>
 	
-		<div ng-show="!iconPanelShow" id="iconPanelOpen" ng-mouseup="showIconPanel()"></div>
+		<div id="panelOpenHolder" class="animated bounceInRight"></div>
+		<button id="panelOpen" class="button button-icon animated bounceInRight" 
+		 ng-mouseup="showIconPanel()">
+				<i class="icon ion-location"></i>
+		</button>
 	
-		<div ng-show="iconPanelShow" id="icon_panel"></div>
+		<div id="panelMinimizeHolder"></div>
+		<button id="panelMinimize" class="button button-icon" ng-mouseup="minimizePanel()">
+				<i class="icon ion-minus-round"></i>
+		</button>
 		
-		<img ng-show="iconPanelShow" id="poopDraggable" draggable src="img/Assets/poop.png">
+		<div id="iconPanel"></div>
+		
+		<img id="poopDraggable" draggable src="img/Assets/poop.png">
 
-		<img ng-show="iconPanelShow" id="binDraggable" draggable src="img/Assets/dog_bin.png">
+		<img id="binDraggable" draggable src="img/Assets/dog_bin.png">
 
-		<img ng-show="iconPanelShow" id="manDraggable" draggable src="img/Assets/man-walking-dog.png">
+		<img id="manDraggable" draggable src="img/Assets/man-walking-dog.png">
 		
   </ion-content>
 </ion-view>

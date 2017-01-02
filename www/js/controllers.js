@@ -132,11 +132,6 @@ GlobalService, ConnectivityMonitor) {
 	var map = null;
 	var iconLatLng = null;
 	
-	$scope.iconPanelShow = false;
-	
-	//$scope.lat = null;
-	//$scope.lng = null;
-	
 	var markerCache = [];			// Cache of all markerData. THESE ARE NOT REFERENCES TO MARKER OBJECTS!
 														// It stores the MARKER DATA currently containing: 'lat', 'lng', 'icon.url'
 														
@@ -147,24 +142,14 @@ GlobalService, ConnectivityMonitor) {
 	
 	$scope.userMarker; 					// Used to reference current location Marker and update to new location
 						
-														// When the afterImage option is enabled
-														// If update is called too quickly then there is an issue with Marker creation/deletion
+	var manMarker = null;				// Reference to the 'man Marker' (finds nearestBin to the Marker location)
 	
-	var manMarker = null;
-	
-	var autoUpdateOption = true;
-												
-	var afterImageOption = false;	
-	var afterImage_1; 
-	var afterImage_2; 
-	var afterImage_3; 
-	var afterImage_4;
-	
-	var updateCount = 0;					// Update counter
-	
+	var autoUpdateOption = true;	// Not currently used				
+
 	var nearestBinMarker;					// Reference to the nearest bin marker (original) that we hide and
 																// replace with the GIF marker indicating the nearest bin
-	var tempBinMarker;					// Reference to a temp Marker (gif) that indicates where the nearest bin is
+	
+	var tempBinMarker;						// Reference to a temp Marker (gif) that indicates where the nearest bin is
 
 	// Icon resources 
 	var poop_icon = {
@@ -179,7 +164,7 @@ GlobalService, ConnectivityMonitor) {
 		url: "img/Assets/man-walking-dog_small.png",
     scaledSize: ''
 	};
-	var indicator_icon = {		//Bin GIF that indicates the nearest bin to the user
+	var nearestBin_Icon = {		//Bin GIF that indicates the nearest bin to the user
 		url: "img/Assets/nearest-bin-small.gif",
 		//scaledSize: ''
 	};
@@ -210,6 +195,27 @@ GlobalService, ConnectivityMonitor) {
 		ionic.trigger('resize');
 	});
 
+	// Resets button visibility to default on exit
+	$scope.$on('$ionicView.afterLeave', function(){
+    document.getElementById("panelOpenHolder").style.visibility = "visible";
+		document.getElementById("panelOpenHolder").className = "animated bounceInRight";
+		document.getElementById("panelOpen").style.visibility = "visible";
+		document.getElementById("panelOpen").className = "button button-icon animated bounceInRight";
+		
+		document.getElementById("panelMinimizeHolder").style.visibility = "hidden";
+		document.getElementById("panelMinimizeHolder").className = "";
+		document.getElementById("panelMinimize").style.visibility = "hidden";
+		document.getElementById("panelMinimize").className = "button button-icon";
+		document.getElementById("iconPanel").style.visibility = "hidden";
+		document.getElementById("iconPanel").className = "";
+		document.getElementById("poopDraggable").style.visibility = "hidden";
+		document.getElementById("poopDraggable").className = "";
+		document.getElementById("binDraggable").style.visibility = "hidden";
+		document.getElementById("binDraggable").className = "";
+		document.getElementById("manDraggable").style.visibility = "hidden";
+		document.getElementById("manDraggable").className = "";
+  });
+	
 	//------------------------->
 	//--- Initializing phase--->
 	//------------------------>
@@ -241,7 +247,8 @@ GlobalService, ConnectivityMonitor) {
 		
 		$cordovaGeolocation.getCurrentPosition(options).then(function(position){
 			
-			poop_icon.scaledSize = new google.maps.Size(30, 30);
+			poop_icon.scaledSize = new google.maps.Size(20, 20);
+			bin_icon.scaledSize = new google.maps.Size(35,35);
 			circle_icon.scaledSize = new google.maps.Size(50,50);
 			circle_iconA1.scaledSize = new google.maps.Size(50,50);
 			circle_iconA2.scaledSize = new google.maps.Size(50,50);
@@ -403,58 +410,14 @@ GlobalService, ConnectivityMonitor) {
 										 // position.coords.longitude);
 		
 			// Simulating movement by changing the latLng
-			var updateLatLng =  new google.maps.LatLng($scope.userMarker.getPosition().lat()+((Math.random()/4)-0.1)*0.0002, 
-											$scope.userMarker.getPosition().lng()+((Math.random()/4)-0.1)*0.0002);
+			var updateLatLng =  new google.maps.LatLng($scope.userMarker.getPosition().lat()+((Math.random()/4)-0.1)*0.0001, 
+											$scope.userMarker.getPosition().lng()+((Math.random()/4)-0.1)*0.0001);
 		
 			$scope.userMarker.setPosition(updateLatLng);
 			
 			//$scope.map.panTo(updateLatLng);
 			
 		});
-		
-		// Current location after image handling
-		if (afterImageOption){
-			if (updateCount > 3){	
-				afterImage_4.setMap(null);
-				afterImage_4 = afterImage_3;
-				afterImage_4.setIcon(circle_iconA4);
-				afterImage_3 = afterImage_2;
-				afterImage_3.setIcon(circle_iconA3);
-				afterImage_2 = afterImage_1;
-				afterImage_2.setIcon(circle_iconA2);
-				afterImage_1 = $scope.userMarker;
-				afterImage_1.setIcon(circle_iconA1);
-				updateCount++;
-			}else if (updateCount == 3){
-				afterImage_4 = afterImage_3;
-				afterImage_4.setIcon(circle_iconA4);
-				afterImage_3 = afterImage_2;
-				afterImage_3.setIcon(circle_iconA3);
-				afterImage_2 = afterImage_1;
-				afterImage_2.setIcon(circle_iconA2);
-				afterImage_1 = $scope.userMarker;
-				afterImage_1.setIcon(circle_iconA1);
-				updateCount++;
-			}else if (updateCount == 2){
-				afterImage_3 = afterImage_2;
-				afterImage_3.setIcon(circle_iconA3);
-				afterImage_2 = afterImage_1;
-				afterImage_2.setIcon(circle_iconA2);
-				afterImage_1 = $scope.userMarker;
-				afterImage_1.setIcon(circle_iconA1);
-				updateCount++
-			}else if (updateCount == 1){
-				afterImage_2 = afterImage_1;
-				afterImage_2.setIcon(circle_iconA2);
-				afterImage_1 = $scope.userMarker;
-				afterImage_1.setIcon(circle_iconA1);
-				updateCount++
-			}else if (updateCount == 0){
-				afterImage_1 = $scope.userMarker;
-				afterImage_1.setIcon(circle_iconA1);
-				updateCount++
-			}
-		}
 
 		// Call the autoUpdate() function every 2 seconds
 		setTimeout(autoUpdate, 5);
@@ -462,26 +425,6 @@ GlobalService, ConnectivityMonitor) {
 	
 	// Refreshes the map - currently has some unknown stutter ...
 	$scope.refreshMap = function(){
-		
-		// Flicker markers reset
-		if (afterImageOption){
-			if (updateCount > 3){
-				afterImage_1.setMap(null);
-				afterImage_2.setMap(null);
-				afterImage_3.setMap(null);
-				afterImage_4.setMap(null);
-			}else if (updateCount == 3){
-				afterImage_1.setMap(null);
-				afterImage_2.setMap(null);
-				afterImage_3.setMap(null);
-			}else if (updateCount == 2){
-				afterImage_1.setMap(null);
-				afterImage_2.setMap(null);
-			}else if (updateCount == 1){
-				afterImage_1.setMap(null);
-			}
-			updateCount = 0;
-		}
 		
 		var options = {timeout: 10000, enableHighAccuracy: true};
 		
@@ -538,6 +481,8 @@ GlobalService, ConnectivityMonitor) {
 	
 	//Adds the poop Marker to the map (after record has been created)
 	$scope.addPoopMarker = function(){
+		$scope.minimizePanel();
+		
 		var marker = new google.maps.Marker({
 			position: iconLatLng,
 			map: $scope.map,
@@ -566,11 +511,11 @@ GlobalService, ConnectivityMonitor) {
 		*/
 		
 		GlobalService.set_activeIcon("");
-		$scope.iconPanelShow = false;
 	}
 	
 	//Adds the bin Marker to the map
 	$scope.addBinMarker = function() {
+		$scope.minimizePanel();
 		
 		var marker = new google.maps.Marker({
 			position: iconLatLng,
@@ -593,11 +538,11 @@ GlobalService, ConnectivityMonitor) {
 		addMarkerToCache(marker);
 		
 		GlobalService.set_activeIcon("");
-		$scope.iconPanelShow = false;
 	}
 	
 	//Adds the bin Marker to the map
 	$scope.addManMarker = function() {
+		$scope.minimizePanel();
 		
 		if (manMarker != null){
 			manMarker.setVisible(true);
@@ -613,8 +558,6 @@ GlobalService, ConnectivityMonitor) {
 		}
 		GlobalService.set_activeIcon("");
 		$scope.findNearestBin(manMarker);
-		
-		$scope.iconPanelShow = false;
 	}
 	
 	//-------------------------------->
@@ -728,12 +671,27 @@ GlobalService, ConnectivityMonitor) {
 			
 				var latLng = new google.maps.LatLng(markers[i].lat,markers[i].lng);
 				
+				var markerVisibility;
+				
+				// Hides the Bin Marker if it has been chosen as the nearest bin before it was loaded
+				if (nearestBinMarker != null){
+					if (currentIcon.url == bin_icon.url && 
+							latLng == nearestBinMarker.getPosition){
+						markerVisibility = false;
+					}else {
+						markerVisibility = true;
+					}
+				}else {
+					markerVisibility = true;
+				}
+				
 				// Adds the (new) marker to the map
 				var marker = new google.maps.Marker({
 					map: $scope.map,
 					animation: google.maps.Animation.DROP,
 					position: latLng,
 					zIndex: 0,
+					visible: markerVisibility,
 					icon: currentIcon
 				});
 
@@ -749,11 +707,14 @@ GlobalService, ConnectivityMonitor) {
 		}	
   }
 	
-	// CURRENT BUG: SOMETIMES DOESNT UPDATE TO A CLOSER BIN?
-	
 	// Find the nearest bin and add a Marker to indicate it (replacing the previous marker temporarily)
+	// TWO DIFFERENT CASES:
+	// Case 1 - Called via the bottom left button to search for the nearest bin to the user location
+	// Case 2 - Called via placing the man Marker to search for the nearest bin to the placed Marker
+	
 	$scope.findNearestBin = function(loc){
 		
+		// Hides the man Marker if function called for Case 1
 		if (loc.getIcon().url == $scope.userMarker.getIcon().url){
 			if (manMarker != null){
 				manMarker.setVisible(false);
@@ -768,7 +729,7 @@ GlobalService, ConnectivityMonitor) {
 			
 		}
 		if (nearestBinMarker != null){
-			nearestBinMarker.setMap($scope.map);
+			nearestBinMarker.setVisible(true);
 		}
 		
 		//Convert objects returned by Google to be more readable
@@ -779,33 +740,43 @@ GlobalService, ConnectivityMonitor) {
 	
 		var nearestBin = GlobalService.get_NearestBin(center);
 		
-		// We find the reference to the nearest Bin currently on the map (from binMarkerCache)
-		// and set it to hide temporarily while we replace it with a new indicator
+		// Find the reference to the nearest Bin Marker if already loaded (from binMarkerCache),
+		// hide it temporarily and replace with the GIF indicator
 		for (var i = 0; i < binMarkerCache.length; i++){
 			if ((binMarkerCache[i].getPosition().lat() == nearestBin.lat) && 
 					(binMarkerCache[i].getPosition().lng() == nearestBin.lng) &&
 					(binMarkerCache[i].getIcon().url == nearestBin.icon)){
 						
 				nearestBinMarker = binMarkerCache[i];
-				nearestBinMarker.setMap(null);
+				nearestBinMarker.setVisible(false);
 				break;
 			}
 		}
 		
 		binLatLng = new google.maps.LatLng(nearestBin.lat,
 						 nearestBin.lng);
-		
+
 		var marker = new google.maps.Marker({
 			map: $scope.map,
 			animation: google.maps.Animation.DROP,
 			position: binLatLng,
-			icon: indicator_icon,
+			icon: nearestBin_Icon,
 			zIndex: 1,
 			optimized: false
 		});
 		
-		$scope.map.panTo(binLatLng);
-		
+		// Pan to the location of the Nearest Bin - Case 1
+		// Pan to the placed marker	- Case 2
+		if (manMarker != null){
+			if (loc.getIcon().url == manMarker.getIcon().url){
+				$scope.map.panTo(manMarker.getPosition());
+			}else {
+				$scope.map.panTo(binLatLng);
+			}
+		}else {
+			$scope.map.panTo(binLatLng);
+		}
+
 		tempBinMarker = marker;
 	}
 	
@@ -875,7 +846,47 @@ GlobalService, ConnectivityMonitor) {
 	
 	// Displays icon Panel
 	$scope.showIconPanel = function(){
-		$scope.iconPanelShow = true;
+		
+		document.getElementById("panelOpenHolder").style.visibility = "hidden";
+		document.getElementById("panelOpenHolder").className = "";
+		document.getElementById("panelOpen").style.visibility = "hidden";
+		document.getElementById("panelOpen").className = "button button-icon";
+		
+		document.getElementById("panelMinimizeHolder").style.visibility = "visible";
+		document.getElementById("panelMinimizeHolder").className = "animated slideInRight";
+		document.getElementById("panelMinimize").style.visibility = "visible";
+		document.getElementById("panelMinimize").className = "button button-icon animated slideInRight";
+		
+		document.getElementById("iconPanel").style.visibility = "visible";
+		document.getElementById("iconPanel").className = "animated slideInRight";
+		document.getElementById("poopDraggable").style.visibility = "visible";
+		document.getElementById("poopDraggable").className = "animated slideInRight";
+		document.getElementById("binDraggable").style.visibility = "visible";
+		document.getElementById("binDraggable").className = "animated slideInRight";
+		document.getElementById("manDraggable").style.visibility = "visible";
+		document.getElementById("manDraggable").className = "animated slideInRight";
+		
+	}
+	
+	// Minimizes icon Panel
+	$scope.minimizePanel = function() {
+		document.getElementById("panelOpenHolder").style.visibility = "visible";
+		document.getElementById("panelOpenHolder").className = "animated slideInRight";
+		document.getElementById("panelOpen").style.visibility = "visible";
+		document.getElementById("panelOpen").className = "button button-icon animated slideInRight";
+	
+		document.getElementById("panelMinimizeHolder").style.visibility = "hidden";
+		document.getElementById("panelMinimizeHolder").className = "";
+		document.getElementById("panelMinimize").style.visibility = "hidden";
+		document.getElementById("panelMinimize").className = "";
+		document.getElementById("iconPanel").style.visibility = "hidden";
+		document.getElementById("iconPanel").className = "";
+		document.getElementById("poopDraggable").style.visibility = "hidden";
+		document.getElementById("poopDraggable").className = "";
+		document.getElementById("binDraggable").style.visibility = "hidden";
+		document.getElementById("binDraggable").className = "";
+		document.getElementById("manDraggable").style.visibility = "hidden";
+		document.getElementById("manDraggable").className = "";
 	}
 	
 	// Add info Window to Marker

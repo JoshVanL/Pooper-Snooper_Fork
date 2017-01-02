@@ -123,6 +123,32 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 						this.classList.add('iconSelected');
 						GlobalService.set_iconType(this.id);
 					}
+					//Allows the deselection of current icon 
+					else if (GlobalService.get_activeIcon() == true &&
+										this.id == GlobalService.get_iconType()){
+						
+						var poopItem = document.getElementById("poopDraggable");
+						var binItem = document.getElementById("binDraggable");
+						var manItem = document.getElementById("manDraggable");
+						
+						if (GlobalService.get_iconType() == "poopDraggable"){							
+							poopItem.classList.remove('iconSelected');					
+							GlobalService.set_activeIcon(false);
+							GlobalService.set_iconType('');	
+						}
+						else if (GlobalService.get_iconType() == "binDraggable"){							
+							binItem.classList.remove('iconSelected');
+							GlobalService.set_activeIcon(false);
+							GlobalService.set_iconType('');	
+						}
+						else if (GlobalService.get_iconType() == "manDraggable"){							
+							manItem.classList.remove('iconSelected');
+							GlobalService.set_activeIcon(false);
+							GlobalService.set_iconType('');	
+						}
+						
+						
+					}
 					return false;
 				},
 				false
@@ -160,26 +186,19 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 					if (GlobalService.get_activeIcon() == true){
 										
 						if (GlobalService.get_iconType() == "poopDraggable"){							
-							//Passes data to our service for the controller 
-							//and calls the click passed click function
-							GlobalService.set_iconType(poopItem.id);
-							scope.$apply('click()');
-							
-							//Reset states
-							poopItem.classList.remove('iconSelected');
+							scope.$apply('click()');											//Passes data to our service for the controller 
+																														//and calls the click passed click function
+		
+							poopItem.classList.remove('iconSelected');		//Reset to 'neutral' state
 							GlobalService.set_activeIcon(false);
 						}
 						else if (GlobalService.get_iconType() == "binDraggable"){							
-							GlobalService.set_iconType(binItem.id);
 							scope.$apply('click()');
-							
 							binItem.classList.remove('iconSelected');
 							GlobalService.set_activeIcon(false);
 						}
 						else if (GlobalService.get_iconType() == "manDraggable"){							
-							GlobalService.set_iconType(manItem.id);
 							scope.$apply('click()');
-							
 							manItem.classList.remove('iconSelected');
 							GlobalService.set_activeIcon(false);
 						}

@@ -49,12 +49,79 @@
 .record{
 	opacity: 0.90;
 }
+
 /*----------------------------*/
 /* ----- Doggy Map page ----- */
 /*----------------------------*/
 
-/* --- Icon Panel Open --- */
-#iconPanelOpen {
+/* Icon-panel */
+#iconPanel {
+	border-radius: 3%;
+	position: fixed;
+	top: 12%;
+	right: 2.5%;
+	width: 13.35%;
+	height: 23.5%;
+	background: #D2691E;
+	z-Index: 1;
+	opacity: 0.85; 
+	visibility: hidden;
+}
+/* Draggable Poop */
+#poopDraggable {
+	position: fixed;
+	top: 12%;
+	right: 2.9%;
+	width: 12.5%;
+	height: 7.7%;
+	z-Index: 2;
+	visibility: hidden;
+}
+/* Draggable Bin */
+#binDraggable {
+	position: fixed;
+	top: 20%;
+	right: 2.9%;
+	width: 12.5%;
+	height: 7.7%;
+	z-Index: 2;
+	visibility: hidden;
+}
+/* Draggable Man */
+#manDraggable {
+	position: fixed;
+	top: 28.5%;
+	right: 4%;
+	width: 9.6%;
+	height: 5.9%;
+	z-Index: 2;
+	visibility: hidden;
+}
+
+/* Icon Panel Close */
+#panelMinimizeHolder {
+	border-radius: 7%;
+	position: fixed;
+	top: 8%;
+	right: 2.5%;
+	width: 13.35%;
+	height: 3.5%;
+	background: #D2691E;
+	z-Index: 1;
+	opacity: 0.85; 
+	visibility: hidden;
+}
+#panelMinimize {
+	position: fixed;
+	right: 4.2%;
+	top: 6.5%;
+	color: white;
+	z-Index: 2;
+	visibility: hidden;
+}
+
+/* Icon Panel Open */
+#panelOpenHolder {
 	border-radius: 30%;
 	position: fixed;
 	top: 8%;
@@ -65,80 +132,16 @@
 	background: #D2691E;
 	opacity: 0.85; 
 }
+#panelOpen {
+	position: fixed;
+	right: 5.4%;
+	top: 8.2%;
+	color: white;
+	z-Index: 2;
+}
 
-/* --- Icon-panel --- */
-#icon_panel {
-	border-radius: 5%;
-	position: fixed;
-	top: 8%;
-	right: 2.5%;
-	width: 13.35%;
-	height: 23.5%;
-	background: #D2691E;
-	z-Index: 1;
-	opacity: 0.85; 
-}
-/*
-#icon_panel {
-	border-radius: 10%;
-	position: fixed;
-	top: 8%;
-	left: 72.5%;
-	width: 25%;
-	height: 7.5%;
-	background: #D2691E;
-	z-Index: 1;
-	opacity: 0.85; 
-}
-*/
-
-/* --- Draggable Poop --- */
-#poopDraggable {
-	position: fixed;
-	top: 8%;
-	right: 2.9%;
-	width: 12.5%;
-	height: 7.7%;
-	z-Index: 2;
-}
-/* --- Draggable Bin --- */
-#binDraggable {
-	position: fixed;
-	top: 16%;
-	right: 2.9%;
-	width: 12.5%;
-	height: 7.7%;
-	z-Index: 2;
-}
-/* --- Draggable Man --- */
-#manDraggable {
-	position: fixed;
-	top: 24.5%;
-	right: 4%;
-	width: 9.6%;
-	height: 5.9%;
-	z-Index: 2;
-}
-/* --- icon Selected state --- */
-.iconSelected {
-  opacity: 0.2;
-}
-/* --- Map element ---*/
-#map {
-	position: fixed;
-	width: 100%;
-	height: 100%;
-}
-/* ------ ?! ------ */
-.scroll {
-	height: 100%;
-}
-/* --- Text allignment in confirmation popups ---*/
-.popup-body{
-	text-align: center;
-}
-/* --- Pinpoint (refresh) panel --- */
-#pinpointContainer{
+/* Pinpoint button panel */
+#pinpointHolder{
 	border-radius: 30%;
 	position: fixed;
 	top: 8%;
@@ -156,9 +159,8 @@
 	z-Index: 2;
 	color: white;
 }
-
-/* --- nearBinButton panel --- */
-#nearestBinContainer {
+/* Nearest Bin Button panel */
+#nearestBinHolder {
 	border-radius: 30%;
 	position: fixed;
 	bottom: 4%;
@@ -169,11 +171,34 @@
 	background: #D2691E;
 	opacity: 0.85; 
 }
-
 #nearestBin {
 	position: fixed;
 	left: 4.2%;
 	bottom: 4%;
 	color: white;
 	z-Index: 2;
+}
+
+
+/*---------------------------*/
+/*-----------OTHER-----------*/
+/*---------------------------*/
+
+/* --- icon Selected state --- */
+.iconSelected {
+  opacity: 0.2;
+}
+/* --- Map element ---*/
+#map {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+}
+/* ------ ?! ------ */
+.scroll {
+	height: 100%;
+}
+/* --- Text allignment in confirmation popups ---*/
+.popup-body{
+	text-align: center;
 }
