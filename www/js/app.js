@@ -60,7 +60,7 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 			}
 		}
   })
-
+	
 	.state('app.recordLogs', {
 		url: '/recordLogs',
 		views: {
@@ -93,6 +93,7 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 			el.addEventListener(
 				'click',
 				function(e) {
+					//Allows the selecting of an icon
 					if (GlobalService.get_activeIcon() == false){
 						
 						this.classList.add('iconSelected');	//For CSS opacity change
@@ -100,6 +101,27 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 						GlobalService.set_activeIcon(true); 
 						GlobalService.set_iconType(this.id);				
 						
+					}
+					//Allows the changing of icon after an icon has been selected
+					else if (GlobalService.get_activeIcon() == true &&
+										this.id != GlobalService.get_iconType()){
+											
+						var poopItem = document.getElementById("poopDraggable");
+						var binItem = document.getElementById("binDraggable");
+						var manItem = document.getElementById("manDraggable");
+						
+						if (GlobalService.get_iconType() == "poopDraggable"){							
+							poopItem.classList.remove('iconSelected');
+						}
+						else if (GlobalService.get_iconType() == "binDraggable"){							
+							binItem.classList.remove('iconSelected');
+						}
+						else if (GlobalService.get_iconType() == "manDraggable"){							
+							manItem.classList.remove('iconSelected');
+						}
+						
+						this.classList.add('iconSelected');
+						GlobalService.set_iconType(this.id);
 					}
 					return false;
 				},
@@ -132,6 +154,7 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 										
 					var poopItem = document.getElementById("poopDraggable");
 					var binItem = document.getElementById("binDraggable");
+					var manItem = document.getElementById("manDraggable");
 					
 					//'Poop' panel icon selected
 					if (GlobalService.get_activeIcon() == true){
@@ -151,6 +174,13 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 							scope.$apply('click()');
 							
 							binItem.classList.remove('iconSelected');
+							GlobalService.set_activeIcon(false);
+						}
+						else if (GlobalService.get_iconType() == "manDraggable"){							
+							GlobalService.set_iconType(manItem.id);
+							scope.$apply('click()');
+							
+							manItem.classList.remove('iconSelected');
 							GlobalService.set_activeIcon(false);
 						}
 					}
@@ -274,8 +304,8 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 			doggyRecords.push(t);
 		},
 		
-		// Returns new Markers of type 'markerType' (that have not been Cached) 
-		get_newMarkers : function(param, markerType){
+		// Returns new (onscreen) Markers of 'markerType' 
+		get_newMarkers : function(params, markerType){
 			
 			if (markerType == "poop"){
 				markerArray = poopMarkers;
@@ -296,7 +326,7 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 					lng: markerArray[i].lng
 				}
 				
-				var pos2 = param.centre;
+				var pos2 = params.centre;
 				
 				var dist = getDistanceBetweenPoints(pos1,pos2,'miles');
 
@@ -304,7 +334,7 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 					if (!markerExists(markerArray[i].lat,
 							markerArray[i].lng, markerArray[i].icon)){
 						
-						if (dist < 0.8*param.boundingRadius){
+						if (dist < 0.8*params.boundingRadius){
 							nearbyMarkers.push(markerArray[i]);
 							addMarkerToCache(markerArray[i]);
 							markerCount++;
@@ -322,10 +352,11 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 		},
 		
 		// Return closest bin Marker
-		get_NearestBin : function(param){
+		get_NearestBin : function(loc){
 			// Reset the nearbyPoopMarker array
 			nearbyBinMarkers = [];
-			var nearestDist = param.boundingRadius;
+			
+			var nearestDist = 100;	//Currently set to check 100 miles for bins around the area
 			
 			for (i = 0; i < binMarkers.length ; i++){
 				var pos1 = {
@@ -333,7 +364,7 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 					lng: binMarkers[i].lng
 				}
 				
-				var pos2 = param.centre;
+				var pos2 = loc;
 				
 				var dist = getDistanceBetweenPoints(pos1,pos2,'miles');
 				

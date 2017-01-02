@@ -130,13 +130,12 @@ GlobalService, ConnectivityMonitor) {
 	//------------------------>
 	var apiKey = "AIzaSyD1-OU4tSucidW9oHkB5CCpLqSUT5fcl-E";
 	var map = null;
-	var latLng = null;
+	var iconLatLng = null;
 	
-	$scope.lat = null;
-	$scope.lng = null;
+	$scope.iconPanelShow = false;
 	
-	//var currentZ = 0;				// Tried fixing marker flickering issue by incrementing zIndex on replacement
-														// Don't think this worked..
+	//$scope.lat = null;
+	//$scope.lng = null;
 	
 	var markerCache = [];			// Cache of all markerData. THESE ARE NOT REFERENCES TO MARKER OBJECTS!
 														// It stores the MARKER DATA currently containing: 'lat', 'lng', 'icon.url'
@@ -146,10 +145,13 @@ GlobalService, ConnectivityMonitor) {
 														// so we may refactor 'markerCache' to store references instead of data.
 														// This will allow the users to remove delete Markers for instance.
 	
-	var userLoc; 							// Used to reference current location Marker and update to new location
+	$scope.userMarker; 					// Used to reference current location Marker and update to new location
 						
 														// When the afterImage option is enabled
 														// If update is called too quickly then there is an issue with Marker creation/deletion
+	
+	var manMarker = null;
+	
 	var autoUpdateOption = true;
 												
 	var afterImageOption = false;	
@@ -173,7 +175,11 @@ GlobalService, ConnectivityMonitor) {
     url: "img/Assets/dog_bin_small.png",
     //scaledSize: ''
 	};
-	var indicator_icon = {
+	var man_icon = {
+		url: "img/Assets/man-walking-dog_small.png",
+    scaledSize: ''
+	};
+	var indicator_icon = {		//Bin GIF that indicates the nearest bin to the user
 		url: "img/Assets/nearest-bin-small.gif",
 		//scaledSize: ''
 	};
@@ -241,8 +247,9 @@ GlobalService, ConnectivityMonitor) {
 			circle_iconA2.scaledSize = new google.maps.Size(50,50);
 			circle_iconA3.scaledSize = new google.maps.Size(50,50);
 			circle_iconA4.scaledSize = new google.maps.Size(50,50);
+			man_icon.scaledSize = new google.maps.Size(40,40);
 			
-			latLng = new google.maps.LatLng(position.coords.latitude,
+			var latLng = new google.maps.LatLng(position.coords.latitude,
 									 position.coords.longitude);
 	 
 			var mapOptions = {
@@ -324,7 +331,7 @@ GlobalService, ConnectivityMonitor) {
 				binLats.push(53.641534048101576);binLngs.push(-2.9661154747009277);			
 					
 				for (i = 0; i < poopLats.length; i++){
-					var myLatLng = new google.maps.LatLng({lat: poopLats[i], lng: poopLngs[i]});
+					var myLatLng = new google.maps.LatLng(poopLats[i],poopLngs[i]);
 					var marker = new google.maps.Marker({
 							position: myLatLng,
 							icon: poop_icon
@@ -359,7 +366,7 @@ GlobalService, ConnectivityMonitor) {
 					icon: circle_icon,
 					position: latLng
 				});    
-				userLoc = marker;
+				$scope.userMarker = marker;
 				
 				loadMarkers();
 				
@@ -392,15 +399,14 @@ GlobalService, ConnectivityMonitor) {
 		
 		$cordovaGeolocation.getCurrentPosition(options).then(function(position){
 			
-			updateLatLng = new google.maps.LatLng(position.coords.latitude,
-										 position.coords.longitude);
+			// var updateLatLng = new google.maps.LatLng(position.coords.latitude,
+										 // position.coords.longitude);
 		
-			// Changing latLng used to test movement
-			
-			// updateLatLng =  new google.maps.LatLng(userLoc.getPosition().lat()+((Math.random()/4)-0.1)*0.0002, 
-											// userLoc.getPosition().lng()+((Math.random()/4)-0.1)*0.0002);
+			// Simulating movement by changing the latLng
+			var updateLatLng =  new google.maps.LatLng($scope.userMarker.getPosition().lat()+((Math.random()/4)-0.1)*0.0002, 
+											$scope.userMarker.getPosition().lng()+((Math.random()/4)-0.1)*0.0002);
 		
-			userLoc.setPosition(updateLatLng);
+			$scope.userMarker.setPosition(updateLatLng);
 			
 			//$scope.map.panTo(updateLatLng);
 			
@@ -416,7 +422,7 @@ GlobalService, ConnectivityMonitor) {
 				afterImage_3.setIcon(circle_iconA3);
 				afterImage_2 = afterImage_1;
 				afterImage_2.setIcon(circle_iconA2);
-				afterImage_1 = userLoc;
+				afterImage_1 = $scope.userMarker;
 				afterImage_1.setIcon(circle_iconA1);
 				updateCount++;
 			}else if (updateCount == 3){
@@ -426,7 +432,7 @@ GlobalService, ConnectivityMonitor) {
 				afterImage_3.setIcon(circle_iconA3);
 				afterImage_2 = afterImage_1;
 				afterImage_2.setIcon(circle_iconA2);
-				afterImage_1 = userLoc;
+				afterImage_1 = $scope.userMarker;
 				afterImage_1.setIcon(circle_iconA1);
 				updateCount++;
 			}else if (updateCount == 2){
@@ -434,24 +440,24 @@ GlobalService, ConnectivityMonitor) {
 				afterImage_3.setIcon(circle_iconA3);
 				afterImage_2 = afterImage_1;
 				afterImage_2.setIcon(circle_iconA2);
-				afterImage_1 = userLoc;
+				afterImage_1 = $scope.userMarker;
 				afterImage_1.setIcon(circle_iconA1);
 				updateCount++
 			}else if (updateCount == 1){
 				afterImage_2 = afterImage_1;
 				afterImage_2.setIcon(circle_iconA2);
-				afterImage_1 = userLoc;
+				afterImage_1 = $scope.userMarker;
 				afterImage_1.setIcon(circle_iconA1);
 				updateCount++
 			}else if (updateCount == 0){
-				afterImage_1 = userLoc;
+				afterImage_1 = $scope.userMarker;
 				afterImage_1.setIcon(circle_iconA1);
 				updateCount++
 			}
 		}
-		
+
 		// Call the autoUpdate() function every 2 seconds
-		setTimeout(autoUpdate, 50);
+		setTimeout(autoUpdate, 5);
 	}
 	
 	// Refreshes the map - currently has some unknown stutter ...
@@ -481,12 +487,12 @@ GlobalService, ConnectivityMonitor) {
 		
 		$cordovaGeolocation.getCurrentPosition(options).then(function(position){
 			
-			latLng = new google.maps.LatLng(position.coords.latitude,
+			var latLng = new google.maps.LatLng(position.coords.latitude,
 									 position.coords.longitude);
 			
 			$scope.map.panTo(latLng);
 
-			userLoc.setPosition(latLng);
+			$scope.userMarker.setPosition(latLng);
 		
 		}, function(error){
 			console.log("Could not get location");
@@ -511,7 +517,7 @@ GlobalService, ConnectivityMonitor) {
 										 
 		//6.76% = Nav bar portion size of the Screen
 		
-		latLng = $scope.map.getProjection().fromPointToLatLng(worldPoint);
+		iconLatLng = $scope.map.getProjection().fromPointToLatLng(worldPoint);
 	
 		//Poop panel icon selected -> add poop marker
 		if (GlobalService.get_iconType() == "poopDraggable"){
@@ -522,12 +528,18 @@ GlobalService, ConnectivityMonitor) {
 		else if (GlobalService.get_iconType() == "binDraggable"){
 			$scope.showBConfirm();
 		}
+		
+		//Man panel icon selected -> add bin marker
+		else if (GlobalService.get_iconType() == "manDraggable"){
+			$scope.addManMarker();
+		}
+		
 	}
 	
 	//Adds the poop Marker to the map (after record has been created)
 	$scope.addPoopMarker = function(){
 		var marker = new google.maps.Marker({
-			position: latLng,
+			position: iconLatLng,
 			map: $scope.map,
 			animation: google.maps.Animation.DROP,
 			zIndex: 0,
@@ -554,14 +566,14 @@ GlobalService, ConnectivityMonitor) {
 		*/
 		
 		GlobalService.set_activeIcon("");
-		confirmation = false;
+		$scope.iconPanelShow = false;
 	}
 	
 	//Adds the bin Marker to the map
 	$scope.addBinMarker = function() {
 		
 		var marker = new google.maps.Marker({
-			position: latLng,
+			position: iconLatLng,
 			map: $scope.map,
 			animation: google.maps.Animation.DROP,
 			zIndex: 0,
@@ -580,17 +592,29 @@ GlobalService, ConnectivityMonitor) {
 		// Adds the marker to markerCache (so it won't be re-added)
 		addMarkerToCache(marker);
 		
-		/*
-		var infoWindow = new google.maps.InfoWindow({
-			content: "Some information!"
-		});
-	 
-		google.maps.event.addListener(marker, 'click', function () {
-			infoWindow.open($scope.map, marker);
-		});
-		*/
 		GlobalService.set_activeIcon("");
-		confirmation = false;
+		$scope.iconPanelShow = false;
+	}
+	
+	//Adds the bin Marker to the map
+	$scope.addManMarker = function() {
+		
+		if (manMarker != null){
+			manMarker.setVisible(true);
+			manMarker.setPosition(iconLatLng);
+		}else {
+			var marker = new google.maps.Marker({
+				position: iconLatLng,
+				map: $scope.map,		
+				zIndex: 1,
+				icon: man_icon
+			});
+			manMarker = marker;
+		}
+		GlobalService.set_activeIcon("");
+		$scope.findNearestBin(manMarker);
+		
+		$scope.iconPanelShow = false;
 	}
 	
 	//-------------------------------->
@@ -702,7 +726,7 @@ GlobalService, ConnectivityMonitor) {
 					currentIcon = bin_icon;
 				}
 			
-				latLng = new google.maps.LatLng(markers[i].lat,markers[i].lng);
+				var latLng = new google.maps.LatLng(markers[i].lat,markers[i].lng);
 				
 				// Adds the (new) marker to the map
 				var marker = new google.maps.Marker({
@@ -725,8 +749,18 @@ GlobalService, ConnectivityMonitor) {
 		}	
   }
 	
+	// CURRENT BUG: SOMETIMES DOESNT UPDATE TO A CLOSER BIN?
+	
 	// Find the nearest bin and add a Marker to indicate it (replacing the previous marker temporarily)
-	$scope.findNearestBin = function(){
+	$scope.findNearestBin = function(loc){
+		
+		if (loc.getIcon().url == $scope.userMarker.getIcon().url){
+			if (manMarker != null){
+				manMarker.setVisible(false);
+			}
+		}
+		
+		var binLatLng;
 		
 		// (Exclude the first case)
 		if (tempBinMarker != null){
@@ -737,38 +771,13 @@ GlobalService, ConnectivityMonitor) {
 			nearestBinMarker.setMap($scope.map);
 		}
 		
-		var center = userLoc.getPosition();
-		var bounds = $scope.map.getBounds();
-		var zoom = $scope.map.getZoom();
-		
 		//Convert objects returned by Google to be more readable
-		var centerNorm = {
-			lat: center.lat(),
-			lng: center.lng()
+		var center = {
+			lat: loc.getPosition().lat(),
+			lng: loc.getPosition().lng()
 		};
 	
-	  var boundsNorm = {
-			northeast: {
-				lat: bounds.getNorthEast().lat(),
-				lng: bounds.getNorthEast().lng()
-			},
-			southwest: {
-				lat: bounds.getSouthWest().lat(),
-				lng: bounds.getSouthWest().lng()
-			}
-		};
-	
-		var boundingRadius = getBoundingRadius(centerNorm, boundsNorm);
-		
-		//Use these parameters to grab only nearby markers (onscreen)
-		var params = {
-			"centre": centerNorm,
-			"bounds": boundsNorm,
-			"zoom": zoom,
-			"boundingRadius": boundingRadius
-		};
-			
-		var nearestBin = GlobalService.get_NearestBin(params);
+		var nearestBin = GlobalService.get_NearestBin(center);
 		
 		// We find the reference to the nearest Bin currently on the map (from binMarkerCache)
 		// and set it to hide temporarily while we replace it with a new indicator
@@ -783,19 +792,19 @@ GlobalService, ConnectivityMonitor) {
 			}
 		}
 		
-		latLng = new google.maps.LatLng(nearestBin.lat,
+		binLatLng = new google.maps.LatLng(nearestBin.lat,
 						 nearestBin.lng);
 		
 		var marker = new google.maps.Marker({
 			map: $scope.map,
 			animation: google.maps.Animation.DROP,
-			position: latLng,
+			position: binLatLng,
 			icon: indicator_icon,
 			zIndex: 1,
 			optimized: false
 		});
 		
-		$scope.map.panTo(latLng);
+		$scope.map.panTo(binLatLng);
 		
 		tempBinMarker = marker;
 	}
@@ -863,6 +872,11 @@ GlobalService, ConnectivityMonitor) {
 	//--------------------------->
 	//----- Other functions ----->
 	//-------------------------->
+	
+	// Displays icon Panel
+	$scope.showIconPanel = function(){
+		$scope.iconPanelShow = true;
+	}
 	
 	// Add info Window to Marker
 	function addInfoWindow(marker, message) {

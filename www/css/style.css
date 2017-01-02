@@ -53,7 +53,32 @@
 /* ----- Doggy Map page ----- */
 /*----------------------------*/
 
+/* --- Icon Panel Open --- */
+#iconPanelOpen {
+	border-radius: 30%;
+	position: fixed;
+	top: 8%;
+	right: 2.5%;
+	height: 7.5%;
+	width: 13.35%;
+	z-index: 1;
+	background: #D2691E;
+	opacity: 0.85; 
+}
+
 /* --- Icon-panel --- */
+#icon_panel {
+	border-radius: 5%;
+	position: fixed;
+	top: 8%;
+	right: 2.5%;
+	width: 13.35%;
+	height: 23.5%;
+	background: #D2691E;
+	z-Index: 1;
+	opacity: 0.85; 
+}
+/*
 #icon_panel {
 	border-radius: 10%;
 	position: fixed;
@@ -63,24 +88,35 @@
 	height: 7.5%;
 	background: #D2691E;
 	z-Index: 1;
-	opacity: 0.9; 
+	opacity: 0.85; 
 }
+*/
+
 /* --- Draggable Poop --- */
 #poopDraggable {
 	position: fixed;
 	top: 8%;
-	left: 73%;
-	width: 12%;
-	height: 7.35%;
+	right: 2.9%;
+	width: 12.5%;
+	height: 7.7%;
 	z-Index: 2;
 }
 /* --- Draggable Bin --- */
 #binDraggable {
 	position: fixed;
-	top: 8%;
-	left: 85.5%;
-	width: 12%;
-	height: 7.35%;
+	top: 16%;
+	right: 2.9%;
+	width: 12.5%;
+	height: 7.7%;
+	z-Index: 2;
+}
+/* --- Draggable Man --- */
+#manDraggable {
+	position: fixed;
+	top: 24.5%;
+	right: 4%;
+	width: 9.6%;
+	height: 5.9%;
 	z-Index: 2;
 }
 /* --- icon Selected state --- */
@@ -111,11 +147,11 @@
 	width: 13.35%;
 	z-index: 1;
 	background: #D2691E;
-	opacity: 0.9; 
+	opacity: 0.85; 
 }
 #pinpoint {
 	position: fixed;
-	left: 3.4%;
+	left: 3.6%;
 	top: 8.3%;
 	z-Index: 2;
 	color: white;
@@ -131,7 +167,7 @@
 	width: 13.35%;
 	z-index: 1;
 	background: #D2691E;
-	opacity: 0.9; 
+	opacity: 0.85; 
 }
 
 #nearestBin {

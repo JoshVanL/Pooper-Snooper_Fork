@@ -6,17 +6,21 @@
 		</button>
 		
 		<div id="nearestBinContainer"></div>
-		<button id="nearestBin" class="button button-icon" ng-mouseup="findNearestBin()">
+		<button id="nearestBin" class="button button-icon" ng-mouseup="findNearestBin(userMarker)">
 				<i class="icon ion-search"></i>
 		</button>
 		
 		<div id="map" droppable data-tap-disabled="true" click="handleIconPress()"></div>
 	
-		<div id="icon_panel"></div>
+		<div ng-show="!iconPanelShow" id="iconPanelOpen" ng-mouseup="showIconPanel()"></div>
+	
+		<div ng-show="iconPanelShow" id="icon_panel"></div>
 		
-		<img id="poopDraggable" draggable src="img/Assets/poop.png">
+		<img ng-show="iconPanelShow" id="poopDraggable" draggable src="img/Assets/poop.png">
 
-		<img id="binDraggable" draggable src="img/Assets/dog_bin.png">
+		<img ng-show="iconPanelShow" id="binDraggable" draggable src="img/Assets/dog_bin.png">
 
+		<img ng-show="iconPanelShow" id="manDraggable" draggable src="img/Assets/man-walking-dog.png">
+		
   </ion-content>
 </ion-view>
