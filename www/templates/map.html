@@ -1,4 +1,11 @@
-<ion-view view-title="<b>Doggy map!</b>" >
+<ion-view view-title="<b>Doggy map!</b>">
+
+	<ion-nav-buttons side="right">
+		<button class="button button-icon" ng-click="tutorialStart()">
+			<i class="icon ion-ios-information-outline"></i>
+		</button>
+	</ion-nav-buttons>
+
 	<ion-content scroll="false">
 		<div id="pinpointHolder" class="animated bounceInLeft"></div>
 		<button id="pinpoint" class="button button-icon animated bounceInLeft" 
@@ -34,4 +41,5 @@
 		<img id="manDraggable" draggable src="img/Assets/man-walking-dog.png">
 		
   </ion-content>
+	
 </ion-view>

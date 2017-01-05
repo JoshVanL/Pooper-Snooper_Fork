@@ -36,10 +36,10 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
   .state('app.welcome', {
 		url: '/welcome',
 		views: {
-		'menuContent': {
-			templateUrl: 'templates/welcome.html'
+			'menuContent': {
+				templateUrl: 'templates/welcome.html'
+			}
 		}
-	}
   })	
   
   .state('app.about', {
@@ -123,31 +123,24 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 						this.classList.add('iconSelected');
 						GlobalService.set_iconType(this.id);
 					}
-					//Allows the deselection of current icon 
+					//Allows the de-selection of current icon 
 					else if (GlobalService.get_activeIcon() == true &&
 										this.id == GlobalService.get_iconType()){
 						
 						var poopItem = document.getElementById("poopDraggable");
 						var binItem = document.getElementById("binDraggable");
 						var manItem = document.getElementById("manDraggable");
-						
+				
 						if (GlobalService.get_iconType() == "poopDraggable"){							
 							poopItem.classList.remove('iconSelected');					
-							GlobalService.set_activeIcon(false);
-							GlobalService.set_iconType('');	
-						}
-						else if (GlobalService.get_iconType() == "binDraggable"){							
+						}else if (GlobalService.get_iconType() == "binDraggable"){							
 							binItem.classList.remove('iconSelected');
-							GlobalService.set_activeIcon(false);
-							GlobalService.set_iconType('');	
-						}
-						else if (GlobalService.get_iconType() == "manDraggable"){							
+						}else if (GlobalService.get_iconType() == "manDraggable"){							
 							manItem.classList.remove('iconSelected');
-							GlobalService.set_activeIcon(false);
-							GlobalService.set_iconType('');	
 						}
-						
-						
+				
+						GlobalService.set_activeIcon(false);
+						GlobalService.set_iconType('');
 					}
 					return false;
 				},
@@ -353,7 +346,7 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 					if (!markerExists(markerArray[i].lat,
 							markerArray[i].lng, markerArray[i].icon)){
 						
-						if (dist < 0.8*params.boundingRadius){
+						if (dist < params.boundingRadius){
 							nearbyMarkers.push(markerArray[i]);
 							addMarkerToCache(markerArray[i]);
 							markerCount++;

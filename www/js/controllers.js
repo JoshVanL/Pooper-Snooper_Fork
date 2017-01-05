@@ -62,7 +62,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 	var emptyForm = angular.copy($scope.record);
 	
 	// Create and load the Modal
-  $ionicModal.fromTemplateUrl('templates/newRecord.html', function(modal) {
+  $ionicModal.fromTemplateUrl('templates/modal/newRecord-modal.html', function(modal) {
     $scope.recordModal = modal;
   }, {
     scope: $scope,
@@ -144,7 +144,7 @@ GlobalService, ConnectivityMonitor) {
 						
 	var manMarker = null;				// Reference to the 'man Marker' (finds nearestBin to the Marker location)
 	
-	var autoUpdateOption = true;	// Not currently used				
+	var autoUpdateOption = true;		
 
 	var nearestBinMarker;					// Reference to the nearest bin marker (original) that we hide and
 																// replace with the GIF marker indicating the nearest bin
@@ -191,11 +191,17 @@ GlobalService, ConnectivityMonitor) {
 	
 	
 	// Fixes the error where opening a modal would cause the map to 'break' 
+	// Auto if the page has been visited before it will resume autoUpdate()
 	$scope.$on('$ionicView.afterEnter', function() {
 		ionic.trigger('resize');
+		if (autoUpdateOption == false){
+			autoUpdateOption = true;
+			autoUpdate();
+			console.log("ABC");
+		}
 	});
 
-	// Resets button visibility to default on exit
+	// Resets button animation classes and stops autoUpdate
 	$scope.$on('$ionicView.afterLeave', function(){
     document.getElementById("panelOpenHolder").style.visibility = "visible";
 		document.getElementById("panelOpenHolder").className = "animated bounceInRight";
@@ -214,6 +220,8 @@ GlobalService, ConnectivityMonitor) {
 		document.getElementById("binDraggable").className = "";
 		document.getElementById("manDraggable").style.visibility = "hidden";
 		document.getElementById("manDraggable").className = "";
+		
+		autoUpdateOption = false;
   });
 	
 	//------------------------->
@@ -264,6 +272,7 @@ GlobalService, ConnectivityMonitor) {
 				zoom: 16,
 				mapTypeId: google.maps.MapTypeId.ROADMAP,
 				mapTypeControl: false,
+				fullscreenControl: false,
 				streetViewControl: false
 			};
 			
@@ -368,7 +377,7 @@ GlobalService, ConnectivityMonitor) {
 				// INITIAL USER LOCATION Marker
 				var marker = new google.maps.Marker({
 					map: $scope.map,
-					animation: google.maps.Animation.DROP,
+					//animation: google.maps.Animation.DROP,
 					zIndex: 100,
 					icon: circle_icon,
 					position: latLng
@@ -402,25 +411,27 @@ GlobalService, ConnectivityMonitor) {
 	
 	// Auto Updates lngLat and user location
 	function autoUpdate(){
-		var options = {timeout: 10000, enableHighAccuracy: true};
-		
-		$cordovaGeolocation.getCurrentPosition(options).then(function(position){
+		if(autoUpdateOption){
+			var options = {timeout: 10000, enableHighAccuracy: true};
 			
-			// var updateLatLng = new google.maps.LatLng(position.coords.latitude,
-										 // position.coords.longitude);
-		
-			// Simulating movement by changing the latLng
-			var updateLatLng =  new google.maps.LatLng($scope.userMarker.getPosition().lat()+((Math.random()/4)-0.1)*0.0001, 
-											$scope.userMarker.getPosition().lng()+((Math.random()/4)-0.1)*0.0001);
-		
-			$scope.userMarker.setPosition(updateLatLng);
+			$cordovaGeolocation.getCurrentPosition(options).then(function(position){
+				
+				// var updateLatLng = new google.maps.LatLng(position.coords.latitude,
+											 // position.coords.longitude);
 			
-			//$scope.map.panTo(updateLatLng);
+				// Simulating movement by changing the latLng
+				var updateLatLng =  new google.maps.LatLng($scope.userMarker.getPosition().lat()+((Math.random()/4)-0.1)*0.0001, 
+												$scope.userMarker.getPosition().lng()+((Math.random()/4)-0.1)*0.0001);
 			
-		});
+				$scope.userMarker.setPosition(updateLatLng);
+				
+				//$scope.map.panTo(updateLatLng);
+				
+			});
 
-		// Call the autoUpdate() function every 2 seconds
-		setTimeout(autoUpdate, 5);
+			// Call the autoUpdate() function every 1 seconds
+			setTimeout(autoUpdate, 5);
+		}
 	}
 	
 	// Refreshes the map - currently has some unknown stutter ...
@@ -688,7 +699,7 @@ GlobalService, ConnectivityMonitor) {
 				// Adds the (new) marker to the map
 				var marker = new google.maps.Marker({
 					map: $scope.map,
-					animation: google.maps.Animation.DROP,
+					//animation: google.maps.Animation.DROP,
 					position: latLng,
 					zIndex: 0,
 					visible: markerVisibility,
@@ -720,13 +731,9 @@ GlobalService, ConnectivityMonitor) {
 				manMarker.setVisible(false);
 			}
 		}
-		
-		var binLatLng;
-		
-		// (Exclude the first case)
+		// Replaces the indicator GIF with the original marker
 		if (tempBinMarker != null){
 			tempBinMarker.setMap(null);
-			
 		}
 		if (nearestBinMarker != null){
 			nearestBinMarker.setVisible(true);
@@ -738,10 +745,13 @@ GlobalService, ConnectivityMonitor) {
 			lng: loc.getPosition().lng()
 		};
 	
+		// Receive the nearest bin Marker's DATA from Database.
 		var nearestBin = GlobalService.get_NearestBin(center);
 		
 		// Find the reference to the nearest Bin Marker if already loaded (from binMarkerCache),
 		// hide it temporarily and replace with the GIF indicator
+		// Note: There is a chance that the nearest Bin Marker has not been loaded. In this case
+		//       there is nothing to hide and it will be hidden when added if appropriate.
 		for (var i = 0; i < binMarkerCache.length; i++){
 			if ((binMarkerCache[i].getPosition().lat() == nearestBin.lat) && 
 					(binMarkerCache[i].getPosition().lng() == nearestBin.lng) &&
@@ -752,13 +762,12 @@ GlobalService, ConnectivityMonitor) {
 				break;
 			}
 		}
-		
-		binLatLng = new google.maps.LatLng(nearestBin.lat,
+	
+		var binLatLng = new google.maps.LatLng(nearestBin.lat,
 						 nearestBin.lng);
 
 		var marker = new google.maps.Marker({
 			map: $scope.map,
-			animation: google.maps.Animation.DROP,
 			position: binLatLng,
 			icon: nearestBin_Icon,
 			zIndex: 1,
@@ -887,6 +896,24 @@ GlobalService, ConnectivityMonitor) {
 		document.getElementById("binDraggable").className = "";
 		document.getElementById("manDraggable").style.visibility = "hidden";
 		document.getElementById("manDraggable").className = "";
+		
+		if (GlobalService.get_activeIcon() == true){
+			var poopItem = document.getElementById("poopDraggable");
+			var binItem = document.getElementById("binDraggable");
+			var manItem = document.getElementById("manDraggable");
+	
+			if (GlobalService.get_iconType() == "poopDraggable"){							
+				poopItem.classList.remove('iconSelected');					
+			}else if (GlobalService.get_iconType() == "binDraggable"){							
+				binItem.classList.remove('iconSelected');
+			}else if (GlobalService.get_iconType() == "manDraggable"){							
+				manItem.classList.remove('iconSelected');
+			}
+	
+			GlobalService.set_activeIcon(false);
+			GlobalService.set_iconType('');
+		}
+		
 	}
 	
 	// Add info Window to Marker
@@ -933,9 +960,9 @@ GlobalService, ConnectivityMonitor) {
     }
   }
 	
-	//-------------------------------------->
-	//---- New Record (Modal) Functions ---->
-	//------------------------------------->
+	//------------------------------>
+	//---- New Record Functions ---->
+	//------------------------------>
 	
 	// Blank form used reset fields
 	$scope.record = {
@@ -946,7 +973,7 @@ GlobalService, ConnectivityMonitor) {
 	var emptyForm = angular.copy($scope.record);
 	
 	// Create and load the Modal
-	$ionicModal.fromTemplateUrl('templates/newPoop.html', function(modal) {
+	$ionicModal.fromTemplateUrl('templates/modal/newPoop-modal.html', function(modal) {
 		$scope.poopModal = modal;
 	}, {
 		scope: $scope,
@@ -982,6 +1009,52 @@ GlobalService, ConnectivityMonitor) {
 			console.log("Location not entered!");
 		}
 	};
+	
+	//---------------------------->
+	//---- Tutorial Functions ---->
+	//--------------------------->
+	
+	$ionicModal.fromTemplateUrl('templates/modal/map-help/map-help-modal.html',
+	function(modal) {
+		$scope.helpModal = modal;
+	}, {
+		scope: $scope,
+		animation: 'slide-in-left'
+	});
+	
+	// Tutorial modal open
+	$scope.tutorialStart = function() {
+		$scope.helpModal.show();
+		
+		$scope.data = {};
+
+		var setupSlider = function() {
+			//some options to pass to our slider
+			$scope.data.sliderOptions = {
+				loop: false,
+				effect: 'fade',
+				speed: 300,
+			};
+
+			$scope.$on("$ionicSlides.sliderInitialized", function(event, data){
+				$scope.slider = data.slider;
+			});
+
+			$scope.$on("$ionicSlides.slideChangeStart", function(event, data){
+			});
+
+			$scope.$on("$ionicSlides.slideChangeEnd", function(event, data){
+				$scope.activeIndex = data.slider.activeIndex;
+				$scope.previousIndex = data.slider.previousIndex;
+			});
+		};
+		setupSlider();
+	}
+	
+	// Tutorial modal close
+	$scope.tutorialEnd = function() {
+		$scope.helpModal.hide();
+	}
 	
 	//------------------------------------------------>
 	//---- Confirm dialog resources and Functions ---->

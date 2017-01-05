@@ -179,7 +179,28 @@
 	z-Index: 2;
 }
 
+/*---------------------------*/
+/*------TUTORIAL MODALS------*/
+/*---------------------------*/
 
+.map-help-Modal{
+	min-height: 0;
+	border-radius: 10px;
+	width: 80%;
+	height: 60%;
+	top: 20%;
+	bottom: 20%;
+	left: 10%; 
+	right: 10%;
+	text-align: center;
+}
+
+#map-model-close{
+	position: fixed;
+	top: -80%;
+	right: -8%;
+	z-Index: 1;
+}
 /*---------------------------*/
 /*-----------OTHER-----------*/
 /*---------------------------*/
@@ -202,3 +223,27 @@
 .popup-body{
 	text-align: center;
 }
+
+.text-center-custom{
+	text-align: center !important;
+}
+
+/*----------------------------------*/
+/*----------- ANIMATIONS -----------*/
+/*----------------------------------*/
+
+.slide-in-left {
+  -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0); }
+
+.slide-in-left.ng-enter, .slide-in-left > .ng-enter {
+  -webkit-transition: all cubic-bezier(0.1, 0.7, 0.1, 1) 400ms;
+  transition: all cubic-bezier(0.1, 0.7, 0.1, 1) 400ms; }
+
+.slide-in-left.ng-enter-active, .slide-in-left > .ng-enter-active {
+  -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0); }
+
+.slide-in-left.ng-leave, .slide-in-left > .ng-leave {
+  -webkit-transition: all ease-in-out 300ms;
+  transition: all ease-in-out 300ms; }
