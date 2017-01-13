@@ -416,12 +416,12 @@ GlobalService, ConnectivityMonitor) {
 			
 			$cordovaGeolocation.getCurrentPosition(options).then(function(position){
 				
-				// var updateLatLng = new google.maps.LatLng(position.coords.latitude,
-											 // position.coords.longitude);
+				var updateLatLng = new google.maps.LatLng(position.coords.latitude,
+											 position.coords.longitude);
 			
 				// Simulating movement by changing the latLng
-				var updateLatLng =  new google.maps.LatLng($scope.userMarker.getPosition().lat()+((Math.random()/4)-0.1)*0.0001, 
-												$scope.userMarker.getPosition().lng()+((Math.random()/4)-0.1)*0.0001);
+				// var updateLatLng =  new google.maps.LatLng($scope.userMarker.getPosition().lat()+((Math.random()/4)-0.1)*0.0001, 
+												// $scope.userMarker.getPosition().lng()+((Math.random()/4)-0.1)*0.0001);
 			
 				$scope.userMarker.setPosition(updateLatLng);
 				
