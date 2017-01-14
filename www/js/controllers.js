@@ -203,6 +203,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
       }
       if(connLost == true) {
         connLost = false;
+        loadGoogleMaps();
         initMap();
       }
     });
