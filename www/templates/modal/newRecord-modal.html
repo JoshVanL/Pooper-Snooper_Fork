@@ -5,8 +5,8 @@
 	<!-- Modal header bar -->
 	<ion-header-bar class="bar-secondary">
 		<h1 class="title">
-			New doggy finding 
-			<i class="icon ion-trash-b"></i> 
+			New doggy finding
+			<i class="icon ion-trash-b"></i>
 		</h1>
 		<button class="button button-clear button-positive" ng-click="closeNewRecord()" side="right">Cancel</button>
 	</ion-header-bar>
@@ -18,40 +18,40 @@
 			<div class="list">
 				<!--
 				<label class="item item-input">
-					<span class="input-label">Datetime</span>
-					<input type="datetime" name="datetime" ng-model="record.datetime">
-				</label>
-				-->
-				<label class="item item-input">
-					<span class="input-label">Date</span>
-					<input type="date" name="date" ng-model="record.date">
-				</label>
-				<label class="item item-input">
-					<span class="input-label">Time</span>
-					<input type="time" name="time" ng-model="record.time">
-				</label>
-				<label class="item item-input">
-					<span class="input-label">Location</span>
-					<input type="text" name="location" ng-model="record.location" ng-minlength="4" required>
-				</label>
-				<div class="padding">								
-					<button type="button" class="button button-block button-balanced" ng-click="findLocation()">
-						<i class="icon ion-ios-search"></i>
-						Find my location
-					</button>
-				</div>
-				
-			</div>
-			<div class="padding">
-				<p ng-show="newRecord.location.$error.required">* Location is required</p>
-			</div>
-			<div class="padding">
-				<button type="submit" class="button button-block button-positive" ng-disabled="newRecord.$invalid">
-					Create record
-				</button>
-			</div>
-		</form>
-								
-	</ion-content>
+				<span class="input-label">Datetime</span>
+				<input type="datetime" name="datetime" ng-model="record.datetime">
+			</label>
+		-->
+		<label class="item item-input">
+			<span class="input-label">Date</span>
+			{{record.dateTime.getDate()}}/{{record.dateTime.getMonth()+1}}/{{record.dateTime.getFullYear()}}
+		</label>
+		<label class="item item-input">
+			<span class="input-label">Time</span>
+			{{record.dateTime.getHours()}}:{{record.dateTime.getMinutes()}}
+		</label>
+		<label class="item item-input">
+			<span class="input-label">Location</span>
+			{{myLocation}}
+		</label>
+		<div class="padding">
+			<button type="button" class="button button-block button-balanced" ng-click="findLocation()">
+				<i class="icon ion-ios-search"></i>
+				Find my location
+			</button>
+		</div>
+
+	</div>
+	<div class="padding">
+		<p ng-show="newRecord.location.$error.required">* Location is required</p>
+	</div>
+	<div class="padding">
+		<button type="submit" class="button button-block button-positive" ng-disabled="newRecord.$invalid">
+			Create record
+		</button>
+	</div>
+</form>
+
+</ion-content>
 
 </div>

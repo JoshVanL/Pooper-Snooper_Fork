@@ -6,7 +6,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
   // when they are recreated or on app start, instead of every page change.
   // To listen for when this page is active (for example, to refresh data),
   // listen for the $ionicView.enter event:
-  //$scope.$on('$ionicView.enter', function(e) {
+  //$scope.$on('$ionicView.enter', function(e)
   //
 
   // Form data for the login modal
@@ -45,7 +45,10 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 /* ------------------------------------------------ */
 /* ------------ Record Logs Controller ------------ */
 /* ------------------------------------------------ */
-.controller('RecordLogsCtrl', function($scope, $ionicModal, $filter, GlobalService) {
+.controller('RecordLogsCtrl', function($scope, $ionicModal, $filter, $ionicLoading, $cordovaGeolocation, GlobalService, $cordovaSQLite) {
+
+  var db = $cordovaSQLite.openDB({name:'tester.db',location:'default'});
+  $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS dogFindings (id integer primary key, DateTime text, Location text, Image blob)");
 
   //Update record logs from the factory service upon entering page
   $scope.$on('$ionicView.afterEnter', function() {
@@ -54,10 +57,12 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 
   // Blank form used reset fields
   $scope.record = {
-    date: "",
-    time: "",
-    location: ""
+    dateTime: "",
+    lat: "",
+    long: ""
   }
+  $scope.myLocation = "";
+
   // Blank form used to reset fields
   var emptyForm = angular.copy($scope.record);
 
@@ -69,41 +74,136 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
     animation: 'slide-in-up'
   });
 
+
+  $scope.doRefresh = function() {
+    $scope.records = [];
+    var query = "SELECT * FROM dogFindings";
+    $cordovaSQLite.execute(db, query, []).then(function(res) {
+      if(res.rows.length > 0){
+        for (var i=0; i<res.rows.length; i++){
+
+          $scope.records.push({
+            dateTime : res.rows.item(i).DateTime,
+            location : res.rows.item(i).Location,
+            id : res.rows.item(i).id
+          });
+          var ids = res.rows.item(i).id;
+          console.log(ids);
+        }
+      }
+    }, function(error){
+      console.error();(error);
+    });
+    // Stop the ion-refresher from spinning
+    $scope.$broadcast('scroll.refreshComplete');
+  };
+
   // Called when the form is submitted
   $scope.createRecord = function(record) {
-    if (record.location.length > 0){
-      GlobalService.push_doggyRecords({
-        date: record.date,
-        time: record.time,
-        location: record.location
-      });
+    //if (record.location.length > 0){
+    //insert record in database
+    var query = "INSERT INTO dogFindings (DateTime, Location, Image) VALUES (?,?,?)";
+    $cordovaSQLite.execute(db, query, [record.dateTime, record.location, record.imgBlob]).then(function(res) {
+      console.log("INSERT ID -> " + res.insertId);
+    }, function (err) {
+      console.error(err);
+    });
 
-      $scope.records = angular.copy(GlobalService.get_doggyRecords());
+    $scope.recordModal.hide();
+    $scope.doRefresh;
 
-      //Close Modal and reset fields
-      $scope.recordModal.hide();
-      $scope.record = angular.copy(emptyForm);
-    }
-    else {
-      console.log("Location not entered!");
-    }
+    console.log("Record created!");
+    record.dateTime = null;
+    record.location = null;
   };
 
   // Open our new record modal
   $scope.newRecord = function() {
+    $scope.record.dateTime = new Date();
+    console.log($scope.record.dateTime);
+    $scope.record.ImageURI = 'No Image';
     $scope.recordModal.show();
+  };
+
+  $scope.selectRecord = function(id) {
+    console.log("Record Selected.");
+    console.log(id);
+    var query = "SELECT * FROM dogFindings WHERE id = ?";
+    $cordovaSQLite.execute(db, query, [id]).then(function(res) {
+      if(res.rows.length > 0){
+        console.log("Record found");
+        $scope.selectedRec.push({
+          dateTime : res.rows.item(0).DateTime,
+          location : res.rows.item(0).Location,
+          id : res.rows.item(0).id
+        });
+        console.log("This happened");
+      }
+    }, function(error){
+      console.error();(error);
+    });
   };
 
   // Close the new record modal
   $scope.closeNewRecord = function() {
     $scope.recordModal.hide();
-    $scope.record = angular.copy(emptyForm);
   };
 
   // Finds current location using GPS
   $scope.findLocation = function() {
-    console.log("findLocation pressed!");
+    $ionicLoading.show({
+      template: '<p>Finding Location</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
+    });
+    var options = {timeout: 10000, enableHighAccuracy: true};
+    $cordovaGeolocation.getCurrentPosition(options).then(function(position){
+      console.log(position.coords.latitude);
+      console.log(position.coords.longitude);
+      $scope.record.lat = position.coords.latitude;
+      $scope.record.long = position.coords.longitude;
+      $scope.myLocation = "Location Found";
+      $ionicLoading.hide();
+    }, function(error){
+      console.log("Could not get location");
+      $scope.myLocation = "Location not found";
+      $ionicLoading.hide();
+    });
   };
+
+  $scope.dataURItoBlob = function(dataURI) {
+    return new Blob([dataURI]);
+  };
+
+  $scope.takePhoto = function() {  var options = {  quality : 75,  destinationType : Camera.DestinationType.DATA_URL,  sourceType : Camera.PictureSourceType.CAMERA,  allowEdit : false, encodingType: Camera.EncodingType.JPEG, targetWidth: 300, targetHeight: 300, popoverOptions: CameraPopoverOptions, saveToPhotoAlbum: false };
+
+  $cordovaCamera.getPicture(options).then(function(imageData) {
+    $scope.imageURI = "data:image/jpeg;base64," + imageData;
+    blobImg = $scope.dataURItoBlob($scope.imageURI);
+    console.log(blobImg);
+    $scope.record.ImageURI = 'Image Selected';
+    $scope.record.imgBlob = blobImg;
+    //here you will call insert function
+  }, function(err) {
+    // An error occured. Show a message to the user
+
+  });
+  $scope.$apply();
+};
+
+$scope.getPhoto = function() {
+  function UploadPicture(imageURI) {
+    console.log(imageURI);
+    $scope.record.ImageURI =  imageURI;
+    $scope.$apply();
+    console.log($scope.record.ImageURI);
+  }
+  navigator.camera.getPicture(UploadPicture, function(message) {
+    alert('get picture failed');
+  }, {
+    quality: 50,
+    destinationType: navigator.camera.DestinationType.FILE_URI,
+    sourceType: navigator.camera.PictureSourceType.PHOTOLIBRARY
+  });
+};
 
 })
 
@@ -201,7 +301,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
         autoUpdate();
         console.log("ABC");
       }
-      if(connLost == true) {
+      if(connLost == true && ConnectivityMonitor.isOnline()) {
         connLost = false;
         loadGoogleMaps();
         initMap();
@@ -599,19 +699,19 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
           function disableMap(){
             $ionicLoading.hide();
             connLost = true;
-              var alertPopup = $ionicPopup.alert({
-                title: 'Connection not found.',
-                template: 'You must be connected to the Internet to view this map.'
-              });
+            var alertPopup = $ionicPopup.alert({
+              title: 'Connection not found.',
+              template: 'You must be connected to the Internet to view this map.'
+            });
           }
 
           function noLocationMap(){
             $ionicLoading.hide();
             connLost = true;
-              var alertPopup = $ionicPopup.alert({
-                title: 'Location not found.',
-                template: 'Please check your location settings'
-              });
+            var alertPopup = $ionicPopup.alert({
+              title: 'Location not found.',
+              template: 'Please check your location settings'
+            });
           }
 
           // Attempts to load the map
