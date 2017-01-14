@@ -50,6 +50,12 @@
 	opacity: 0.90;
 }
 
+.center {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
 /* Create record cancel */
 #brownFont {
 	color: #D2691E;

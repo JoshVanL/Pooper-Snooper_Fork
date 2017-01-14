@@ -45,7 +45,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 /* ------------------------------------------------ */
 /* ------------ Record Logs Controller ------------ */
 /* ------------------------------------------------ */
-.controller('RecordLogsCtrl', function($scope, $ionicModal, $cordovaImagePicker, $filter, $ionicLoading, $cordovaGeolocation, GlobalService, $cordovaSQLite) {
+.controller('RecordLogsCtrl', function($scope, $ionicModal, $cordovaCamera, $cordovaImagePicker, $filter, $ionicLoading, $cordovaGeolocation, GlobalService, $cordovaSQLite) {
 
   var db = $cordovaSQLite.openDB({name:'tester.db',location:'default'});
   $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS dogFindings (id integer primary key, DateTime text, Location text, Image blob)");
@@ -173,37 +173,43 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
     return new Blob([dataURI]);
   };
 
-  $scope.takePhoto = function() {
-    var options = {  quality : 75,  destinationType : Camera.DestinationType.DATA_URL,  sourceType : Camera.PictureSourceType.CAMERA,  allowEdit : false, encodingType: Camera.EncodingType.JPEG, targetWidth: 300, targetHeight: 300, popoverOptions: CameraPopoverOptions, saveToPhotoAlbum: false };
+  $scope.takePicture = function() {
+      var options = {
+          quality : 80,
+          destinationType : Camera.DestinationType.DATA_URL,
+          sourceType : Camera.PictureSourceType.CAMERA,
+          allowEdit : true,
+          encodingType: Camera.EncodingType.JPEG,
+          targetWidth: 200,
+          targetHeight: 200,
+          popoverOptions: CameraPopoverOptions,
+          correctOrientation: true,
+          saveToPhotoAlbum: false
+      };
 
-    $cordovaCamera.getPicture(options).then(function(imageData) {
-      $scope.imageURI = "data:image/jpeg;base64," + imageData;
-      blobImg = $scope.dataURItoBlob($scope.imageURI);
-      console.log(blobImg);
-      $scope.record.ImageURI = 'Image Selected';
-      $scope.record.imgBlob = blobImg;
-      //here you will call insert function
-    }, function(err) {
-      // An error occured. Show a message to the user
-
-    });
-    $scope.$apply();
+      $cordovaCamera.getPicture(options).then(function(imageData) {
+        console.log(imageData);
+          $scope.record.ImageURI = "data:image/jpeg;base64," + imageData;
+      }, function(err) {
+          // An error occured. Show a message to the user
+      });
   };
+
 
   $scope.getImage = function() {
     // Image picker will load images according to these settings
     var options = {
       maximumImagesCount: 1, // Max number of selected images, I'm using only one for this example
-      width: 800,
-      height: 800,
+      width: 300,
+      height: 300,
       quality: 80            // Higher is better
     };
     $cordovaImagePicker.getPictures(options).then(function (results) {
       // Loop through acquired images
       $scope.record.fileName = results[0].replace(/^.*[\\\/]/, '');
-      for (var i = 0; i < results.length; i++) {
-        console.log('Image URI: ' + results[i]);   // Print image URI
-      }
+      $scope.record.ImageURI = results[0];
+      console.log($scope.record.fileName);
+      console.log($scope.record.ImageURI);
     }, function(error) {
       console.log('Error: ' + JSON.stringify(error));    // In case of error
     });

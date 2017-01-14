@@ -22,7 +22,7 @@
 				<input type="datetime" name="datetime" ng-model="record.datetime">
 			</label>
 		-->
-		<label class="item item-input">
+		<label>
 			<span class="input-label">Date</span>
 			{{record.dateTime.getDate()}}/{{record.dateTime.getMonth()+1}}/{{record.dateTime.getFullYear()}}
 		</label>
@@ -31,11 +31,11 @@
 			{{record.dateTime.getHours()}}:{{record.dateTime.getMinutes()}}
 		</label>
 		<label class="item item-input">
-			<span class="input-label">Photo</span>
-			{{record.fileName}}
+			<img ng-show="record.ImageURI !== undefined" ng-src="{{record.ImageURI}}" class="center">
+	    <img ng-show="record.ImageURI === undefined" ng-src="img/Assets/poop_small.png" class="center">
 		</label>
 		<div class="button-bar">
-			<button id="brownButton"  type="button" class="button  button-balanced" ng-click="takePhoto()">
+			<button id="brownButton"  type="button" class="button  button-balanced" ng-click="takePicture()">
 				<i class="icon ion-camera"></i>
 				Take Photo
 			</button>
