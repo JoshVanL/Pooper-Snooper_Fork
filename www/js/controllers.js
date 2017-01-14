@@ -45,7 +45,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 /* ------------------------------------------------ */
 /* ------------ Record Logs Controller ------------ */
 /* ------------------------------------------------ */
-.controller('RecordLogsCtrl', function($scope, $ionicModal, $filter, $ionicLoading, $cordovaGeolocation, GlobalService, $cordovaSQLite) {
+.controller('RecordLogsCtrl', function($scope, $ionicModal, $cordovaImagePicker, $filter, $ionicLoading, $cordovaGeolocation, GlobalService, $cordovaSQLite) {
 
   var db = $cordovaSQLite.openDB({name:'tester.db',location:'default'});
   $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS dogFindings (id integer primary key, DateTime text, Location text, Image blob)");
@@ -61,7 +61,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
     lat: "",
     long: ""
   }
-  $scope.myLocation = "";
+  $scope.myLocation = "* No Location *";
 
   // Blank form used to reset fields
   var emptyForm = angular.copy($scope.record);
@@ -121,7 +121,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
   $scope.newRecord = function() {
     $scope.record.dateTime = new Date();
     console.log($scope.record.dateTime);
-    $scope.record.ImageURI = 'No Image';
+    $scope.record.fileName = 'No Image';
     $scope.recordModal.show();
   };
 
@@ -164,7 +164,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
       $ionicLoading.hide();
     }, function(error){
       console.log("Could not get location");
-      $scope.myLocation = "Location not found";
+      $scope.myLocation = "*Location not found*";
       $ionicLoading.hide();
     });
   };
@@ -173,37 +173,41 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
     return new Blob([dataURI]);
   };
 
-  $scope.takePhoto = function() {  var options = {  quality : 75,  destinationType : Camera.DestinationType.DATA_URL,  sourceType : Camera.PictureSourceType.CAMERA,  allowEdit : false, encodingType: Camera.EncodingType.JPEG, targetWidth: 300, targetHeight: 300, popoverOptions: CameraPopoverOptions, saveToPhotoAlbum: false };
+  $scope.takePhoto = function() {
+    var options = {  quality : 75,  destinationType : Camera.DestinationType.DATA_URL,  sourceType : Camera.PictureSourceType.CAMERA,  allowEdit : false, encodingType: Camera.EncodingType.JPEG, targetWidth: 300, targetHeight: 300, popoverOptions: CameraPopoverOptions, saveToPhotoAlbum: false };
 
-  $cordovaCamera.getPicture(options).then(function(imageData) {
-    $scope.imageURI = "data:image/jpeg;base64," + imageData;
-    blobImg = $scope.dataURItoBlob($scope.imageURI);
-    console.log(blobImg);
-    $scope.record.ImageURI = 'Image Selected';
-    $scope.record.imgBlob = blobImg;
-    //here you will call insert function
-  }, function(err) {
-    // An error occured. Show a message to the user
+    $cordovaCamera.getPicture(options).then(function(imageData) {
+      $scope.imageURI = "data:image/jpeg;base64," + imageData;
+      blobImg = $scope.dataURItoBlob($scope.imageURI);
+      console.log(blobImg);
+      $scope.record.ImageURI = 'Image Selected';
+      $scope.record.imgBlob = blobImg;
+      //here you will call insert function
+    }, function(err) {
+      // An error occured. Show a message to the user
 
-  });
-  $scope.$apply();
-};
-
-$scope.getPhoto = function() {
-  function UploadPicture(imageURI) {
-    console.log(imageURI);
-    $scope.record.ImageURI =  imageURI;
+    });
     $scope.$apply();
-    console.log($scope.record.ImageURI);
-  }
-  navigator.camera.getPicture(UploadPicture, function(message) {
-    alert('get picture failed');
-  }, {
-    quality: 50,
-    destinationType: navigator.camera.DestinationType.FILE_URI,
-    sourceType: navigator.camera.PictureSourceType.PHOTOLIBRARY
-  });
-};
+  };
+
+  $scope.getImage = function() {
+    // Image picker will load images according to these settings
+    var options = {
+      maximumImagesCount: 1, // Max number of selected images, I'm using only one for this example
+      width: 800,
+      height: 800,
+      quality: 80            // Higher is better
+    };
+    $cordovaImagePicker.getPictures(options).then(function (results) {
+      // Loop through acquired images
+      $scope.record.fileName = results[0].replace(/^.*[\\\/]/, '');
+      for (var i = 0; i < results.length; i++) {
+        console.log('Image URI: ' + results[i]);   // Print image URI
+      }
+    }, function(error) {
+      console.log('Error: ' + JSON.stringify(error));    // In case of error
+    });
+  };
 
 })
 
