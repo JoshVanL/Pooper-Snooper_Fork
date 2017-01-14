@@ -146,6 +146,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 
     var autoUpdateOption = true;
 
+    var connLost = false;
+
     var nearestBinMarker;					// Reference to the nearest bin marker (original) that we hide and
     // replace with the GIF marker indicating the nearest bin
 
@@ -199,6 +201,10 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
         autoUpdate();
         console.log("ABC");
       }
+      if(connLost == true) {
+        connLost = false;
+        initMap();
+      }
     });
 
     // Resets button animation classes and stops autoUpdate
@@ -239,7 +245,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 
       console.warn("Google Maps SDK needs to be loaded");
 
-      //isableMap();
+      //disableMap();
       var options = {timeout: 10000, enableHighAccuracy: true};
 
       if(ConnectivityMonitor.isOnline()){
@@ -458,6 +464,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
               $scope.userMarker.setPosition(latLng);
 
             }, function(error){
+              noLocationMap();
               console.log("Could not get location");
             });
           }
@@ -590,6 +597,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 
           function disableMap(){
             $ionicLoading.hide();
+            connLost = true;
               var alertPopup = $ionicPopup.alert({
                 title: 'Connection not found.',
                 template: 'You must be connected to the Internet to view this map.'
@@ -598,6 +606,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 
           function noLocationMap(){
             $ionicLoading.hide();
+            connLost = true;
               var alertPopup = $ionicPopup.alert({
                 title: 'Location not found.',
                 template: 'Please check your location settings'
