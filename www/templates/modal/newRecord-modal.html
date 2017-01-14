@@ -22,7 +22,7 @@
 				<input type="datetime" name="datetime" ng-model="record.datetime">
 			</label>
 		-->
-		<label>
+		<label class="item item-input">
 			<span class="input-label">Date</span>
 			{{record.dateTime.getDate()}}/{{record.dateTime.getMonth()+1}}/{{record.dateTime.getFullYear()}}
 		</label>
@@ -30,7 +30,7 @@
 			<span class="input-label">Time</span>
 			{{record.dateTime.getHours()}}:{{record.dateTime.getMinutes()}}
 		</label>
-		<label class="item item-input">
+		<label>
 			<img ng-show="record.ImageURI !== undefined" ng-src="{{record.ImageURI}}" class="center">
 	    <img ng-show="record.ImageURI === undefined" ng-src="img/Assets/poop_small.png" class="center">
 		</label>
