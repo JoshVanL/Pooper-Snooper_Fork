@@ -124,7 +124,10 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
   // Open our new record modal
   $scope.newRecord = function() {
     $scope.record.dateTime = new Date();
-    $scope.record.time = ($scope.record.dateTime.getHours()<10?'0':'') + ($scope.record.dateTime.getHours() +":"+($scope.record.dateTime.getMinutes()<10?'0':'') + $scope.record.dateTime.getMinutes())
+
+    $scope.record.time = ($scope.record.dateTime.getHours()<10?'0':'') + ($scope.record.dateTime.getHours() +":"
+    +($scope.record.dateTime.getMinutes()<10?'0':'') + $scope.record.dateTime.getMinutes())
+
     console.log($scope.record.dateTime);
     $scope.record.fileName = 'No Image';
     $scope.recordModal.show();
@@ -174,25 +177,30 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
     });
   };
 
-  function dataURItoBlob(dataURI, callback) {
+    $scope.dataURItoBlob = function(dataURI, callback) {
     // convert base64 to raw binary data held in a string
     // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
     var byteString = atob(dataURI.split(',')[1]);
 
     // separate out the mime component
-    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
 
     // write the bytes of the string to an ArrayBuffer
     var ab = new ArrayBuffer(byteString.length);
     var ia = new Uint8Array(ab);
-    for (var i = 0; i < byteString.length; i++) {
-      ia[i] = byteString.charCodeAt(i);
+    try {
+      return new Blob([ab], {type: mimeString});
+    } catch (e) {
+      // The BlobBuilder API has been deprecated in favour of Blob, but older
+      // browsers don't know about the Blob constructor
+      // IE10 also supports BlobBuilder, but since the `Blob` constructor
+      //  also works, there's no need to add `MSBlobBuilder`.
+      var BlobBuilder = window.WebKitBlobBuilder || window.MozBlobBuilder;
+      var bb = new BlobBuilder();
+      bb.append(ab);
+      return bb.getBlob(mimeString);
     }
-    // write the ArrayBuffer to a blob, and you're done
-    var bb = new BlobBuilder();
-    bb.append(ab);
-    return bb.getBlob(mimeString);
-  }
+  };
 
   $scope.takePicture = function() {
     var options = {
@@ -209,9 +217,9 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
     };
 
     $cordovaCamera.getPicture(options).then(function(imageData) {
-      console.log(imageData);
       $scope.record.ImageURI = "data:image/jpeg;base64," + imageData;
-      $scope.record.imgBlob = dataURItoBlob(ImageURI);
+      $scope.record.imgBlob = $scope.dataURItoBlob($scope.record.ImageURI);
+      console.log($scope.record.imgBlob);
     }, function(err) {
       // An error occured. Show a message to the user
     });
@@ -230,9 +238,9 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
       // Loop through acquired images
       $scope.record.fileName = results[0].replace(/^.*[\\\/]/, '');
       $scope.record.ImageURI = results[0];
-      $scope.record.imgBlob = dataURItoBlob(ImageURI);
-      console.log($scope.record.fileName);
-      console.log($scope.record.ImageURI);
+      $scope.record.imgBlob = $scope.dataURItoBlob(ImageURI);
+      //console.log($scope.record.fileName);
+      //console.log($scope.record.ImageURI);
     }, function(error) {
       console.log('Error: ' + JSON.stringify(error));    // In case of error
     });
