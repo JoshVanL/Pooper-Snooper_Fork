@@ -52,17 +52,18 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
     name: 'tester.db',
     location: 'default'
   });
-  //Drop table for testing
-  var query = "DROP TABLE IF EXISTS dogFindings";
-  $cordovaSQLite.execute(db, query).then(function(res) {
-    console.log("Table deleted");
-  }, function(err) {
-    console.error(err);
-  });
+  // //Drop table for testing
+  // var query = "DROP TABLE IF EXISTS dogFindings";
+  // $cordovaSQLite.execute(db, query).then(function(res) {
+  //   console.log("Table deleted");
+  // }, function(err) {
+  //   console.error(err);
+  // });
   //Create table if doesn't exist
-  query = "CREATE TABLE IF NOT EXISTS dogFindings (id integer primary key, DateTime text, Lat number, Long number, Image blob)";
+  var query = "CREATE TABLE IF NOT EXISTS dogFindings (id integer primary key, DateTime text, Lat number, Long number, Image blob)";
   $cordovaSQLite.execute(db, query).then(function(res) {
     console.log("Table Created");
+    $scope.doRefresh();
   }, function(err) {
     console.error(err);
   });
@@ -105,14 +106,14 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
         for (var i = 0; i < res.rows.length; i++) {
 
           $scope.records.push({
-            dateTime: res.rows.item(i).dateTime,
-            lat: res.rows.item(i).lat,
-            long: res.rows.item(i).long,
+            dateTime: res.rows.item(i).DateTime,
+            lat: res.rows.item(i).Lat,
+            long: res.rows.item(i).Long,
+            blob: res.rows.item(i).Image,
             id: res.rows.item(i).id
           });
-          var ids = res.rows.item(i).id;
-          console.log(ids);
         }
+        console.log(JSON.stringify($scope.records));
       }
     }, function(error) {
       console.error();
@@ -138,7 +139,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
     });
 
     $scope.recordModal.hide();
-    //$scope.doRefresh();
+    $scope.doRefresh();
   };
 
   clearRecord = function() {
@@ -171,7 +172,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
         console.log("Record found");
         $scope.selectedRec.push({
           dateTime: res.rows.item(0).DateTime,
-          location: res.rows.item(0).Location,
+          location: res.rows.item(0).Lat,
+          location: res.rows.item(0).Long,
           id: res.rows.item(0).id
         });
         console.log("This happened");
