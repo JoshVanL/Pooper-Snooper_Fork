@@ -83,6 +83,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
     long: ""
   }
   $scope.myLocation = "* No Location *";
+  $scope.createEnabled = false;
 
   // Blank form used to reset fields
   var emptyForm = angular.copy($scope.record);
@@ -156,6 +157,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
   // Open our new record modal
   $scope.newRecord = function() {
     clearRecord();
+    $scope.createEnabled = false;
     console.log($scope.record.dateTime);
     $scope.recordModal.show();
   };
@@ -202,6 +204,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
       $scope.record.long = position.coords.longitude;
       $scope.myLocation = "Location Found";
       $ionicLoading.hide();
+      if ($scope.record.imgBlob) $scope.createEnabled = true;
     }, function(error) {
       console.log("Could not get location");
       $scope.myLocation = "*Location not found*";
@@ -254,6 +257,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
       $scope.record.ImageURI = "data:image/jpeg;base64," + imageData;
       $scope.record.imgBlob = $scope.dataURItoBlob($scope.record.ImageURI);
       console.log($scope.record.imgBlob);
+      if ($scope.record.lat && $scope.record.long) $scope.createEnabled = true;
     }, function(err) {
       // An error occured. Show a message to the user
     });
@@ -273,6 +277,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
       $scope.record.fileName = results[0].replace(/^.*[\\\/]/, '');
       $scope.record.ImageURI = results[0];
       $scope.record.imgBlob = $scope.dataURItoBlob(ImageURI);
+      if ($scope.record.lat && $scope.record.long) $scope.createEnabled = true;
       //console.log($scope.record.fileName);
       //console.log($scope.record.ImageURI);
     }, function(error) {

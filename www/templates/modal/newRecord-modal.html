@@ -54,7 +54,7 @@
 				<p ng-show="newRecord.location.$error.required">* Location is required</p>
 			</div>
 			<div class="padding">
-				<button type="submit" class="button button-block button-positive" ng-disabled="newRecord.$invalid">
+				<button type="submit" class="button button-block button-positive" ng-disabled="!createEnabled">
 			Create record
 		</button>
 			</div>
