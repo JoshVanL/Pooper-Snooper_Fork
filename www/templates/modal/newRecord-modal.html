@@ -28,11 +28,11 @@
 		</label>
 		<label class="item item-input">
 			<span class="input-label">Time</span>
-			{{record.dateTime.getHours()}}:{{record.dateTime.getMinutes()}}
+			{{record.time}}
 		</label>
 		<label>
+			<img ng-show="record.ImageURI === undefined" ng-src="img/Assets/poop_small.png" class="center">
 			<img ng-show="record.ImageURI !== undefined" ng-src="{{record.ImageURI}}" class="center">
-	    <img ng-show="record.ImageURI === undefined" ng-src="img/Assets/poop_small.png" class="center">
 		</label>
 		<div class="button-bar">
 			<button id="brownButton"  type="button" class="button  button-balanced" ng-click="takePicture()">

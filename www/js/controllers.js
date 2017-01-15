@@ -48,7 +48,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 .controller('RecordLogsCtrl', function($scope, $ionicModal, $cordovaCamera, $cordovaImagePicker, $filter, $ionicLoading, $cordovaGeolocation, GlobalService, $cordovaSQLite) {
 
   var db = $cordovaSQLite.openDB({name:'tester.db',location:'default'});
-  $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS dogFindings (id integer primary key, DateTime text, Location text, Image blob)");
+  $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS dogFindings (id integer primary key, DateTime text, Lat number, Long number, Image blob)");
 
   //Update record logs from the factory service upon entering page
   $scope.$on('$ionicView.afterEnter', function() {
@@ -57,7 +57,11 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 
   // Blank form used reset fields
   $scope.record = {
+    ImageURI: "",
+    fileName: "",
+    imgBlob: "",
     dateTime: "",
+    time : "",
     lat: "",
     long: ""
   }
@@ -102,7 +106,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
   $scope.createRecord = function(record) {
     //if (record.location.length > 0){
     //insert record in database
-    var query = "INSERT INTO dogFindings (DateTime, Location, Image) VALUES (?,?,?)";
+    var query = "INSERT INTO dogFindings (DateTime, Lat, Long, Image) VALUES (?,?,?)";
     $cordovaSQLite.execute(db, query, [record.dateTime, record.location, record.imgBlob]).then(function(res) {
       console.log("INSERT ID -> " + res.insertId);
     }, function (err) {
@@ -120,6 +124,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
   // Open our new record modal
   $scope.newRecord = function() {
     $scope.record.dateTime = new Date();
+    $scope.record.time = ($scope.record.dateTime.getHours()<10?'0':'') + ($scope.record.dateTime.getHours() +":"+($scope.record.dateTime.getMinutes()<10?'0':'') + $scope.record.dateTime.getMinutes())
     console.log($scope.record.dateTime);
     $scope.record.fileName = 'No Image';
     $scope.recordModal.show();
@@ -169,30 +174,47 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
     });
   };
 
-  $scope.dataURItoBlob = function(dataURI) {
-    return new Blob([dataURI]);
-  };
+  function dataURItoBlob(dataURI, callback) {
+    // convert base64 to raw binary data held in a string
+    // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+    var byteString = atob(dataURI.split(',')[1]);
+
+    // separate out the mime component
+    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+
+    // write the bytes of the string to an ArrayBuffer
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+    for (var i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+    // write the ArrayBuffer to a blob, and you're done
+    var bb = new BlobBuilder();
+    bb.append(ab);
+    return bb.getBlob(mimeString);
+  }
 
   $scope.takePicture = function() {
-      var options = {
-          quality : 80,
-          destinationType : Camera.DestinationType.DATA_URL,
-          sourceType : Camera.PictureSourceType.CAMERA,
-          allowEdit : true,
-          encodingType: Camera.EncodingType.JPEG,
-          targetWidth: 200,
-          targetHeight: 200,
-          popoverOptions: CameraPopoverOptions,
-          correctOrientation: true,
-          saveToPhotoAlbum: false
-      };
+    var options = {
+      quality : 80,
+      destinationType : Camera.DestinationType.DATA_URL,
+      sourceType : Camera.PictureSourceType.CAMERA,
+      allowEdit : true,
+      encodingType: Camera.EncodingType.JPEG,
+      targetWidth: 200,
+      targetHeight: 200,
+      popoverOptions: CameraPopoverOptions,
+      correctOrientation: true,
+      saveToPhotoAlbum: false
+    };
 
-      $cordovaCamera.getPicture(options).then(function(imageData) {
-        console.log(imageData);
-          $scope.record.ImageURI = "data:image/jpeg;base64," + imageData;
-      }, function(err) {
-          // An error occured. Show a message to the user
-      });
+    $cordovaCamera.getPicture(options).then(function(imageData) {
+      console.log(imageData);
+      $scope.record.ImageURI = "data:image/jpeg;base64," + imageData;
+      $scope.record.imgBlob = dataURItoBlob(ImageURI);
+    }, function(err) {
+      // An error occured. Show a message to the user
+    });
   };
 
 
@@ -208,6 +230,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
       // Loop through acquired images
       $scope.record.fileName = results[0].replace(/^.*[\\\/]/, '');
       $scope.record.ImageURI = results[0];
+      $scope.record.imgBlob = dataURItoBlob(ImageURI);
       console.log($scope.record.fileName);
       console.log($scope.record.ImageURI);
     }, function(error) {
