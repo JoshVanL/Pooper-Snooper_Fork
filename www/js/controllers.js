@@ -97,6 +97,14 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
     animation: 'slide-in-up'
   });
 
+  $ionicModal.fromTemplateUrl('templates/modal/record-modal.html', function(modal) {
+    $scope.viewRecordModal = modal;
+  }, {
+    scope: $scope,
+    animation: 'slide-in-up'
+  });
+
+
 
   $scope.doRefresh = function() {
     $scope.records = [];
@@ -168,26 +176,33 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
     console.log(id);
     var query = "SELECT * FROM dogFindings WHERE id = ?";
     $cordovaSQLite.execute(db, query, [id]).then(function(res) {
-      if (res.rows.length > 0) {
-        console.log("Record found");
-        $scope.selectedRec.push({
-          dateTime: res.rows.item(0).DateTime,
-          location: res.rows.item(0).Lat,
-          location: res.rows.item(0).Long,
-          id: res.rows.item(0).id
-        });
-        console.log("This happened");
-      }
-    }, function(error) {
-      console.error();
-      (error);
-    });
+        if (res.rows.length > 0) {
+          console.log("Record found");
+          $scope.selectedRec = {
+            dateTime: res.rows.item(0).DateTime,
+            lat: res.rows.item(0).Lat,
+            long: res.rows.item(0).Long,
+            blob: res.rows.item(0).Image,
+            id: res.rows.item(0).id
+          };
+          $scope.selectedRec.image = URL.createObjectURL($scope.selectedRec.blob);
+          console.log(JSON.stringify($scope.selectedRec.image));
+          $scope.viewRecordModal.show();
+        }
+      },
+      function(error) {
+        console.error();
+        (error);
+      });
   };
 
 
   // Close the new record modal
   $scope.closeNewRecord = function() {
     $scope.recordModal.hide();
+  };
+  $scope.closeViewRecord = function() {
+    $scope.viewRecordModal.hide();
   };
 
   // Finds current location using GPS

@@ -1,0 +1,35 @@
+
+<div class="modal">
+
+  <!-- Modal header bar -->
+  <ion-header-bar class="bar-secondary">
+    <h1 class="title">
+      Doggy finding record
+      <i class="icon ion-trash-b"></i>
+    </h1>
+    <button id="brownFont" class="button button-clear button-positive" ng-click="closeViewRecord()" side="right">Close</button>
+  </ion-header-bar>
+  <ion-content>
+    <form name="viewRecord">
+      <div class="list">
+        <label class="item item-input">
+          <span class="input-label">DateTime</span>
+          {{selectedRec.dateTime}}
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Lat</span>
+          {{selectedRec.lat}}
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Long</span>
+          {{selectedRec.long}}
+        </label>
+
+
+
+
+      </div>
+    </form>
+
+  </ion-content>
+</div>
