@@ -1,17 +1,17 @@
 <ion-view view-title="<b>Doggy records</b>">
-	  <ion-nav-buttons side="right">
-			<button class="button button-icon" ng-click="newRecord()">
+	<ion-nav-buttons side="right">
+		<button class="button button-icon" ng-click="newRecord()">
 			<i class="icon ion-compose"></i>
 			</button>
-		</ion-nav-buttons>
+	</ion-nav-buttons>
 
-		<ion-content class="background-DoggyRecords">
+	<ion-content class="background-DoggyRecords">
 
-			<ion-list>
-				<ion-item>
-	        {{selectedRec.id}} {{selectedRec.lat}} {{selectedRec.long}} {{selectedRec.dateTime}}
-	      </ion-item>
-			</ion-list>
+		<ion-list>
+			<ion-item>
+				{{selectedRec.id}} {{selectedRec.lat}} {{selectedRec.long}} {{selectedRec.dateTime}}
+			</ion-item>
+		</ion-list>
 
-		</ion-content>
+	</ion-content>
 </ion-view>
