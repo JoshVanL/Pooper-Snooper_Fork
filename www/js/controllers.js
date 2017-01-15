@@ -105,32 +105,35 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 
   // Called when the form is submitted
   $scope.createRecord = function(record) {
-    //if (record.location.length > 0){
     //insert record in database
     var query = "INSERT INTO dogFindings (DateTime, Lat, Long, Image) VALUES (?,?,?)";
-    $cordovaSQLite.execute(db, query, [record.dateTime, record.lat, record.long, record.imgBlob]).then(function(res) {
+    $cordovaSQLite.execute(db, query, [$scope.record.dateTime, record.lat, record.long, record.imgBlob]).then(function(res) {
       console.log("INSERT ID -> " + res.insertId);
     }, function (err) {
       console.error(err);
     });
 
     $scope.recordModal.hide();
-    $scope.doRefresh;
+    $scope.doRefresh();
+  };
 
-    console.log("Record created!");
-    record.dateTime = null;
-    record.location = null;
+  clearRecord = function() {
+    $scope.myLocation = "* No Location *";
+    $scope.record.lat = null;
+    $scope.record.long = null;
+    $scope.record.fileName = 'No Image';
+    $scope.record.ImageURI = undefined;
+    $scope.record.imgBlob = undefined;
+
+    $scope.record.dateTime = new Date();
+    $scope.record.time = ($scope.record.dateTime.getHours()<10?'0':'') + ($scope.record.dateTime.getHours() +":"
+    +($scope.record.dateTime.getMinutes()<10?'0':'') + $scope.record.dateTime.getMinutes());
   };
 
   // Open our new record modal
   $scope.newRecord = function() {
-    $scope.record.dateTime = new Date();
-
-    $scope.record.time = ($scope.record.dateTime.getHours()<10?'0':'') + ($scope.record.dateTime.getHours() +":"
-    +($scope.record.dateTime.getMinutes()<10?'0':'') + $scope.record.dateTime.getMinutes())
-
+    clearRecord();
     console.log($scope.record.dateTime);
-    $scope.record.fileName = 'No Image';
     $scope.recordModal.show();
   };
 
@@ -178,7 +181,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
     });
   };
 
-    $scope.dataURItoBlob = function(dataURI, callback) {
+  $scope.dataURItoBlob = function(dataURI, callback) {
     // convert base64 to raw binary data held in a string
     // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
     var byteString = atob(dataURI.split(',')[1]);
