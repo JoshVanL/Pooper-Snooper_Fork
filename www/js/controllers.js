@@ -87,8 +87,9 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
         for (var i=0; i<res.rows.length; i++){
 
           $scope.records.push({
-            dateTime : res.rows.item(i).DateTime,
-            location : res.rows.item(i).Location,
+            dateTime : res.rows.item(i).dateTime,
+            lat : res.rows.item(i).lat,
+            long : res.rows.item(i).long,
             id : res.rows.item(i).id
           });
           var ids = res.rows.item(i).id;
@@ -107,7 +108,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
     //if (record.location.length > 0){
     //insert record in database
     var query = "INSERT INTO dogFindings (DateTime, Lat, Long, Image) VALUES (?,?,?)";
-    $cordovaSQLite.execute(db, query, [record.dateTime, record.location, record.imgBlob]).then(function(res) {
+    $cordovaSQLite.execute(db, query, [record.dateTime, record.lat, record.long, record.imgBlob]).then(function(res) {
       console.log("INSERT ID -> " + res.insertId);
     }, function (err) {
       console.error(err);

@@ -8,13 +8,10 @@
 		<ion-content class="background-DoggyRecords">
 
 			<ion-list>
-				<ion-item class="record" ng-repeat="record in records">
-					{{ record.date | date:"dd-MM-yy"}} {{record.location}}
-				
-					<!--  {{record.location}} {{record.date.getDate()}}/{{record.date.getMonth()}}/{{record.date.getFullYear()}}
-					{{record.time.getHours()}}:{{record.time.getMinutes()}} -->
-				</ion-item>
+				<ion-item>
+	        {{selectedRec.id}} {{selectedRec.lat}} {{selectedRec.long}} {{selectedRec.dateTime}}
+	      </ion-item>
 			</ion-list>
-			
+
 		</ion-content>
 </ion-view>
