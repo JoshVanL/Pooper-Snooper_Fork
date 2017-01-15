@@ -177,6 +177,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
     var query = "SELECT * FROM dogFindings WHERE id = ?";
     $cordovaSQLite.execute(db, query, [id]).then(function(res) {
         if (res.rows.length > 0) {
+
           console.log("Record found");
           $scope.selectedRec = {
             dateTime: res.rows.item(0).DateTime,
@@ -185,8 +186,11 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
             blob: res.rows.item(0).Image,
             id: res.rows.item(0).id
           };
-          $scope.selectedRec.image = URL.createObjectURL($scope.selectedRec.blob);
-          console.log(JSON.stringify($scope.selectedRec.image));
+          console.log(($scope.selectedRec.blob));
+          $scope.blobToDataURL($scope.selectedRec.blob, function(data) {
+            $scope.selectedRec.image = data;
+            console.log($scope.selectedRec.image);
+          });
           $scope.viewRecordModal.show();
         }
       },
@@ -194,6 +198,14 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
         console.error();
         (error);
       });
+  };
+
+  $scope.blobToDataURL = function(blob, callback) {
+    var a = new FileReader();
+    a.onload = function(e) {
+      callback(e.target.result);
+    }
+    a.readAsDataURL(blob);
   };
 
 
@@ -228,6 +240,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
       $ionicLoading.hide();
     });
   };
+
 
   $scope.dataURItoBlob = function(dataURI, callback) {
     // convert base64 to raw binary data held in a string
