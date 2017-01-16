@@ -68,10 +68,11 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
     console.error(err);
   });
 
-  //Update record logs from the factory service upon entering page
-  $scope.$on('$ionicView.afterEnter', function() {
-    $scope.records = angular.copy(GlobalService.get_doggyRecords());
-  });
+  //This would be buggy when re-oppening the record page
+  // //Update record logs from the factory service upon entering page
+  // $scope.$on('$ionicView.afterEnter', function() {
+  //   $scope.records = angular.copy(GlobalService.get_doggyRecords());
+  // });
 
   // Blank form used reset fields
   $scope.record = {
