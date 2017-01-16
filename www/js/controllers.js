@@ -528,8 +528,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
         });
         $scope.userMarker = marker;
 
-        loadMarkers();
-
         //Reload markers every time the map moves
         google.maps.event.addListener($scope.map, 'dragend', function() {
           loadMarkers();
@@ -583,6 +581,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 
         console.log("poop > " + poopLats + poopLngs);
       }
+      loadMarkers();
     })
   }
 
@@ -615,6 +614,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 
         console.log("bins > " + binLats + binLngs);
       }
+      loadMarkers();
     })
   }
 
