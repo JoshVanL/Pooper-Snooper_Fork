@@ -538,122 +538,112 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
         // CREATING DUMMY MARKERS TO TEST LOADING FUNCTION
         // -------------------------------------------------
 
-        var poopLats = [];
-        var poopLngs = [];
+        // var poopLats = [];
+        // var poopLngs = [];
 
         var binLats = [];
         var binLngs = [];
 
-        //POOPS
-        poopLats.push(53.650705);
-        poopLngs.push(-2.986479);
-        poopLats.push(53.646291);
-        poopLngs.push(-2.975814);
-        poopLats.push(53.648237);
-        poopLngs.push(-2.969313);
-        poopLats.push(53.648924);
-        poopLngs.push(-2.979956);
-        poopLats.push(53.648698);
-        poopLngs.push(-2.978786);
+        //POOP
 
-        poopLats.push(53.650212);
-        poopLngs.push(-2.979301);
-        poopLats.push(53.650428);
-        poopLngs.push(-2.97781);
-        poopLats.push(53.64459966505379);
-        poopLngs.push(-2.994503974914551);
-        poopLats.push(53.647003665191235);
-        poopLngs.push(-3.0152535438537598);
-        poopLats.push(53.63496957119772);
-        poopLngs.push(-2.972745895385742);
+        getPoopMarkings();
 
-        poopLats.push(53.65099730954873);
-        poopLngs.push(-2.958498001098633);
-        poopLats.push(53.665951037123044);
-        poopLngs.push(-2.9844188690185547);
-        poopLats.push(53.66035672614186);
-        poopLngs.push(-2.9656219482421875);
-        poopLats.push(53.65567727758958);
-        poopLngs.push(-2.994203567504883);
-        poopLats.push(53.65588074267648);
-        poopLngs.push(-2.9915428161621094);
+        // poopLats.push(51.455139866096786);
+        // poopLngs.push(-2.599817307409694);
+        // poopLats.push(53.646291);
+        // poopLngs.push(-2.975814);
+        // poopLats.push(53.648237);
+        // poopLngs.push(-2.969313);
+        // poopLats.push(53.648924);
+        // poopLngs.push(-2.979956);
+        // poopLats.push(53.648698);
+        // poopLngs.push(-2.978786);
+        //
+        // poopLats.push(53.650212);
+        // poopLngs.push(-2.979301);
+        // poopLats.push(53.650428);
+        // poopLngs.push(-2.97781);
+        // poopLats.push(53.64459966505379);
+        // poopLngs.push(-2.994503974914551);
+        // poopLats.push(53.647003665191235);
+        // poopLngs.push(-3.0152535438537598);
+        // poopLats.push(53.63496957119772);
+        // poopLngs.push(-2.972745895385742);
+        //
+        // poopLats.push(53.65099730954873);
+        // poopLngs.push(-2.958498001098633);
+        // poopLats.push(53.665951037123044);
+        // poopLngs.push(-2.9844188690185547);
+        // poopLats.push(53.66035672614186);
+        // poopLngs.push(-2.9656219482421875);
+        // poopLats.push(53.65567727758958);
+        // poopLngs.push(-2.994203567504883);
+        // poopLats.push(53.65588074267648);
+        // poopLngs.push(-2.9915428161621094);
+        //
+        // poopLats.push(53.652014738097655);
+        // poopLngs.push(-3.0062198638916016);
+        // poopLats.push(53.64692734983276);
+        // poopLngs.push(-3.0028724670410156);
+        // poopLats.push(53.64453606530589);
+        // poopLngs.push(-3.004159927368164);
+        // poopLats.push(53.63980397503522);
+        // poopLngs.push(-2.9929161071777344);
+        // poopLats.push(53.64061813590609);
+        // poopLngs.push(-2.9761791229248047);
+        //
+        // poopLats.push(53.642551704992265);
+        // poopLngs.push(-2.983388900756836);
+        // poopLats.push(53.643620218301244);
+        // poopLngs.push(-2.9889678955078125);
+        // poopLats.push(53.6473343634821);
+        // poopLngs.push(-2.994718551635742);
+        //
+        // // BINS
+        // binLats.push(53.64986539143778);
+        // binLngs.push(-2.979719638824463);
+        // binLats.push(53.648237410988955);
+        // binLngs.push(-2.9790759086608887);
+        // binLats.push(53.648046627915676);
+        // binLngs.push(-2.976651191711426);
+        // binLats.push(53.64901325326107);
+        // binLngs.push(-2.972724437713623);
+        // binLats.push(53.64952199454264);
+        // binLngs.push(-2.9810070991516113);
+        //
+        // binLats.push(53.65190027861155);
+        // binLngs.push(-2.980320453643799);
+        // binLats.push(53.645693565705784);
+        // binLngs.push(-2.979912757873535);
+        // binLats.push(53.644421585517954);
+        // binLngs.push(-2.975621223449707);
+        // binLats.push(53.647995752283684);
+        // binLngs.push(-2.9686689376831055);
+        // binLats.push(53.65287953306066);
+        // binLngs.push(-2.9754281044006348);
+        //
+        // binLats.push(53.650908283382584);
+        // binLngs.push(-2.9842472076416016);
+        // binLats.push(53.651366130234585);
+        // binLngs.push(-2.9871439933776855);
+        // binLats.push(53.64966189731898);
+        // binLngs.push(-2.9906201362609863);
+        // binLats.push(53.64691463059291);
+        // binLngs.push(-2.9868650436401367);
+        // binLats.push(53.64303508341375);
+        // binLngs.push(-2.9854488372802734);
+        //
+        // binLats.push(53.641597652376625);
+        // binLngs.push(-2.9799342155456543);
+        // binLats.push(53.63975308945901);
+        // binLngs.push(-2.9735398292541504);
+        // binLats.push(53.636292726261026);
+        // binLngs.push(-2.971973419189453);
+        // binLats.push(53.63602555406321);
+        // binLngs.push(-2.9680681228637695);
+        // binLats.push(53.641534048101576);
+        // binLngs.push(-2.9661154747009277);
 
-        poopLats.push(53.652014738097655);
-        poopLngs.push(-3.0062198638916016);
-        poopLats.push(53.64692734983276);
-        poopLngs.push(-3.0028724670410156);
-        poopLats.push(53.64453606530589);
-        poopLngs.push(-3.004159927368164);
-        poopLats.push(53.63980397503522);
-        poopLngs.push(-2.9929161071777344);
-        poopLats.push(53.64061813590609);
-        poopLngs.push(-2.9761791229248047);
-
-        poopLats.push(53.642551704992265);
-        poopLngs.push(-2.983388900756836);
-        poopLats.push(53.643620218301244);
-        poopLngs.push(-2.9889678955078125);
-        poopLats.push(53.6473343634821);
-        poopLngs.push(-2.994718551635742);
-
-        // BINS
-        binLats.push(53.64986539143778);
-        binLngs.push(-2.979719638824463);
-        binLats.push(53.648237410988955);
-        binLngs.push(-2.9790759086608887);
-        binLats.push(53.648046627915676);
-        binLngs.push(-2.976651191711426);
-        binLats.push(53.64901325326107);
-        binLngs.push(-2.972724437713623);
-        binLats.push(53.64952199454264);
-        binLngs.push(-2.9810070991516113);
-
-        binLats.push(53.65190027861155);
-        binLngs.push(-2.980320453643799);
-        binLats.push(53.645693565705784);
-        binLngs.push(-2.979912757873535);
-        binLats.push(53.644421585517954);
-        binLngs.push(-2.975621223449707);
-        binLats.push(53.647995752283684);
-        binLngs.push(-2.9686689376831055);
-        binLats.push(53.65287953306066);
-        binLngs.push(-2.9754281044006348);
-
-        binLats.push(53.650908283382584);
-        binLngs.push(-2.9842472076416016);
-        binLats.push(53.651366130234585);
-        binLngs.push(-2.9871439933776855);
-        binLats.push(53.64966189731898);
-        binLngs.push(-2.9906201362609863);
-        binLats.push(53.64691463059291);
-        binLngs.push(-2.9868650436401367);
-        binLats.push(53.64303508341375);
-        binLngs.push(-2.9854488372802734);
-
-        binLats.push(53.641597652376625);
-        binLngs.push(-2.9799342155456543);
-        binLats.push(53.63975308945901);
-        binLngs.push(-2.9735398292541504);
-        binLats.push(53.636292726261026);
-        binLngs.push(-2.971973419189453);
-        binLats.push(53.63602555406321);
-        binLngs.push(-2.9680681228637695);
-        binLats.push(53.641534048101576);
-        binLngs.push(-2.9661154747009277);
-
-        for (i = 0; i < poopLats.length; i++) {
-          var myLatLng = new google.maps.LatLng(poopLats[i], poopLngs[i]);
-          var marker = new google.maps.Marker({
-            position: myLatLng,
-            icon: poop_icon
-          });
-          var markerData = {
-            lat: marker.getPosition().lat(),
-            lng: marker.getPosition().lng(),
-            icon: marker.getIcon().url
-          };
-          GlobalService.push_poopMarkers(markerData);
-        }
 
         for (i = 0; i < binLats.length; i++) {
           var myLatLng = new google.maps.LatLng({
@@ -707,6 +697,36 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
   //------------------------------->
   //---- Map related Functions ---->
   //------------------------------>
+
+  function getPoopMarkings() {
+    var query = "SELECT * FROM dogFindings";
+    var poopLats = [];
+    var poopLngs = [];
+    $cordovaSQLite.execute(db, query, []).then(function(res) {
+      if (res.rows.length > 0) {
+        for (var i = 0; i < res.rows.length; i++) {
+          poopLats.push(res.rows.item(i).Lat);
+          poopLngs.push(res.rows.item(i).Long);
+        }
+      }
+      for (i = 0; i < poopLats.length; i++) {
+        var myLatLng = new google.maps.LatLng(poopLats[i], poopLngs[i]);
+        var marker = new google.maps.Marker({
+          position: myLatLng,
+          icon: poop_icon
+        });
+        var markerData = {
+          lat: marker.getPosition().lat(),
+          lng: marker.getPosition().lng(),
+          icon: marker.getIcon().url
+        };
+        GlobalService.push_poopMarkers(markerData);
+      }
+
+      console.log(poopLats + poopLngs);
+    })
+  }
+
 
   // Auto Updates lngLat and user location
   function autoUpdate() {
