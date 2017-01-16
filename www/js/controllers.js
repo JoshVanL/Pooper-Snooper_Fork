@@ -564,25 +564,25 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
           poopLats.push(res.rows.item(i).Lat);
           poopLngs.push(res.rows.item(i).Long);
         }
-      }
-      for (i = 0; i < poopLats.length; i++) {
-        var myLatLng = new google.maps.LatLng({
-          lat: poopLats[i],
-          lng: poopLngs[i]
-        });
-        var marker = new google.maps.Marker({
-          position: myLatLng,
-          icon: poop_icon
-        });
-        var markerData = {
-          lat: marker.getPosition().lat(),
-          lng: marker.getPosition().lng(),
-          icon: marker.getIcon().url
-        };
-        GlobalService.push_binMarkers(markerData);
-      }
+        for (i = 0; i < poopLats.length; i++) {
+          var myLatLng = new google.maps.LatLng({
+            lat: poopLats[i],
+            lng: poopLngs[i]
+          });
+          var marker = new google.maps.Marker({
+            position: myLatLng,
+            icon: poop_icon
+          });
+          var markerData = {
+            lat: marker.getPosition().lat(),
+            lng: marker.getPosition().lng(),
+            icon: marker.getIcon().url
+          };
+          GlobalService.push_binMarkers(markerData);
+        }
 
-      console.log(poopLats + poopLngs);
+        console.log("poop > " + poopLats + poopLngs);
+      }
     })
   }
 
@@ -596,22 +596,25 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
           binLats.push(res.rows.item(i).Lat);
           binLngs.push(res.rows.item(i).Long);
         }
-      }
-      for (i = 0; i < binLats.length; i++) {
-        var myLatLng = new google.maps.LatLng(poopLats[i], poopLngs[i]);
-        var marker = new google.maps.Marker({
-          position: myLatLng,
-          icon: bin_icon
-        });
-        var markerData = {
-          lat: marker.getPosition().lat(),
-          lng: marker.getPosition().lng(),
-          icon: marker.getIcon().url
-        };
-        GlobalService.push_binMarkers(markerData);
-      }
+        for (i = 0; i < binLats.length; i++) {
+          var myLatLng = new google.maps.LatLng({
+            lat: binLats[i],
+            lng: binLngs[i]
+          });
+          var marker = new google.maps.Marker({
+            position: myLatLng,
+            icon: bin_icon
+          });
+          var markerData = {
+            lat: marker.getPosition().lat(),
+            lng: marker.getPosition().lng(),
+            icon: marker.getIcon().url
+          };
+          GlobalService.push_binMarkers(markerData);
+        }
 
-      console.log(binsLats + binLngs);
+        console.log("bins > " + binLats + binLngs);
+      }
     })
   }
 
@@ -764,7 +767,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
       markerData.lng
     ];
     $cordovaSQLite.execute(db, query, record).then(function(res) {
-      console.log("INSERT ID -> " + res.insertId);
+      console.log(JSON.stringify(res));
     }, function(err) {
       console.log('Error: ' + JSON.stringify(err));
     });
