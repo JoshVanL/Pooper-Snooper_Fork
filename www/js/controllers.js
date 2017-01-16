@@ -52,13 +52,13 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
     name: 'tester.db',
     location: 'default'
   });
-  // //Drop table for testing
-  var query = "DROP TABLE IF EXISTS dogFindings";
-  $cordovaSQLite.execute(db, query).then(function(res) {
-    console.log("Table deleted");
-  }, function(err) {
-    console.error(err);
-  });
+  // // //Drop table for testing
+  // var query = "DROP TABLE IF EXISTS dogFindings";
+  // $cordovaSQLite.execute(db, query).then(function(res) {
+  //   console.log("Table deleted");
+  // }, function(err) {
+  //   console.error(err);
+  // });
   //Create table if doesn't exist
   var query = "CREATE TABLE IF NOT EXISTS dogFindings (id integer primary key, DateTime text, Lat number, Long number, Image blob)";
   $cordovaSQLite.execute(db, query).then(function(res) {
@@ -325,6 +325,28 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 .controller('MapCtrl', function($scope, $cordovaGeolocation, $ionicModal,
   $window, $ionicPopup, $ionicLoading, $rootScope, $cordovaNetwork, $ionicSideMenuDelegate,
   GlobalService, ConnectivityMonitor, $cordovaCamera, $cordovaImagePicker, $cordovaSQLite) {
+
+
+  //Get database
+  var db = $cordovaSQLite.openDB({
+    name: 'tester.db',
+    location: 'default'
+  });
+  // // //Drop table for testing
+  // var query = "DROP TABLE IF EXISTS dogFindings";
+  // $cordovaSQLite.execute(db, query).then(function(res) {
+  //   console.log("Table deleted");
+  // }, function(err) {
+  //   console.error(err);
+  // });
+  //Create table if doesn't exist
+  var query = "CREATE TABLE IF NOT EXISTS dogFindings (id integer primary key, DateTime text, Lat number, Long number, Image blob)";
+  $cordovaSQLite.execute(db, query).then(function(res) {
+    console.log(JSON.stringify(res));
+  }, function(err) {
+    console.error(err);
+  });
+
 
   //Disables swipe to side menu feature on entering page
   $scope.$on('$ionicView.enter', function() {
@@ -1289,32 +1311,112 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
   $scope.newRecord = function() {
     clearRecord();
     $scope.createEnabled = false;
-    $scope.record.latLong = iconLatLng;
+    console.log(JSON.stringify(iconLatLng.lat()));
+    console.log(JSON.stringify(iconLatLng.lng()));
+    $scope.record.lat = iconLatLng.lat();
+    $scope.record.long = iconLatLng.lng();
     $scope.poopModal.show();
+  };
+
+  $scope.dataURItoBlob = function(dataURI, callback) {
+    // convert base64 to raw binary data held in a string
+    // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+    var byteString = atob(dataURI.split(',')[1]);
+
+    // separate out the mime component
+    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+    // write the bytes of the string to an ArrayBuffer
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+    try {
+      return new Blob([ab], {
+        type: mimeString
+      });
+    } catch (e) {
+      // The BlobBuilder API has been deprecated in favour of Blob, but older
+      // browsers don't know about the Blob constructor
+      // IE10 also supports BlobBuilder, but since the `Blob` constructor
+      //  also works, there's no need to add `MSBlobBuilder`.
+      var BlobBuilder = window.WebKitBlobBuilder || window.MozBlobBuilder;
+      var bb = new BlobBuilder();
+      bb.append(ab);
+      return bb.getBlob(mimeString);
+    }
+  };
+
+  $scope.takePicture = function() {
+    var options = {
+      quality: 80,
+      destinationType: Camera.DestinationType.DATA_URL,
+      sourceType: Camera.PictureSourceType.CAMERA,
+      allowEdit: true,
+      encodingType: Camera.EncodingType.JPEG,
+      targetWidth: 200,
+      targetHeight: 200,
+      popoverOptions: CameraPopoverOptions,
+      correctOrientation: true,
+      saveToPhotoAlbum: false
+    };
+
+    $cordovaCamera.getPicture(options).then(function(imageData) {
+      $scope.record.ImageURI = "data:image/jpeg;base64," + imageData;
+      $scope.record.imgBlob = $scope.dataURItoBlob($scope.record.ImageURI);
+      console.log($scope.record.imgBlob);
+      $scope.createEnabled = true;
+    }, function(err) {
+      // An error occured. Show a message to the user
+    });
+  };
+
+
+  $scope.getImage = function() {
+    // Image picker will load images according to these settings
+    var options = {
+      maximumImagesCount: 1, // Max number of selected images, I'm using only one for this example
+      width: 300,
+      height: 300,
+      quality: 80 // Higher is better
+    };
+    $cordovaImagePicker.getPictures(options).then(function(results) {
+      // Loop through acquired images
+      $scope.record.fileName = results[0].replace(/^.*[\\\/]/, '');
+      $scope.record.ImageURI = results[0];
+      $scope.record.imgBlob = $scope.dataURItoBlob(ImageURI);
+      $scope.createEnabled = true;
+      //console.log($scope.record.fileName);
+      //console.log($scope.record.ImageURI);
+    }, function(error) {
+      console.log('Error: ' + JSON.stringify(error)); // In case of error
+    });
   };
 
   // Close the new record modal
   $scope.closeNewRecord = function(record) {
     $scope.poopModal.hide();
-    $scope.record = angular.copy(emptyForm);
+    clearRecord();
   };
 
   // Create record item
   $scope.createRecord = function(record) {
-    if (record.location.length > 0) {
-      GlobalService.push_doggyRecords({
-        date: record.date,
-        time: record.time,
-        location: record.location
-      });
-      $scope.poopModal.hide();
-      $scope.record = angular.copy(emptyForm);
+    //insert record in database
+    var query = "INSERT INTO dogFindings (DateTime, Lat, Long, Image) VALUES (?,?,?,?)";
+    var record = [
+      $scope.record.dateTime,
+      $scope.record.lat,
+      $scope.record.long,
+      $scope.record.imgBlob
+    ];
+    $cordovaSQLite.execute(db, query, record).then(function(res) {
+      console.log("INSERT ID -> " + res.insertId);
+    }, function(err) {
+      console.log('Error: ' + JSON.stringify(err));
+    });
+    $scope.poopModal.hide();
+    clearRecord();
 
-      //Adds the marker to your map upon creating the Record
-      $scope.addPoopMarker();
-    } else {
-      console.log("Location not entered!");
-    }
+    //Adds the marker to your map upon creating the Record
+    $scope.addPoopMarker();
   };
 
   //---------------------------->
