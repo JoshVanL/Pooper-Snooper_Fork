@@ -4,9 +4,11 @@
 // 'PooperSnooper' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'PooperSnooper.controllers' is found in controllers.js
+
+var db = null;
 angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordova'])
 
-.run(function($ionicPlatform) {
+.run(function($ionicPlatform, $cordovaSQLite) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -19,6 +21,15 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
+
+    //Get database
+    db = $cordovaSQLite.openDB({
+      name: 'tester.db',
+      location: 'default'
+    });
+    $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS dogFindings (id integer primary key, DateTime text, Lat number, Long number, Image blob)");
+    $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS binLocations (id integer primary key, DateTime text, Lat number, Long number)");
+
   });
 })
 
