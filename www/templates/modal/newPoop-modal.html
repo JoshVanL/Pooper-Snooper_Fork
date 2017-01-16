@@ -6,57 +6,54 @@
 	<ion-header-bar class="bar-secondary">
 		<h1 class="title">
 			Add your Poop!
-			<i class="icon ion-trash-b"></i> 
+			<i class="icon ion-trash-b"></i>
 		</h1>
 		<button class="button button-clear button-positive" ng-click="closeNewRecord()" side="right">Cancel</button>
 	</ion-header-bar>
-	
+
 	<!-- Modal content area -->
 	<ion-content>
 
-		<form name="newRecord" ng-submit="createRecord(record)">
+		<form name="newRecord" ng-submit="createRecord()">
 			<div class="list">
-			
-				<!--
-				<label class="item item-input">
-					<span class="input-label">Datetime</span>
-					<input type="datetime" name="datetime" ng-model="record.datetime">
-				</label>
-				-->
-				
 				<label class="item item-input">
 					<span class="input-label">Date</span>
-					
-
-					<input type="date" name="date" ng-model="record.date">
-					
+					{{record.dateTime.getDate()}}/{{record.dateTime.getMonth()+1}}/{{record.dateTime.getFullYear()}}
 				</label>
 				<label class="item item-input">
 					<span class="input-label">Time</span>
-					<input type="time" name="time" ng-model="record.time">
+					{{record.time}}
 				</label>
-				<label class="item item-input">
-					<span class="input-label">Location</span>
-					<input type="text" name="location" ng-model="record.location" ng-minlength="4" required>
+				<label>
+					<img ng-show="record.ImageURI === undefined" ng-src="img/Assets/poop_small.png" class="center">
+					<img ng-show="record.ImageURI !== undefined" ng-src="{{record.ImageURI}}" class="center">
 				</label>
-				<div class="padding">								
-					<button type="button" class="button button-block button-balanced" ng-click="findLocation()">
-						<i class="icon ion-ios-search"></i>
-						Find my location
+				<div class="button-bar">
+					<button id="brownButton" type="button" class="button  button-balanced" ng-click="takePicture()">
+						<i class="icon ion-camera"></i>
+						Take Photo
+					</button>
+					<button id="brownButton" type="button" side="right" class="button button-balanced" ng-click="getImage()">
+						<i class="icon ion-android-image"></i>
+						Find Photo
 					</button>
 				</div>
-				
+				<label class="item item-input">
+					<span class="input-label">LatLong</span>
+					{{record.latLong}}
+				</label>
+
 			</div>
 			<div class="padding">
 				<p ng-show="newRecord.location.$error.required">* Location is required</p>
 			</div>
 			<div class="padding">
-				<button type="submit" class="button button-block button-positive" ng-disabled="newRecord.$invalid">
+				<button type="submit" class="button button-block button-positive" ng-disabled="!createEnabled">
 					Create record
 				</button>
 			</div>
 		</form>
-								
+
 	</ion-content>
 
 </div>

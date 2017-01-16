@@ -53,12 +53,12 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
     location: 'default'
   });
   // //Drop table for testing
-  // var query = "DROP TABLE IF EXISTS dogFindings";
-  // $cordovaSQLite.execute(db, query).then(function(res) {
-  //   console.log("Table deleted");
-  // }, function(err) {
-  //   console.error(err);
-  // });
+  var query = "DROP TABLE IF EXISTS dogFindings";
+  $cordovaSQLite.execute(db, query).then(function(res) {
+    console.log("Table deleted");
+  }, function(err) {
+    console.error(err);
+  });
   //Create table if doesn't exist
   var query = "CREATE TABLE IF NOT EXISTS dogFindings (id integer primary key, DateTime text, Lat number, Long number, Image blob)";
   $cordovaSQLite.execute(db, query).then(function(res) {
@@ -187,10 +187,10 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
             id: res.rows.item(0).id
           };
           console.log(($scope.selectedRec.blob));
-          $scope.blobToDataURL($scope.selectedRec.blob, function(data) {
-            $scope.selectedRec.image = data;
-            console.log($scope.selectedRec.image);
-          });
+          // $scope.blobToDataURL($scope.selectedRec.blob, function(data) {
+          //   $scope.selectedRec.image = data;
+          //   console.log($scope.selectedRec.image);
+          // });
           $scope.viewRecordModal.show();
         }
       },
@@ -324,7 +324,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 //Note : removed $state from dependencies (dunno what it did!)
 .controller('MapCtrl', function($scope, $cordovaGeolocation, $ionicModal,
   $window, $ionicPopup, $ionicLoading, $rootScope, $cordovaNetwork, $ionicSideMenuDelegate,
-  GlobalService, ConnectivityMonitor) {
+  GlobalService, ConnectivityMonitor, $cordovaCamera, $cordovaImagePicker, $cordovaSQLite) {
 
   //Disables swipe to side menu feature on entering page
   $scope.$on('$ionicView.enter', function() {
@@ -1255,11 +1255,15 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 
   // Blank form used reset fields
   $scope.record = {
-    date: "",
+    ImageURI: "",
+    fileName: "",
+    imgBlob: "",
+    dateTime: "",
     time: "",
-    location: ""
+    lat: "",
+    long: ""
   }
-  var emptyForm = angular.copy($scope.record);
+  $scope.createEnabled = false;
 
   // Create and load the Modal
   $ionicModal.fromTemplateUrl('templates/modal/newPoop-modal.html', function(modal) {
@@ -1269,8 +1273,23 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
     animation: 'slide-in-up'
   });
 
+  clearRecord = function() {
+    $scope.record.lat = null;
+    $scope.record.long = null;
+    $scope.record.fileName = 'No Image';
+    $scope.record.ImageURI = undefined;
+    $scope.record.imgBlob = undefined;
+
+    $scope.record.dateTime = new Date();
+    $scope.record.time = ($scope.record.dateTime.getHours() < 10 ? '0' : '') + ($scope.record.dateTime.getHours() + ":" +
+      ($scope.record.dateTime.getMinutes() < 10 ? '0' : '') + $scope.record.dateTime.getMinutes());
+  };
+
   // Open our new record modal
   $scope.newRecord = function() {
+    clearRecord();
+    $scope.createEnabled = false;
+    $scope.record.latLong = iconLatLng;
     $scope.poopModal.show();
   };
 
