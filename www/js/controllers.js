@@ -90,6 +90,9 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     }, 1000);
   };
 
+  $scope.getAllFindings();
+  $scope.getAllBins();
+
 })
 
 .service('backandService', function($http, Backand) {

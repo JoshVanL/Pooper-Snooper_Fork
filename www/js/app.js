@@ -5,7 +5,6 @@
 // the 2nd parameter is an array of 'requires'
 // 'PooperSnooper.controllers' is found in controllers.js
 
-var db = null;
 angular.module('PooperSnooper', ['ionic', 'backand', 'PooperSnooper.controllers', 'ngCordova'])
 
 .run(function($ionicPlatform, $cordovaSQLite) {
@@ -21,14 +20,6 @@ angular.module('PooperSnooper', ['ionic', 'backand', 'PooperSnooper.controllers'
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
-
-    //Get database
-    db = $cordovaSQLite.openDB({
-      name: 'tester.db',
-      location: 'default'
-    });
-    $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS dogFindings (id integer primary key, DateTime text, Lat number, Long number, Image blob)");
-    $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS binLocations (id integer primary key, DateTime text, Lat number, Long number)");
 
   });
 })
