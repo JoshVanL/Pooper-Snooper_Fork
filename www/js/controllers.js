@@ -668,7 +668,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     var binLngs = [];
     console.log("Number of bins > " + $scope.bins.length);
     if ($scope.bins.length > 0) {
-      for (var i = 0; i < res.rows.length; i++) {
+      for (var i = 0; i < $scope.bins.length; i++) {
         binLats.push($scope.bins[i].Lat);
         binLngs.push($scope.bins[i].Long);
       }
@@ -835,18 +835,12 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       icon: marker.getIcon().url
     };
 
-    var query = "INSERT INTO binLocations (DateTime, Lat, Long) VALUES (?,?,?)";
-    var now = new Date();
-    var record = [
-      now,
-      markerData.lat,
-      markerData.lng
-    ];
-    $cordovaSQLite.execute(db, query, record).then(function(res) {
-      console.log(JSON.stringify(res));
-    }, function(err) {
-      console.log('Error: ' + JSON.stringify(err));
-    });
+    $scope.input.Lat = markerData.lat;
+    $scope.input.Long = markerData.lng;
+    $scope.input.DateTime = new Date();
+    console.log(JSON.stringify($scope.input));
+    $scope.addBin();
+
     GlobalService.push_binMarkers(markerData);
 
     // Adds the marker to binMarkerCache so we have a reference to it
