@@ -27,7 +27,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       .then(function(result) {
         console.log("Selected finding");
         $scope.selectedRec = result.data;
-        console.log(JSON.stringify($scope.selectedRec.Lat));
+        console.log($scope.selectedRec.ImageURI);
         viewModal.show();
       });
   }
@@ -251,15 +251,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     $scope.record.dateTime = new Date();
     $scope.record.time = ($scope.record.dateTime.getHours() < 10 ? '0' : '') + ($scope.record.dateTime.getHours() + ":" +
       ($scope.record.dateTime.getMinutes() < 10 ? '0' : '') + $scope.record.dateTime.getMinutes());
-  };
-
-  clearSelected = function() {
-    $scope.selectedRec = {
-      dateTime: new Date(),
-      lat: 0,
-      long: 0,
-      id: 0
-    };
   };
 
   // Open our new record modal
