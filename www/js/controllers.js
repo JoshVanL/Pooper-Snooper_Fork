@@ -374,6 +374,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   var map = null;
   var iconLatLng = null;
 
+  $scope.getAllFindings();
+
   var markerCache = []; // Cache of all markerData. THESE ARE NOT REFERENCES TO MARKER OBJECTS!
   // It stores the MARKER DATA currently containing: 'lat', 'lng', 'icon.url'
 
@@ -587,36 +589,34 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   //------------------------------>
 
   function getPoopMarkers() {
-    var query = "SELECT * FROM dogFindings";
     var poopLats = [];
     var poopLngs = [];
-    $cordovaSQLite.execute(db, query, []).then(function(res) {
-      if (res.rows.length > 0) {
-        for (var i = 0; i < res.rows.length; i++) {
-          poopLats.push(res.rows.item(i).Lat);
-          poopLngs.push(res.rows.item(i).Long);
-        }
-        for (i = 0; i < poopLats.length; i++) {
-          var myLatLng = new google.maps.LatLng({
-            lat: poopLats[i],
-            lng: poopLngs[i]
-          });
-          var marker = new google.maps.Marker({
-            position: myLatLng,
-            icon: poop_icon
-          });
-          var markerData = {
-            lat: marker.getPosition().lat(),
-            lng: marker.getPosition().lng(),
-            icon: marker.getIcon().url
-          };
-          GlobalService.push_binMarkers(markerData);
-        }
-
-        console.log("poop > " + poopLats + poopLngs);
+    console.log("Number of findings > " +$scope.findings.length);
+    if ($scope.findings.length > 0) {
+      for (var i = 0; i < $scope.findings.length; i++) {
+        poopLats.push(Number($scope.findings[i].Lat));
+        poopLngs.push(Number($scope.findings[i].Long));
       }
-      loadMarkers();
-    })
+      for (i = 0; i < poopLats.length; i++) {
+        var myLatLng = new google.maps.LatLng({
+          lat: poopLats[i],
+          lng: poopLngs[i]
+        });
+        var marker = new google.maps.Marker({
+          position: myLatLng,
+          icon: poop_icon
+        });
+        var markerData = {
+          lat: marker.getPosition().lat(),
+          lng: marker.getPosition().lng(),
+          icon: marker.getIcon().url
+        };
+        GlobalService.push_binMarkers(markerData);
+      }
+
+      console.log("poop > " + poopLats + poopLngs);
+    }
+    loadMarkers();
   }
 
   function getBinMarkers() {
