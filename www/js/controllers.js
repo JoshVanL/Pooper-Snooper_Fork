@@ -1,6 +1,6 @@
 angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout, dogFindingsService) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, backandService) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -10,33 +10,52 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   //
 
   $scope.findings = [];
+  $scope.bins = [];
   $scope.input = {};
 
 
   $scope.getAllFindings = function() {
-    dogFindingsService.getFindings()
+    backandService.getFindings()
       .then(function(result) {
         $scope.findings = result.data.data;
-        console.log("gotAll");
+        console.log("Got all findings");
       });
   }
 
   $scope.addFinding = function() {
-    dogFindingsService.addFinding($scope.input)
+    backandService.addFinding($scope.input)
       .then(function(result) {
         $scope.input = {};
-        // Reload our todos, not super cool
-        //getAllFindings();
       });
   }
 
   $scope.deleteFinding = function(id) {
-    dogFindingsService.deleteFinding(id)
+    backandService.deleteFinding(id)
       .then(function(result) {
         console.log("HERE");
         console.log(result);
-        // Reload our todos, not super cool
-        //getAllFindings();
+      });
+  }
+
+  $scope.getAllBins = function() {
+    backandService.getBins()
+      .then(function(result) {
+        $scope.bins = result.data.data;
+        console.log("Got all Bins");
+      });
+  }
+
+  $scope.addBin = function() {
+    backandService.addBin($scope.input)
+      .then(function(result) {
+        $scope.input = {};
+      });
+  }
+
+  $scope.deleteBin = function(id) {
+    backandService.deleteBin(id)
+      .then(function(result) {
+        console.log(result);
       });
   }
 
@@ -73,34 +92,58 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
 })
 
-.service('dogFindingsService', function($http, Backand) {
+.service('backandService', function($http, Backand) {
   var baseUrl = '/1/objects/';
-  var objectName = 'dogFindings/';
+  var dogFindingsName = 'dogFindings/';
+  var binLocationsName = 'binLocations/';
 
-  function getUrl() {
-    return Backand.getApiUrl() + baseUrl + objectName;
+  function getFindingsUrl() {
+    return Backand.getApiUrl() + baseUrl + dogFindingsName;
   }
 
-  function getUrlForId(id) {
-    return getUrl() + id;
+  function getFindingsUrlForId(id) {
+    return getFindingsUrl() + id;
   }
 
   getFindings = function() {
-    return $http.get(getUrl());
+    return $http.get(getFindingsUrl());
   };
 
   addFinding = function(finding) {
-    return $http.post(getUrl(), finding);
+    return $http.post(getFindingsUrl(), finding);
   }
 
   deleteFinding = function(id) {
-    return $http.delete(getUrlForId(id));
+    return $http.delete(getFindingsUrlForId(id));
+  };
+
+  function getBinUrl() {
+    return Backand.getApiUrl() + baseUrl + binLocationsName;
+  }
+
+  function getBinUrlForId(id) {
+    return getBinUrl() + id;
+  }
+
+  getBins = function() {
+    return $http.get(getBinUrl());
+  };
+
+  addBin = function(bin) {
+    return $http.post(getBinUrl(), bin);
+  }
+
+  deleteBin = function(id) {
+    return $http.delete(getBinUrlForId(id));
   };
 
   return {
     getFindings: getFindings,
     addFinding: addFinding,
-    deleteFinding: deleteFinding
+    deleteFinding: deleteFinding,
+    getBins: getBins,
+    addBin: addBin,
+    deleteBin: deleteBin
   }
 })
 
@@ -108,7 +151,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 /* ------------------------------------------------ */
 /* ------------ Record Logs Controller ------------ */
 /* ------------------------------------------------ */
-.controller('RecordLogsCtrl', function($scope, $ionicModal, $cordovaCamera, $cordovaImagePicker, $filter, $ionicLoading, $cordovaGeolocation, GlobalService, $cordovaSQLite, dogFindingsService) {
+.controller('RecordLogsCtrl', function($scope, $ionicModal, $cordovaCamera, $cordovaImagePicker, $filter, $ionicLoading, $cordovaGeolocation, GlobalService, $cordovaSQLite, backandService) {
 
   // // //Drop table for testing
   // var query = "DROP TABLE IF EXISTS dogFindings";
@@ -375,6 +418,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   var iconLatLng = null;
 
   $scope.getAllFindings();
+  $scope.getAllBins();
 
   var markerCache = []; // Cache of all markerData. THESE ARE NOT REFERENCES TO MARKER OBJECTS!
   // It stores the MARKER DATA currently containing: 'lat', 'lng', 'icon.url'
@@ -591,7 +635,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   function getPoopMarkers() {
     var poopLats = [];
     var poopLngs = [];
-    console.log("Number of findings > " +$scope.findings.length);
+    console.log("Number of findings > " + $scope.findings.length);
     if ($scope.findings.length > 0) {
       for (var i = 0; i < $scope.findings.length; i++) {
         poopLats.push(Number($scope.findings[i].Lat));
@@ -620,36 +664,34 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   }
 
   function getBinMarkers() {
-    var query = "SELECT * FROM binLocations";
     var binLats = [];
     var binLngs = [];
-    $cordovaSQLite.execute(db, query, []).then(function(res) {
-      if (res.rows.length > 0) {
-        for (var i = 0; i < res.rows.length; i++) {
-          binLats.push(res.rows.item(i).Lat);
-          binLngs.push(res.rows.item(i).Long);
-        }
-        for (i = 0; i < binLats.length; i++) {
-          var myLatLng = new google.maps.LatLng({
-            lat: binLats[i],
-            lng: binLngs[i]
-          });
-          var marker = new google.maps.Marker({
-            position: myLatLng,
-            icon: bin_icon
-          });
-          var markerData = {
-            lat: marker.getPosition().lat(),
-            lng: marker.getPosition().lng(),
-            icon: marker.getIcon().url
-          };
-          GlobalService.push_binMarkers(markerData);
-        }
-
-        console.log("bins > " + binLats + binLngs);
+    console.log("Number of bins > " + $scope.bins.length);
+    if ($scope.bins.length > 0) {
+      for (var i = 0; i < res.rows.length; i++) {
+        binLats.push($scope.bins[i].Lat);
+        binLngs.push($scope.bins[i].Long);
       }
-      loadMarkers();
-    })
+      for (i = 0; i < binLats.length; i++) {
+        var myLatLng = new google.maps.LatLng({
+          lat: binLats[i],
+          lng: binLngs[i]
+        });
+        var marker = new google.maps.Marker({
+          position: myLatLng,
+          icon: bin_icon
+        });
+        var markerData = {
+          lat: marker.getPosition().lat(),
+          lng: marker.getPosition().lng(),
+          icon: marker.getIcon().url
+        };
+        GlobalService.push_binMarkers(markerData);
+      }
+
+      console.log("bins > " + binLats + binLngs);
+    }
+    loadMarkers();
   }
 
 
