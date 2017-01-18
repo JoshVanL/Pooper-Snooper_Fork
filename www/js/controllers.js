@@ -1,6 +1,6 @@
-angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
+angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, dogFindingsService) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -8,6 +8,36 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
   // listen for the $ionicView.enter event:
   //$scope.$on('$ionicView.enter', function(e))
   //
+
+  $scope.findings = [];
+  $scope.input = {};
+
+
+  $scope.getAllTodos = function() {
+    dogFindingsService.getTodos()
+      .then(function(result) {
+        $scope.findings = result.data.data;
+        console.log("gotAll");
+        console.log(JSON.stringify($scope.findings));
+      });
+  }
+
+  $scope.addTodo = function() {
+    dogFindingsService.addTodo($scope.input)
+      .then(function(result) {
+        $scope.input = {};
+        // Reload our todos, not super cool
+        getAllTodos();
+      });
+  }
+
+  $scope.deleteTodo = function(id) {
+    dogFindingsService.deleteTodo(id)
+      .then(function(result) {
+        // Reload our todos, not super cool
+        getAllTodos();
+      });
+  }
 
   // Form data for the login modal
   $scope.loginData = {};
@@ -39,13 +69,45 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
       $scope.closeLogin();
     }, 1000);
   };
+
+})
+
+.service('dogFindingsService', function ($http, Backand) {
+  var baseUrl = '/1/objects/';
+  var objectName = 'dogFindings/';
+
+  function getUrl() {
+    return Backand.getApiUrl() + baseUrl + objectName;
+  }
+
+  function getUrlForId(id) {
+    return getUrl() + id;
+  }
+
+  getTodos = function () {
+    return $http.get(getUrl());
+  };
+
+  addTodo = function(todo) {
+    return $http.post(getUrl(), todo);
+  }
+
+  deleteTodo = function (id) {
+    return $http.delete(getUrlForId(id));
+  };
+
+  return {
+    getTodos: getTodos,
+    addTodo: addTodo,
+    deleteTodo: deleteTodo
+  }
 })
 
 
 /* ------------------------------------------------ */
 /* ------------ Record Logs Controller ------------ */
 /* ------------------------------------------------ */
-.controller('RecordLogsCtrl', function($scope, $ionicModal, $cordovaCamera, $cordovaImagePicker, $filter, $ionicLoading, $cordovaGeolocation, GlobalService, $cordovaSQLite) {
+.controller('RecordLogsCtrl', function($scope, $ionicModal, $cordovaCamera, $cordovaImagePicker, $filter, $ionicLoading, $cordovaGeolocation, GlobalService, $cordovaSQLite, dogFindingsService) {
 
   // // //Drop table for testing
   // var query = "DROP TABLE IF EXISTS dogFindings";
@@ -97,6 +159,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 
 
   function doRefresh() {
+    $scope.getAllTodos();
     $scope.records = [];
     var query = "SELECT * FROM dogFindings";
     $cordovaSQLite.execute(db, query, []).then(function(res) {
@@ -111,7 +174,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
             id: res.rows.item(i).id
           });
         }
-        console.log(JSON.stringify($scope.records));
+        //console.log(JSON.stringify($scope.records));
       }
     }, function(error) {
       console.error();
@@ -153,6 +216,16 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
       ($scope.record.dateTime.getMinutes() < 10 ? '0' : '') + $scope.record.dateTime.getMinutes());
   };
 
+  clearSelected = function() {
+    $scope.selectedRec = {
+      dateTime: new Date(),
+      lat: 0,
+      long: 0,
+      blob: new Blob(),
+      id: 0
+    };
+  };
+
   // Open our new record modal
   $scope.newRecord = function() {
     clearRecord();
@@ -167,7 +240,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
     var query = "SELECT * FROM dogFindings WHERE id = ?";
     $cordovaSQLite.execute(db, query, [id]).then(function(res) {
         if (res.rows.length > 0) {
-
+          clearSelected();
           console.log("Record found");
           $scope.selectedRec = {
             dateTime: res.rows.item(0).DateTime,
@@ -176,7 +249,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
             blob: res.rows.item(0).Image,
             id: res.rows.item(0).id
           };
-          console.log(($scope.selectedRec.blob));
+          // console.log(($scope.selectedRec.blob));
           // $scope.blobToDataURL($scope.selectedRec.blob, function(data) {
           //   $scope.selectedRec.image = data;
           //   console.log($scope.selectedRec.image);
@@ -275,6 +348,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'ngCordova'])
 
     $cordovaCamera.getPicture(options).then(function(imageData) {
       $scope.record.ImageURI = "data:image/jpeg;base64," + imageData;
+      $scope.record.imgBlob = new Blob();
       $scope.record.imgBlob = $scope.dataURItoBlob($scope.record.ImageURI);
       console.log($scope.record.imgBlob);
       if ($scope.record.lat && $scope.record.long) $scope.createEnabled = true;

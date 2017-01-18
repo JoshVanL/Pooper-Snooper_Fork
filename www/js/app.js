@@ -6,7 +6,7 @@
 // 'PooperSnooper.controllers' is found in controllers.js
 
 var db = null;
-angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordova'])
+angular.module('PooperSnooper', ['ionic', 'backand', 'PooperSnooper.controllers', 'ngCordova'])
 
 .run(function($ionicPlatform, $cordovaSQLite) {
   $ionicPlatform.ready(function() {
@@ -34,7 +34,10 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
 })
 
 // Navigate through page states
-.config(function($stateProvider, $urlRouterProvider) {
+.config(function($stateProvider, $urlRouterProvider, BackandProvider) {
+  BackandProvider.setAppName('PooperSnooper');
+  BackandProvider.setAnonymousToken('bba42d70-2df7-4490-82a5-5395c4e7347e');
+
   $stateProvider
 
     .state('app', {
@@ -83,6 +86,8 @@ angular.module('PooperSnooper', ['ionic', 'PooperSnooper.controllers', 'ngCordov
   })
 
   // if none of the above states are matched, use this as the fall back
+
+
 
   // $urlRouterProvider.otherwise('/app/map');
   $urlRouterProvider.otherwise('/app/welcome');
