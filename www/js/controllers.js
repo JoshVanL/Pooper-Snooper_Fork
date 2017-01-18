@@ -18,7 +18,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       .then(function(result) {
         $scope.findings = result.data.data;
         console.log("gotAll");
-        console.log(JSON.stringify($scope.findings[1]));
       });
   }
 
@@ -27,15 +26,17 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       .then(function(result) {
         $scope.input = {};
         // Reload our todos, not super cool
-        getAllFindings();
+        //getAllFindings();
       });
   }
 
   $scope.deleteFinding = function(id) {
     dogFindingsService.deleteFinding(id)
       .then(function(result) {
+        console.log("HERE");
+        console.log(result);
         // Reload our todos, not super cool
-        getAllFindings();
+        //getAllFindings();
       });
   }
 
@@ -72,7 +73,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
 })
 
-.service('dogFindingsService', function ($http, Backand) {
+.service('dogFindingsService', function($http, Backand) {
   var baseUrl = '/1/objects/';
   var objectName = 'dogFindings/';
 
@@ -84,7 +85,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     return getUrl() + id;
   }
 
-  getFindings = function () {
+  getFindings = function() {
     return $http.get(getUrl());
   };
 
@@ -92,7 +93,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     return $http.post(getUrl(), finding);
   }
 
-  deleteFinding = function (id) {
+  deleteFinding = function(id) {
     return $http.delete(getUrlForId(id));
   };
 
@@ -136,8 +137,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   $scope.myLocation = "* No Location *";
   $scope.createEnabled = false;
 
-  doRefresh();
-
   // Blank form used to reset fields
   var emptyForm = angular.copy($scope.record);
 
@@ -158,36 +157,32 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
 
 
-  function doRefresh() {
+  $scope.doRefresh = function() {
     $scope.getAllFindings();
     // Stop the ion-refresher from spinning
     $scope.$broadcast('scroll.refreshComplete');
   };
 
+
+  $scope.doRefresh();
+
   // Called when the form is submitted
   $scope.createRecord = function() {
     //insert record in database
-    var query = "INSERT INTO dogFindings (DateTime, Lat, Long, Image) VALUES (?,?,?,?)";
-    var record = [
-      $scope.record.dateTime,
-      $scope.record.lat,
-      $scope.record.long,
-      $scope.record.imgBlob
-    ];
-    $cordovaSQLite.execute(db, query, record).then(function(res) {
-      console.log("INSERT ID -> " + res.insertId);
-    }, function(err) {
-      console.log('Error: ' + JSON.stringify(err));
-    });
+    $scope.input.Lat = $scope.record.lat;
+    $scope.input.Long = $scope.record.long;
+    $scope.input.DateTime = $scope.record.dateTime;
+    console.log(JSON.stringify($scope.input));
+    $scope.addFinding();
 
     $scope.recordModal.hide();
-    doRefresh();
+    $scope.doRefresh();
   };
 
   clearRecord = function() {
     $scope.myLocation = "* No Location *";
-    $scope.record.lat = null;
-    $scope.record.long = null;
+    $scope.record.lat = 0;
+    $scope.record.long = 0;
     $scope.record.fileName = 'No Image';
     $scope.record.ImageURI = undefined;
     $scope.record.imgBlob = undefined;
