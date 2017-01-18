@@ -13,29 +13,29 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   $scope.input = {};
 
 
-  $scope.getAllTodos = function() {
-    dogFindingsService.getTodos()
+  $scope.getAllFindings = function() {
+    dogFindingsService.getFindings()
       .then(function(result) {
         $scope.findings = result.data.data;
         console.log("gotAll");
-        console.log(JSON.stringify($scope.findings));
+        console.log(JSON.stringify($scope.findings[1]));
       });
   }
 
-  $scope.addTodo = function() {
-    dogFindingsService.addTodo($scope.input)
+  $scope.addFinding = function() {
+    dogFindingsService.addFinding($scope.input)
       .then(function(result) {
         $scope.input = {};
         // Reload our todos, not super cool
-        getAllTodos();
+        getAllFindings();
       });
   }
 
-  $scope.deleteTodo = function(id) {
-    dogFindingsService.deleteTodo(id)
+  $scope.deleteFinding = function(id) {
+    dogFindingsService.deleteFinding(id)
       .then(function(result) {
         // Reload our todos, not super cool
-        getAllTodos();
+        getAllFindings();
       });
   }
 
@@ -84,22 +84,22 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     return getUrl() + id;
   }
 
-  getTodos = function () {
+  getFindings = function () {
     return $http.get(getUrl());
   };
 
-  addTodo = function(todo) {
-    return $http.post(getUrl(), todo);
+  addFinding = function(finding) {
+    return $http.post(getUrl(), finding);
   }
 
-  deleteTodo = function (id) {
+  deleteFinding = function (id) {
     return $http.delete(getUrlForId(id));
   };
 
   return {
-    getTodos: getTodos,
-    addTodo: addTodo,
-    deleteTodo: deleteTodo
+    getFindings: getFindings,
+    addFinding: addFinding,
+    deleteFinding: deleteFinding
   }
 })
 
@@ -159,26 +159,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
 
   function doRefresh() {
-    $scope.getAllTodos();
-    $scope.records = [];
-    var query = "SELECT * FROM dogFindings";
-    $cordovaSQLite.execute(db, query, []).then(function(res) {
-      if (res.rows.length > 0) {
-        for (var i = 0; i < res.rows.length; i++) {
-
-          $scope.records.push({
-            dateTime: res.rows.item(i).DateTime,
-            lat: res.rows.item(i).Lat,
-            long: res.rows.item(i).Long,
-            blob: res.rows.item(i).Image,
-            id: res.rows.item(i).id
-          });
-        }
-        //console.log(JSON.stringify($scope.records));
-      }
-    }, function(error) {
-      console.error();
-    });
+    $scope.getAllFindings();
     // Stop the ion-refresher from spinning
     $scope.$broadcast('scroll.refreshComplete');
   };
