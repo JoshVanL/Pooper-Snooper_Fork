@@ -669,8 +669,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     console.log("Number of bins > " + $scope.bins.length);
     if ($scope.bins.length > 0) {
       for (var i = 0; i < $scope.bins.length; i++) {
-        binLats.push($scope.bins[i].Lat);
-        binLngs.push($scope.bins[i].Long);
+        binLats.push(Number($scope.bins[i].Lat));
+        binLngs.push(Number($scope.bins[i].Long));
       }
       for (i = 0; i < binLats.length; i++) {
         var myLatLng = new google.maps.LatLng({
