@@ -211,32 +211,16 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   };
 
   $scope.selectRecord = function(id) {
-    console.log("Record Selected.");
-    console.log(id);
-    var query = "SELECT * FROM dogFindings WHERE id = ?";
-    $cordovaSQLite.execute(db, query, [id]).then(function(res) {
-        if (res.rows.length > 0) {
-          clearSelected();
-          console.log("Record found");
-          $scope.selectedRec = {
-            dateTime: res.rows.item(0).DateTime,
-            lat: res.rows.item(0).Lat,
-            long: res.rows.item(0).Long,
-            blob: res.rows.item(0).Image,
-            id: res.rows.item(0).id
-          };
-          // console.log(($scope.selectedRec.blob));
-          // $scope.blobToDataURL($scope.selectedRec.blob, function(data) {
-          //   $scope.selectedRec.image = data;
-          //   console.log($scope.selectedRec.image);
-          // });
-          $scope.viewRecordModal.show();
-        }
-      },
-      function(error) {
-        console.error();
-        (error);
-      });
+    console.log("Record Selected > " + id);
+
+    clearSelected();
+    $scope.selectedRec = {
+      dateTime: $scope.findings[id - 1].DateTime,
+      lat: $scope.findings[id - 1].Lat,
+      long: $scope.findings[id - 1].Long,
+      id: id
+    };
+    $scope.viewRecordModal.show();
   };
 
   $scope.blobToDataURL = function(blob, callback) {
