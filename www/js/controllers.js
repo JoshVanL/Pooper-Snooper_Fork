@@ -1359,18 +1359,12 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   // Create record item
   $scope.createRecord = function(record) {
     //insert record in database
-    var query = "INSERT INTO dogFindings (DateTime, Lat, Long, Image) VALUES (?,?,?,?)";
-    var record = [
-      $scope.record.dateTime,
-      $scope.record.lat,
-      $scope.record.long,
-      $scope.record.imgBlob
-    ];
-    $cordovaSQLite.execute(db, query, record).then(function(res) {
-      console.log("INSERT ID -> " + res.insertId);
-    }, function(err) {
-      console.log('Error: ' + JSON.stringify(err));
-    });
+    $scope.input.Lat = $scope.record.lat;
+    $scope.input.Long = $scope.record.long;
+    $scope.input.DateTime = $scope.record.dateTime;
+    console.log(JSON.stringify($scope.input));
+    $scope.addFinding();
+
     $scope.poopModal.hide();
     clearRecord();
 
