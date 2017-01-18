@@ -190,7 +190,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   $scope.record = {
     ImageURI: "",
     fileName: "",
-    imgBlob: "",
     dateTime: "",
     time: "",
     lat: "",
@@ -234,6 +233,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     $scope.input.Lat = $scope.record.lat;
     $scope.input.Long = $scope.record.long;
     $scope.input.DateTime = $scope.record.dateTime;
+    $scope.input.ImageURI = $scope.record.imageURI;
     console.log(JSON.stringify($scope.input));
     $scope.addFinding();
 
@@ -246,8 +246,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     $scope.record.lat = 0;
     $scope.record.long = 0;
     $scope.record.fileName = 'No Image';
-    $scope.record.ImageURI = undefined;
-    $scope.record.imgBlob = undefined;
+    $scope.record.imageURI = undefined;
 
     $scope.record.dateTime = new Date();
     $scope.record.time = ($scope.record.dateTime.getHours() < 10 ? '0' : '') + ($scope.record.dateTime.getHours() + ":" +
@@ -259,7 +258,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       dateTime: new Date(),
       lat: 0,
       long: 0,
-      blob: new Blob(),
       id: 0
     };
   };
@@ -275,14 +273,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   $scope.selectRecord = function(id) {
     console.log("Record Selected > " + id);
     $scope.selectFinding(id, $scope.viewRecordModal);
-  };
-
-  $scope.blobToDataURL = function(blob, callback) {
-    var a = new FileReader();
-    a.onload = function(e) {
-      callback(e.target.result);
-    }
-    a.readAsDataURL(blob);
   };
 
 
@@ -310,7 +300,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       $scope.record.long = position.coords.longitude;
       $scope.myLocation = "Location Found";
       $ionicLoading.hide();
-      if ($scope.record.imgBlob) $scope.createEnabled = true;
+      $scope.createEnabled = true;
     }, function(error) {
       console.log("Could not get location");
       $scope.myLocation = "*Location not found*";
@@ -318,33 +308,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     });
   };
 
-
-  $scope.dataURItoBlob = function(dataURI, callback) {
-    // convert base64 to raw binary data held in a string
-    // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
-    var byteString = atob(dataURI.split(',')[1]);
-
-    // separate out the mime component
-    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-
-    // write the bytes of the string to an ArrayBuffer
-    var ab = new ArrayBuffer(byteString.length);
-    var ia = new Uint8Array(ab);
-    try {
-      return new Blob([ab], {
-        type: mimeString
-      });
-    } catch (e) {
-      // The BlobBuilder API has been deprecated in favour of Blob, but older
-      // browsers don't know about the Blob constructor
-      // IE10 also supports BlobBuilder, but since the `Blob` constructor
-      //  also works, there's no need to add `MSBlobBuilder`.
-      var BlobBuilder = window.WebKitBlobBuilder || window.MozBlobBuilder;
-      var bb = new BlobBuilder();
-      bb.append(ab);
-      return bb.getBlob(mimeString);
-    }
-  };
 
   $scope.takePicture = function() {
     var options = {
@@ -361,10 +324,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     };
 
     $cordovaCamera.getPicture(options).then(function(imageData) {
-      $scope.record.ImageURI = "data:image/jpeg;base64," + imageData;
-      $scope.record.imgBlob = new Blob();
-      $scope.record.imgBlob = $scope.dataURItoBlob($scope.record.ImageURI);
-      console.log($scope.record.imgBlob);
+      $scope.record.imageURI = "data:image/jpeg;base64," + imageData;
       if ($scope.record.lat && $scope.record.long) $scope.createEnabled = true;
     }, function(err) {
       // An error occured. Show a message to the user
@@ -1262,7 +1222,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   $scope.record = {
     ImageURI: "",
     fileName: "",
-    imgBlob: "",
     dateTime: "",
     time: "",
     lat: "",
@@ -1282,8 +1241,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     $scope.record.lat = null;
     $scope.record.long = null;
     $scope.record.fileName = 'No Image';
-    $scope.record.ImageURI = undefined;
-    $scope.record.imgBlob = undefined;
+    $scope.record.imageURI = undefined;
 
     $scope.record.dateTime = new Date();
     $scope.record.time = ($scope.record.dateTime.getHours() < 10 ? '0' : '') + ($scope.record.dateTime.getHours() + ":" +
@@ -1301,32 +1259,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     $scope.poopModal.show();
   };
 
-  $scope.dataURItoBlob = function(dataURI, callback) {
-    // convert base64 to raw binary data held in a string
-    // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
-    var byteString = atob(dataURI.split(',')[1]);
-
-    // separate out the mime component
-    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-
-    // write the bytes of the string to an ArrayBuffer
-    var ab = new ArrayBuffer(byteString.length);
-    var ia = new Uint8Array(ab);
-    try {
-      return new Blob([ab], {
-        type: mimeString
-      });
-    } catch (e) {
-      // The BlobBuilder API has been deprecated in favour of Blob, but older
-      // browsers don't know about the Blob constructor
-      // IE10 also supports BlobBuilder, but since the `Blob` constructor
-      //  also works, there's no need to add `MSBlobBuilder`.
-      var BlobBuilder = window.WebKitBlobBuilder || window.MozBlobBuilder;
-      var bb = new BlobBuilder();
-      bb.append(ab);
-      return bb.getBlob(mimeString);
-    }
-  };
 
   $scope.takePicture = function() {
     var options = {
@@ -1343,9 +1275,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     };
 
     $cordovaCamera.getPicture(options).then(function(imageData) {
-      $scope.record.ImageURI = "data:image/jpeg;base64," + imageData;
-      $scope.record.imgBlob = $scope.dataURItoBlob($scope.record.ImageURI);
-      console.log($scope.record.imgBlob);
+      $scope.record.imageURI = "data:image/jpeg;base64," + imageData;
       $scope.createEnabled = true;
     }, function(err) {
       // An error occured. Show a message to the user
@@ -1364,6 +1294,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     $scope.input.Lat = $scope.record.lat;
     $scope.input.Long = $scope.record.long;
     $scope.input.DateTime = $scope.record.dateTime;
+    $scope.input.ImageURI = $scope.record.imageURI;
     console.log(JSON.stringify($scope.input));
     $scope.addFinding();
 
