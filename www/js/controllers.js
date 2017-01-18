@@ -22,6 +22,17 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       });
   }
 
+  $scope.selectFinding = function(id, viewModal) {
+    backandService.selectFinding(id)
+      .then(function(result) {
+        console.log("Selected finding");
+        $scope.selectedRec = result.data;
+        console.log(JSON.stringify($scope.selectedRec.Lat));
+        viewModal.show();
+      });
+  }
+
+
   $scope.addFinding = function() {
     backandService.addFinding($scope.input)
       .then(function(result) {
@@ -112,6 +123,10 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     return $http.get(getFindingsUrl());
   };
 
+  selectFinding = function(id) {
+    return $http.get(getFindingsUrlForId(id));
+  }
+
   addFinding = function(finding) {
     return $http.post(getFindingsUrl(), finding);
   }
@@ -144,6 +159,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     getFindings: getFindings,
     addFinding: addFinding,
     deleteFinding: deleteFinding,
+    selectFinding: selectFinding,
     getBins: getBins,
     addBin: addBin,
     deleteBin: deleteBin
@@ -258,15 +274,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
   $scope.selectRecord = function(id) {
     console.log("Record Selected > " + id);
-
-    clearSelected();
-    $scope.selectedRec = {
-      dateTime: $scope.findings[id - 1].DateTime,
-      lat: $scope.findings[id - 1].Lat,
-      long: $scope.findings[id - 1].Long,
-      id: id
-    };
-    $scope.viewRecordModal.show();
+    $scope.selectFinding(id, $scope.viewRecordModal);
   };
 
   $scope.blobToDataURL = function(blob, callback) {
