@@ -372,27 +372,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   };
 
 
-  $scope.getImage = function() {
-    // Image picker will load images according to these settings
-    var options = {
-      maximumImagesCount: 1, // Max number of selected images, I'm using only one for this example
-      width: 300,
-      height: 300,
-      quality: 80 // Higher is better
-    };
-    $cordovaImagePicker.getPictures(options).then(function(results) {
-      // Loop through acquired images
-      $scope.record.fileName = results[0].replace(/^.*[\\\/]/, '');
-      $scope.record.ImageURI = results[0];
-      $scope.record.imgBlob = $scope.dataURItoBlob(ImageURI);
-      if ($scope.record.lat && $scope.record.long) $scope.createEnabled = true;
-      //console.log($scope.record.fileName);
-      //console.log($scope.record.ImageURI);
-    }, function(error) {
-      console.log('Error: ' + JSON.stringify(error)); // In case of error
-    });
-  };
-
 })
 
 /* ----------------------------------------------------------- */
@@ -428,8 +407,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   var map = null;
   var iconLatLng = null;
 
-  $scope.getAllFindings();
-  $scope.getAllBins();
 
   var markerCache = []; // Cache of all markerData. THESE ARE NOT REFERENCES TO MARKER OBJECTS!
   // It stores the MARKER DATA currently containing: 'lat', 'lng', 'icon.url'
@@ -1372,28 +1349,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       $scope.createEnabled = true;
     }, function(err) {
       // An error occured. Show a message to the user
-    });
-  };
-
-
-  $scope.getImage = function() {
-    // Image picker will load images according to these settings
-    var options = {
-      maximumImagesCount: 1, // Max number of selected images, I'm using only one for this example
-      width: 300,
-      height: 300,
-      quality: 80 // Higher is better
-    };
-    $cordovaImagePicker.getPictures(options).then(function(results) {
-      // Loop through acquired images
-      $scope.record.fileName = results[0].replace(/^.*[\\\/]/, '');
-      $scope.record.ImageURI = results[0];
-      $scope.record.imgBlob = $scope.dataURItoBlob(ImageURI);
-      $scope.createEnabled = true;
-      //console.log($scope.record.fileName);
-      //console.log($scope.record.ImageURI);
-    }, function(error) {
-      console.log('Error: ' + JSON.stringify(error)); // In case of error
     });
   };
 
