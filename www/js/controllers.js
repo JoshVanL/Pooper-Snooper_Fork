@@ -107,7 +107,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   };
 
   // Triggered in the signUp modal to close it
-  $scope.closesignUp = function() {
+  $scope.closeSignUp = function() {
     $scope.signUpModal.hide();
     $scope.modal.show();
   };
@@ -115,25 +115,42 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   //Open the signUp modal
   $scope.signUp = function() {
     $scope.modal.hide();
+    $scope.signUpData = {
+      firstName: "first",
+      lastName: "last",
+      email: "test20@test.com",
+      password: "test",
+      again: "test"
+    };
     $scope.signUpModal.show();
   };
 
-  function dosignUp() {
-    $scope.errorMessage = '';
-    console.log("Here");
-    LoginService.signUp($scope.firstName, $scope.lastName, $scope.email, $scope.password, $scope.again)
+  $scope.doSignUp = function() {
+    $scope.signUpData.errorMessage = '';
+    LoginService.signup($scope.signUpData.firstName, $scope.signUpData.lastName, $scope.signUpData.email, $scope.signUpData.password, $scope.signUpData.again)
       .then(function(response) {
-        // success
-        console.log("signUp sucsess");
-        onLogin();
-      }, function(reason) {
-        if (reason.data.error_description !== undefined) {
-          $scope.errorMessage = reason.data.error_description;
-          console.log($scope.errorMessage);
-        } else {
-          $scope.errorMessage = reason.data;
-          console.log($scope.errorMessage);
-        }
+          //getting invalid grant - username or password is incorrect for some reason
+
+        }, function(reason) {
+          console.log(JSON.stringify(reason));
+          if (reason.data != undefined) {
+            $scope.signUpData.errorMessage = reason.data.error_description;
+            console.log($scope.signUpData.errorMessage);
+          } else {
+            //getting invalid grant - username or password is incorrect for some reason
+            // $scope.signUpData.errorMessage = reason.error;
+            // console.log($scope.signUpData.errorMessage);
+            // success
+            console.log("signUp sucsess");
+            var signedUpPopup = $ionicPopup.alert({
+              title: 'Signed Up!',
+              template: $scope.signUpData.email
+            });
+            signedUpPopup.then(function(res) {
+              onLogin($scope.signUpData.email);
+              $scope.signUpModal.hide();
+            });
+          };
       });
   };
 

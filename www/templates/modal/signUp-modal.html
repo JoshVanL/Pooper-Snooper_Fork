@@ -2,16 +2,16 @@
   <ion-header-bar>
     <h1 class="title">Sign Up</h1>
     <div class="buttons">
-      <button class="button button-assertive" ng-click="closesignUp()">Close</button>
+      <button class="button button-assertive" ng-click="closeSignUp()">Close</button>
     </div>
   </ion-header-bar>
   <ion-content scroll="false">
-    <form ng-submit="dosignUp()">
+    <form ng-submit="doSignUp()">
       <div class="list">
         <div class="row">
           <div class="col">
             <label class="item item-input">
-              <input id=email name=email type="email" ng-model="singupData.email" placeholder="Your email">
+              <input id=email name=email type="email" ng-model="signUpData.email" placeholder="Your email">
             </label>
           </div>
         </div>
@@ -45,7 +45,7 @@
 
         <div class="">
           <button class="button button-block button-stable" type="submit">
-            signUp
+            SignUp
           </button>
         </div>
       </form>

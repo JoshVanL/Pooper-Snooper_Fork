@@ -97,8 +97,8 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
     return Backand.signout();
   };
 
-  service.signUp = function(firstName, lastName, email, password, confirmPassword) {
-    return Backand.signUp(firstName, lastName, email, password, confirmPassword);
+  service.signup = function(firstName, lastName, email, password, confirmPassword) {
+    return Backand.signup(firstName, lastName, email, password, confirmPassword);
   }
 })
 
