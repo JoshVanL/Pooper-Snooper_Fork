@@ -95,13 +95,17 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     $scope.modal.show();
   };
 
+  function onLogin(username) {
+    console.log("Loged in!");
+}
+
   // Perform the login action when the user submits the login form
   $scope.doLogin = function() {
-    console.log('Doing login', $scope.loginData);
-    LoginService.signin($scope.login.email, $scope.login.password)
-      .then(function () {
+    console.log('Doing login > '+ $scope.loginData.email + ' ' + $scope.loginData.password);
+    LoginService.signin($scope.loginData.email, $scope.loginData.password)
+      .then(function() {
         onLogin();
-      }, function (error) {
+      }, function(error) {
         console.log(JSON.stringify(error));
       })
 
