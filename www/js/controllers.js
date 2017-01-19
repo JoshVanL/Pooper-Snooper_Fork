@@ -1,6 +1,6 @@
 angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout, backandService, $ionicLoading, LoginService) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, $ionicPopup, backandService, $ionicLoading, LoginService) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -97,23 +97,28 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
   function onLogin(username) {
     console.log("Loged in!");
-}
+  }
 
   // Perform the login action when the user submits the login form
   $scope.doLogin = function() {
-    console.log('Doing login > '+ $scope.loginData.email + ' ' + $scope.loginData.password);
+    $ionicLoading.show({
+      template: '<p>Logging in</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
+    });
+
+    console.log('Doing login > ' + $scope.loginData.email + ' ' + $scope.loginData.password);
     LoginService.signin($scope.loginData.email, $scope.loginData.password)
       .then(function() {
+        $ionicLoading.hide();
         onLogin();
+        $scope.closeLogin();
       }, function(error) {
         console.log(JSON.stringify(error));
+        $ionicLoading.hide();
+        var alertPopup = $ionicPopup.alert({
+          title: 'Cannot Login.',
+          template: error.error_description
+        });
       })
-
-    // Simulate a login delay. Remove this and replace with your login
-    // code if using a login system
-    $timeout(function() {
-      $scope.closeLogin();
-    }, 1000);
   };
 
   $scope.getAllFindings();
