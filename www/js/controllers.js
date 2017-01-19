@@ -105,30 +105,51 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
   // Perform the login action when the user submits the login form
   $scope.doLogin = function() {
-    if(ConnectivityMonitor.isOnline()) {
+    if (ConnectivityMonitor.isOnline()) {
 
-    $ionicLoading.show({
-      template: '<p>Logging in</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
-    });
+      $ionicLoading.show({
+        template: '<p>Logging in</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
+      });
 
-    console.log('Doing login > ' + $scope.loginData.email + ' ' + $scope.loginData.password);
-    LoginService.signin($scope.loginData.email, $scope.loginData.password)
-      .then(function() {
-        $ionicLoading.hide();
-        onLogin($scope.loginData.email);
-        $scope.closeLogin();
-      }, function(error) {
-        console.log(JSON.stringify(error));
-        $ionicLoading.hide();
-        var alertPopup = $ionicPopup.alert({
-          title: 'Can\'t Login',
-          template: error.error_description
-        });
-      })
+      console.log('Doing login > ' + $scope.loginData.email + ' ' + $scope.loginData.password);
+      LoginService.signin($scope.loginData.email, $scope.loginData.password)
+        .then(function() {
+          $ionicLoading.hide();
+          onLogin($scope.loginData.email);
+          $scope.closeLogin();
+        }, function(error) {
+          console.log(JSON.stringify(error));
+          $ionicLoading.hide();
+          var alertPopup = $ionicPopup.alert({
+            title: 'Can\'t Login',
+            template: error.error_description
+          });
+        })
     } else {
       var alertPopup = $ionicPopup.alert({
         title: 'Can\'t Login',
         template: 'Internet connection is needed to login'
+      });
+    }
+  };
+
+  $scope.doLogout = function() {
+    if (ConnectivityMonitor.isOnline()) {
+      $ionicLoading.show({
+        template: '<p>Logging out</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
+      });
+      LoginService.signout().then(function() {
+        $ionicLoading.hide();
+        $scope.loggedIn = 0;
+        var alertPopup = $ionicPopup.alert({
+          title: 'Logged out',
+          template: $scope.username
+        });
+      })
+    } else {
+      var alertPopup = $ionicPopup.alert({
+        title: 'Can\'t Logout',
+        template: 'Internet connection is needed to logout'
       });
     }
   };
