@@ -1,6 +1,6 @@
 <ion-side-menus enable-menu-with-back-views="false">
   <ion-side-menu-content>
-	<!-- To disable swipe function as it may have 
+	<!-- To disable swipe function as it may have
 	<ion-side-menu-content drag-content="false">
 	-->
     <ion-nav-bar class="bar-energized">
@@ -33,8 +33,11 @@
 				<ion-item menu-close href="#/app/about">
           About us
         </ion-item>
-				<ion-item menu-close ng-click="login()">
+				<ion-item menu-close ng-click="login()" ng-show="!loggedIn">
           Login
+        </ion-item>
+        <ion-item ng-show="loggedIn">
+          Logged in as : {{username}}
         </ion-item>
       </ion-list>
     </ion-content>

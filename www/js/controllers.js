@@ -14,6 +14,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   $scope.input = {};
   $scope.poopMarkers = [{}];
   $scope.id = 0;
+  $scope.loggedIn = 0;
+  $scope.username = "";
 
 
   $scope.getAllFindings = function() {
@@ -96,7 +98,9 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   };
 
   function onLogin(username) {
-    console.log("Loged in!");
+    console.log("Loged in! > " + username);
+    $scope.username = username;
+    $scope.loggedIn = 1;
   }
 
   // Perform the login action when the user submits the login form
@@ -111,7 +115,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     LoginService.signin($scope.loginData.email, $scope.loginData.password)
       .then(function() {
         $ionicLoading.hide();
-        onLogin();
+        onLogin($scope.loginData.email);
         $scope.closeLogin();
       }, function(error) {
         console.log(JSON.stringify(error));
