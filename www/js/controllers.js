@@ -1,6 +1,6 @@
 angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout, backandService) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, backandService, $ionicLoading) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -12,6 +12,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   $scope.findings = [];
   $scope.bins = [];
   $scope.input = {};
+  $scope.poopMarkers = [{}];
+  $scope.id = 0;
 
 
   $scope.getAllFindings = function() {
@@ -29,6 +31,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         $scope.selectedRec = result.data;
         console.log($scope.selectedRec.ImageURI);
         viewModal.show();
+        $ionicLoading.hide();
       });
   }
 
@@ -37,6 +40,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     backandService.addFinding($scope.input)
       .then(function(result) {
         $scope.input = {};
+        $scope.id = result.data.__metadata.id;
+        console.log($scope.id);
       });
   }
 
@@ -574,6 +579,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   function getPoopMarkers() {
     var poopLats = [];
     var poopLngs = [];
+    var marker = {};
     console.log("Number of findings > " + $scope.findings.length);
     if ($scope.findings.length > 0) {
       for (var i = 0; i < $scope.findings.length; i++) {
@@ -585,22 +591,27 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
           lat: poopLats[i],
           lng: poopLngs[i]
         });
-        var marker = new google.maps.Marker({
+        marker = new google.maps.Marker({
           position: myLatLng,
           icon: poop_icon
         });
+
         var markerData = {
           lat: marker.getPosition().lat(),
           lng: marker.getPosition().lng(),
-          icon: marker.getIcon().url
+          icon: marker.getIcon().url,
+          id: $scope.findings[i].id
         };
-        GlobalService.push_binMarkers(markerData);
+        GlobalService.push_poopMarkers(markerData);
+
+
       }
 
       console.log("poop > " + poopLats + poopLngs);
     }
     loadMarkers();
   }
+
 
   function getBinMarkers() {
     var binLats = [];
@@ -743,15 +754,13 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     // Adds the marker to markerCache (so it won't be re-added)
     addMarkerToCache(marker);
 
-    /*
-                var infoWindow = new google.maps.InfoWindow({
-                content: "Some information!"
-              });
-
-              google.maps.event.addListener(marker, 'click', function () {
-              infoWindow.open($scope.map, marker);
-            });
-            */
+    google.maps.event.addListener(marker, 'click', function() {
+      console.log("clicked " + $scope.id);
+      $ionicLoading.show({
+        template: '<p>Loading Finding</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
+      });
+      $scope.selectFinding($scope.id, $scope.viewRecordModal);
+    });
 
     GlobalService.set_activeIcon("");
   }
@@ -954,6 +963,19 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
         // Adds the marker to markerCache (so it won't be re-added)
         addMarkerToCache(marker);
+        var id = markers[i].id;
+
+        if (currentIcon == poop_icon) {
+          google.maps.event.addListener(marker, 'click', function() {
+            console.log("clicked " + id);
+            $ionicLoading.show({
+              template: '<p>Loading Finding</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
+            });
+            $scope.selectFinding(id, $scope.viewRecordModal);
+          });
+          console.log(JSON.stringify(id));
+        }
+
 
         // Adds the marker to binMarkerCache so we have a reference to it
         // to deal with the Nearest bin marker (hide/show)
@@ -1228,6 +1250,17 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     animation: 'slide-in-up'
   });
 
+  $ionicModal.fromTemplateUrl('templates/modal/record-modal.html', function(modal) {
+    $scope.viewRecordModal = modal;
+  }, {
+    scope: $scope,
+    animation: 'slide-in-up'
+  });
+
+  $scope.closeViewRecord = function() {
+    $scope.viewRecordModal.hide();
+  };
+
   clearRecord = function() {
     $scope.record.lat = null;
     $scope.record.long = null;
@@ -1288,7 +1321,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     $scope.input.ImageURI = $scope.record.imageURI;
     console.log(JSON.stringify($scope.input));
     $scope.addFinding();
-
     $scope.poopModal.hide();
     clearRecord();
 
