@@ -115,13 +115,13 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   //Open the signUp modal
   $scope.signUp = function() {
     $scope.modal.hide();
-    $scope.signUpData = {
-      firstName: "first",
-      lastName: "last",
-      email: "test20@test.com",
-      password: "test",
-      again: "test"
-    };
+    // $scope.signUpData = {
+    //   firstName: "fist",
+    //   lastName: "last",
+    //   email: "test30@test.com",
+    //   password: "test",
+    //   again: "test"
+    // };
     $scope.signUpModal.show();
   };
 
@@ -135,6 +135,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
           console.log(JSON.stringify(reason));
           if (reason.data != undefined) {
             $scope.signUpData.errorMessage = reason.data.error_description;
+            console.log("error");
             console.log($scope.signUpData.errorMessage);
           } else {
             //getting invalid grant - username or password is incorrect for some reason
