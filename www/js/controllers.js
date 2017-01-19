@@ -106,8 +106,15 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     $scope.modal.show();
   };
 
+  // Triggered in the signup modal to close it
+  $scope.closeSignup = function() {
+    $scope.signupModal.hide();
+    $scope.modal.show();
+  };
+
   //Open the signup modal
   $scope.signup = function() {
+    $scope.modal.hide();
     $scope.signupModal.show();
   };
 
