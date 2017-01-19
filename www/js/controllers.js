@@ -17,7 +17,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
 
   $scope.getAllFindings = function() {
-    backandService.getFindings()
+    backandService.getEveryFinding()
       .then(function(result) {
         $scope.findings = result.data.data;
         console.log("Got all findings");
@@ -29,7 +29,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       .then(function(result) {
         console.log("Selected finding");
         $scope.selectedRec = result.data;
-        console.log($scope.selectedRec.ImageURI);
+        console.log(JSON.stringify($scope.selectedRec));
         viewModal.show();
         $ionicLoading.hide();
       });
@@ -54,7 +54,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   }
 
   $scope.getAllBins = function() {
-    backandService.getBins()
+    backandService.getEveryBin()
       .then(function(result) {
         $scope.bins = result.data.data;
         console.log("Got all Bins");
@@ -116,6 +116,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   var dogFindingsName = 'dogFindings/';
   var binLocationsName = 'binLocations/';
 
+
   function getFindingsUrl() {
     return Backand.getApiUrl() + baseUrl + dogFindingsName;
   }
@@ -126,6 +127,10 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
   getFindings = function() {
     return $http.get(getFindingsUrl());
+  };
+
+  getEveryFinding = function() {
+    return $http.get(Backand.getApiUrl() + baseUrl + dogFindingsName +'?pageSize=200');
   };
 
   selectFinding = function(id) {
@@ -152,6 +157,10 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     return $http.get(getBinUrl());
   };
 
+  getEveryBin = function() {
+    return $http.get(Backand.getApiUrl() + baseUrl + binLocationsName +'?pageSize=200');
+  };
+
   addBin = function(bin) {
     return $http.post(getBinUrl(), bin);
   }
@@ -162,10 +171,12 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
   return {
     getFindings: getFindings,
+    getEveryFinding: getEveryFinding,
     addFinding: addFinding,
     deleteFinding: deleteFinding,
     selectFinding: selectFinding,
     getBins: getBins,
+    getEveryBin: getEveryBin,
     addBin: addBin,
     deleteBin: deleteBin
   }
