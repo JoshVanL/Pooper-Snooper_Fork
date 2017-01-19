@@ -115,22 +115,32 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   //Open the signUp modal
   $scope.signUp = function() {
     $scope.modal.hide();
-    // $scope.signUpData = {
-    //   firstName: "fist",
-    //   lastName: "last",
-    //   email: "test30@test.com",
-    //   password: "test",
-    //   again: "test"
-    // };
+    $scope.signUpData = {
+      firstName: "fist",
+      lastName: "last",
+      email: "test301@test.com",
+      password: "testtest",
+      again: "testtest"
+    };
     $scope.signUpModal.show();
   };
 
   $scope.doSignUp = function() {
     $scope.signUpData.errorMessage = '';
+    if($scope.signUpData.password.length >=6){
     LoginService.signup($scope.signUpData.firstName, $scope.signUpData.lastName, $scope.signUpData.email, $scope.signUpData.password, $scope.signUpData.again)
       .then(function(response) {
           //getting invalid grant - username or password is incorrect for some reason
-
+          // success
+          console.log("signUp sucsess");
+          var signedUpPopup = $ionicPopup.alert({
+            title: 'Signed Up!',
+            template: $scope.signUpData.email
+          });
+          signedUpPopup.then(function(res) {
+            onLogin($scope.signUpData.email);
+            $scope.signUpModal.hide();
+          });
         }, function(reason) {
           console.log(JSON.stringify(reason));
           if (reason.data != undefined) {
@@ -138,25 +148,19 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             console.log("error");
             console.log($scope.signUpData.errorMessage);
           } else {
-            //getting invalid grant - username or password is incorrect for some reason
-            // $scope.signUpData.errorMessage = reason.error;
-            // console.log($scope.signUpData.errorMessage);
-            // success
-            console.log("signUp sucsess");
-            var signedUpPopup = $ionicPopup.alert({
-              title: 'Signed Up!',
-              template: $scope.signUpData.email
-            });
-            signedUpPopup.then(function(res) {
-              onLogin($scope.signUpData.email);
-              $scope.signUpModal.hide();
-            });
+            // getting invalid grant - username or password is incorrect for some reason
+            $scope.signUpData.errorMessage = reason.error;
+            console.log($scope.signUpData.errorMessage);
+
           };
       });
+    } else {
+      $scope.signUpData.errorMessage = 'Password must be at least 6 characters';
+    }
   };
 
   function onLogin(username) {
-    console.log("Loged in! > " + username);
+    console.log("Logged in! > " + username);
     $scope.username = username;
     $scope.loggedIn = 1;
   }
