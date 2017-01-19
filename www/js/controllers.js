@@ -79,12 +79,21 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
   // Form data for the login modal
   $scope.loginData = {};
+  $scope.signupData = {};
 
   // Create the login modal that we will use later
   $ionicModal.fromTemplateUrl('templates/login.html', {
     scope: $scope
   }).then(function(modal) {
     $scope.modal = modal;
+  });
+
+  // Create and load the Modal
+  $ionicModal.fromTemplateUrl('templates/modal/signup-modal.html', function(modal) {
+    $scope.signupModal = modal;
+  }, {
+    scope: $scope,
+    animation: 'slide-in-up'
   });
 
   // Triggered in the login modal to close it
@@ -95,6 +104,11 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   // Open the login modal
   $scope.login = function() {
     $scope.modal.show();
+  };
+
+  //Open the signup modal
+  $scope.signup = function() {
+    $scope.signupModal.show();
   };
 
   function onLogin(username) {
