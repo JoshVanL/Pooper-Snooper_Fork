@@ -16,6 +16,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   $scope.id = 0;
   $scope.loggedIn = 0;
   $scope.username = "";
+  $scope.facebookToken="";
 
 
   $scope.getAllFindings = function() {
@@ -115,21 +116,21 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   //Open the signUp modal
   $scope.signUp = function() {
     $scope.modal.hide();
-    $scope.signUpData = {
-      firstName: "fist",
-      lastName: "last",
-      email: "test301@test.com",
-      password: "testtest",
-      again: "testtest"
-    };
+    // $scope.signUpData = {
+    //   firstName: "fist",
+    //   lastName: "last",
+    //   email: "test301@test.com",
+    //   password: "testtest",
+    //   again: "testtest"
+    // };
     $scope.signUpModal.show();
   };
 
   $scope.doSignUp = function() {
     $scope.signUpData.errorMessage = '';
-    if($scope.signUpData.password.length >=6){
-    LoginService.signup($scope.signUpData.firstName, $scope.signUpData.lastName, $scope.signUpData.email, $scope.signUpData.password, $scope.signUpData.again)
-      .then(function(response) {
+    if ($scope.signUpData.password.length >= 6) {
+      LoginService.signup($scope.signUpData.firstName, $scope.signUpData.lastName, $scope.signUpData.email, $scope.signUpData.password, $scope.signUpData.again)
+        .then(function(response) {
           //getting invalid grant - username or password is incorrect for some reason
           // success
           console.log("signUp sucsess");
@@ -153,10 +154,24 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             console.log($scope.signUpData.errorMessage);
 
           };
-      });
+        });
     } else {
       $scope.signUpData.errorMessage = 'Password must be at least 6 characters';
     }
+  };
+
+  $scope.doSignUpFacebook = function() {
+    console.log("clicked");
+    LoginService.socialsignUp('facebook')
+      .then(function() {
+        onLogin();
+      }, function(reason) {
+        if (reason.data.error_description !== undefined) {
+          $scope.signUpData.errorMessage = reason.data.error_description;
+        } else {
+          $scope.signUpData.errorMessage = reason.data;
+        }
+      });
   };
 
   function onLogin(username) {
@@ -176,9 +191,15 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       console.log('Doing login > ' + $scope.loginData.email + ' ' + $scope.loginData.password);
       LoginService.signin($scope.loginData.email, $scope.loginData.password)
         .then(function() {
+          var loggedInPopup = $ionicPopup.alert({
+            title: 'Logged in!',
+            template: $scope.loginData.email
+          });
           $ionicLoading.hide();
-          onLogin($scope.loginData.email);
-          $scope.closeLogin();
+          loggedInPopup.then(function(res) {
+            onLogin($scope.loginData.email);
+            $scope.closeLogin();
+          });
         }, function(error) {
           console.log(JSON.stringify(error));
           $ionicLoading.hide();
