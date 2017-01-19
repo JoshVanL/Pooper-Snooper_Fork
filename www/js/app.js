@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'PooperSnooper.controllers' is found in controllers.js
 
-angular.module('PooperSnooper', ['ionic', 'backand', 'PooperSnooper.controllers', 'ngCordova'])
+angular.module('PooperSnooper', ['ionic', 'backand', 'PooperSnooper.controllers', 'PooperSnooper.services', 'ngCordova'])
 
 .run(function($ionicPlatform, $cordovaSQLite) {
   $ionicPlatform.ready(function() {
