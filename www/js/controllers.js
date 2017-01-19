@@ -1,6 +1,6 @@
 angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout, $ionicPopup, backandService, $ionicLoading, LoginService) {
+.controller('AppCtrl', function($scope, $ionicModal, ConnectivityMonitor, $timeout, $ionicPopup, backandService, $ionicLoading, LoginService) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -101,6 +101,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
   // Perform the login action when the user submits the login form
   $scope.doLogin = function() {
+    if(ConnectivityMonitor.isOnline()) {
+
     $ionicLoading.show({
       template: '<p>Logging in</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
     });
@@ -115,10 +117,16 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         console.log(JSON.stringify(error));
         $ionicLoading.hide();
         var alertPopup = $ionicPopup.alert({
-          title: 'Cannot Login.',
+          title: 'Can\'t Login',
           template: error.error_description
         });
       })
+    } else {
+      var alertPopup = $ionicPopup.alert({
+        title: 'Can\'t Login',
+        template: 'Internet connection is needed to login'
+      });
+    }
   };
 
   $scope.getAllFindings();
