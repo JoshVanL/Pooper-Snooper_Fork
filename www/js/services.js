@@ -88,8 +88,8 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
     return Backand.socialSignIn(provider);
   };
 
-  service.socialSignUp = function(provider) {
-    return Backand.socialSignUp(provider);
+  service.socialsignUp = function(provider) {
+    return Backand.socialsignUp(provider);
 
   };
 
@@ -97,8 +97,8 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
     return Backand.signout();
   };
 
-  service.signup = function(firstName, lastName, email, password, confirmPassword) {
-    return Backand.signup(firstName, lastName, email, password, confirmPassword);
+  service.signUp = function(firstName, lastName, email, password, confirmPassword) {
+    return Backand.signUp(firstName, lastName, email, password, confirmPassword);
   }
 })
 
@@ -133,8 +133,8 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
       });
   };
 
-  self.socialSignUp = function(provider) {
-    return Backand.socialSignUp(provider)
+  self.socialsignUp = function(provider) {
+    return Backand.socialsignUp(provider)
       .then(function(response) {
         loadUserDetails();
         return response;
@@ -154,7 +154,7 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
   };
 
   self.signUp = function(firstName, lastName, username, password, parameters) {
-    return Backand.signup(firstName, lastName, username, password, password, parameters)
+    return Backand.signUp(firstName, lastName, username, password, password, parameters)
       .then(function(signUpResponse) {
 
         if (signUpResponse.data.currentStatus === 1) {

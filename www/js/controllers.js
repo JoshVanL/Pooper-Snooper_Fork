@@ -79,7 +79,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
   // Form data for the login modal
   $scope.loginData = {};
-  $scope.signupData = {};
+  $scope.signUpData = {};
 
   // Create the login modal that we will use later
   $ionicModal.fromTemplateUrl('templates/login.html', {
@@ -89,8 +89,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   });
 
   // Create and load the Modal
-  $ionicModal.fromTemplateUrl('templates/modal/signup-modal.html', function(modal) {
-    $scope.signupModal = modal;
+  $ionicModal.fromTemplateUrl('templates/modal/signUp-modal.html', function(modal) {
+    $scope.signUpModal = modal;
   }, {
     scope: $scope,
     animation: 'slide-in-up'
@@ -106,16 +106,35 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     $scope.modal.show();
   };
 
-  // Triggered in the signup modal to close it
-  $scope.closeSignup = function() {
-    $scope.signupModal.hide();
+  // Triggered in the signUp modal to close it
+  $scope.closesignUp = function() {
+    $scope.signUpModal.hide();
     $scope.modal.show();
   };
 
-  //Open the signup modal
-  $scope.signup = function() {
+  //Open the signUp modal
+  $scope.signUp = function() {
     $scope.modal.hide();
-    $scope.signupModal.show();
+    $scope.signUpModal.show();
+  };
+
+  function dosignUp() {
+    $scope.errorMessage = '';
+    console.log("Here");
+    LoginService.signUp($scope.firstName, $scope.lastName, $scope.email, $scope.password, $scope.again)
+      .then(function(response) {
+        // success
+        console.log("signUp sucsess");
+        onLogin();
+      }, function(reason) {
+        if (reason.data.error_description !== undefined) {
+          $scope.errorMessage = reason.data.error_description;
+          console.log($scope.errorMessage);
+        } else {
+          $scope.errorMessage = reason.data;
+          console.log($scope.errorMessage);
+        }
+      });
   };
 
   function onLogin(username) {
