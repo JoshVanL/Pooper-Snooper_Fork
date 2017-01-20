@@ -77,6 +77,6 @@
   <allow-navigation href="http://172.23.211.162:8100"/>
   <plugin name="cordova-plugin-facebook4" spec="https://github.com/jeduan/cordova-plugin-facebook4">
     <variable name="APP_ID" value="1791902807738120"/>
-    <variable name="APP_NAME" value="PooperSnooper"/>
+    <variable name="APP_NAME" value="Pooper Snooper"/>
   </plugin>
 </widget>
