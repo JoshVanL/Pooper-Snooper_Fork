@@ -295,21 +295,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 /* ------------------------------------------------ */
 /* ------------ Record Logs Controller ------------ */
 /* ------------------------------------------------ */
-.controller('RecordLogsCtrl', function($scope, $ionicModal, $cordovaCamera, $cordovaImagePicker, $filter, $ionicLoading, $cordovaGeolocation, GlobalService, $cordovaSQLite, backandService) {
+.controller('RecordLogsCtrl', function($scope, $ionicModal, $cordovaCamera, $cordovaImagePicker, $filter, $ionicLoading, $cordovaGeolocation, GlobalService, backandService) {
 
-  // // //Drop table for testing
-  // var query = "DROP TABLE IF EXISTS dogFindings";
-  // $cordovaSQLite.execute(db, query).then(function(res) {
-  //   console.log("Table deleted");
-  // }, function(err) {
-  //   console.error(err);
-  // });
-
-  //This would be buggy when re-oppening the record page
-  // //Update record logs from the factory service upon entering page
-  // $scope.$on('$ionicView.afterEnter', function() {
-  //   $scope.records = angular.copy(GlobalService.get_doggyRecords());
-  // });
 
   // Blank form used reset fields
   $scope.record = {
@@ -457,15 +444,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 //Note : removed $state from dependencies (dunno what it did!)
 .controller('MapCtrl', function($scope, $cordovaGeolocation, $ionicModal,
   $window, $ionicPopup, $ionicLoading, $rootScope, $cordovaNetwork, $ionicSideMenuDelegate,
-  GlobalService, ConnectivityMonitor, $cordovaCamera, $cordovaImagePicker, $cordovaSQLite) {
-
-  // // //Drop table for testing
-  // var query = "DROP TABLE IF EXISTS dogFindings";
-  // $cordovaSQLite.execute(db, query).then(function(res) {
-  //   console.log("Table deleted");
-  // }, function(err) {
-  //   console.error(err);
-  // });
+  GlobalService, ConnectivityMonitor, $cordovaCamera, $cordovaImagePicker) {
 
   //Disables swipe to side menu feature on entering page
   $scope.$on('$ionicView.enter', function() {
