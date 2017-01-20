@@ -5736,7 +5736,6 @@ angular.module('ngCordova.plugins', [
   'ngCordova.plugins.socialSharing',
   'ngCordova.plugins.spinnerDialog',
   'ngCordova.plugins.splashscreen',
-  'ngCordova.plugins.sqlite',
   'ngCordova.plugins.statusbar',
   'ngCordova.plugins.toast',
   'ngCordova.plugins.touchid',
