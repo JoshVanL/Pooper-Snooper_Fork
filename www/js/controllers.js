@@ -231,7 +231,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         $scope.facebookToken = "Here with Backand InAPP! ";
         $scope.username = d.username;
         $scope.role = d.role;
-      }, loginError);
+      }, $scope.loginError);
     });
   }
 
@@ -261,7 +261,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       $scope.facebookToken = "Here with Backand! ";
       $scope.username = username;
       $scope.role = userRole;
-    }, loginError)
+    }, $scope.loginError)
   }
 };
 
