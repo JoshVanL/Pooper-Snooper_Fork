@@ -21,10 +21,21 @@
         </label>
       </div>
     </form>
-      <ion-item class="dark-bg light item-icon-left" ng-click="facebookTokenSingin()">
-        <i class="icon ion-social-facebook"></i>
-        Login using Facebook
-      </ion-item>
+    <body>
+  		<div class="button-bar">
+  			<button class="button button-positive icon-left ion-social-facebook" ng-click="login.socialSignin('facebook')" type="button">
+  				Facebook
+  			</button>
+
+  			<button class="button button-dark icon-left ion-social-facebook ion-social-github" ng-click="login.socialSignin('github')" type="button">
+  				Github
+  			</button>
+
+  			<button class="button button-assertive icon-left ion-social-googleplus" ng-click="login.socialSignin('google')" type="button">
+  				Google+
+  			</button>
+  		</div>
+  	 </body>
     <label class="button-bar">
       <button class="button button-block button-positive" ng-click="signUp()">Sign up</button>
     </label>
