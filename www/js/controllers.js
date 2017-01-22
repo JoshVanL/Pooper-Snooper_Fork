@@ -218,49 +218,55 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     }
   };
 
-  $scope.facebookTokenSingin = function() {
-    console.log('start facebook token');
-    var fbLoginSuccess = function(userData) {
+  // $scope.facebookTokenSingin = function() {
+  //   console.log('start facebook token');
+  //   var fbLoginSuccess = function(userData) {
+  //
+  //     facebookConnectPlugin.getAccessToken(function(token) {
+  //
+  //       $scope.facebookToken = token;
+  //
+  //       LoginService.facebookToken(login.facebookToken).then(function(d) {
+  //         $scope.isLoggedWihtBackand = true;
+  //         $scope.facebookToken = "Here with Backand InAPP! ";
+  //         $scope.username = d.username;
+  //         $scope.role = d.role;
+  //       }, $scope.loginError);
+  //     });
+  //   }
+  //
+  //   var haveInAppPlugin = false;
+  //
+  //   try {
+  //     haveInAppPlugin = facebookConnectPlugin;
+  //   } catch (err) {
+  //
+  //   }
+  //
+  //   // facebookConnectPlugin is not defined on desktop
+  //   if (haveInAppPlugin) { // mobile
+  //     facebookConnectPlugin.login(["public_profile", "email"], fbLoginSuccess,
+  //       function(error) {
+  //         console.error(error)
+  //       }
+  //     );
+  //   } else { // desktop
+  //     LoginService.socialSignIn('facebook').then(function() {
+  //       var username = Backand.getUsername();
+  //       var userRole = Backand.getUserRole();
+  //
+  //       $scope.isLoggedWihtBackand = true;
+  //       $scope.facebookToken = "Here with Backand! ";
+  //       $scope.username = username;
+  //       $scope.role = userRole;
+  //     }, $scope.loginError)
+  //   }
+  // };
 
-      facebookConnectPlugin.getAccessToken(function(token) {
-
-        $scope.facebookToken = token;
-
-        LoginService.facebookToken(login.facebookToken).then(function(d) {
-          $scope.isLoggedWihtBackand = true;
-          $scope.facebookToken = "Here with Backand InAPP! ";
-          $scope.username = d.username;
-          $scope.role = d.role;
-        }, $scope.loginError);
-      });
-    }
-
-    var haveInAppPlugin = false;
-
-    try {
-      haveInAppPlugin = facebookConnectPlugin;
-    } catch (err) {
-
-    }
-
-    // facebookConnectPlugin is not defined on desktop
-    if (haveInAppPlugin) { // mobile
-      facebookConnectPlugin.login(["public_profile", "email"], fbLoginSuccess,
-        function(error) {
-          console.error(error)
-        }
-      );
-    } else { // desktop
-      LoginService.socialSignIn('facebook').then(function() {
-        var username = Backand.getUsername();
-        var userRole = Backand.getUserRole();
-
-        $scope.isLoggedWihtBackand = true;
-        $scope.facebookToken = "Here with Backand! ";
-        $scope.username = username;
-        $scope.role = userRole;
-      }, $scope.loginError)
-    }
+  $scope.socialSignIn = function(provider) {
+    console.log("inside socialsignin");
+    LoginService.socialSignIn(provider)
+      .then(onValidLogin, onErrorInLogin);
   };
 
   $scope.doLogout = function() {
