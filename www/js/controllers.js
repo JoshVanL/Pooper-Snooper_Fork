@@ -16,7 +16,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   $scope.id = 0;
   $scope.loggedIn = 0;
   $scope.username = "";
-  $scope.facebookToken="";
+  $scope.facebookToken = "";
 
 
   $scope.getAllFindings = function() {
@@ -218,52 +218,50 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     }
   };
 
-  $scope.facebookTokenSingin = function () {
-  console.log('start facebook token');
-  var fbLoginSuccess = function (userData) {
+  $scope.facebookTokenSingin = function() {
+    console.log('start facebook token');
+    var fbLoginSuccess = function(userData) {
 
-    facebookConnectPlugin.getAccessToken(function (token) {
+      facebookConnectPlugin.getAccessToken(function(token) {
 
-      $scope.facebookToken = token;
+        $scope.facebookToken = token;
 
-      LoginService.facebookToken(login.facebookToken).then(function (d) {
+        LoginService.facebookToken(login.facebookToken).then(function(d) {
+          $scope.isLoggedWihtBackand = true;
+          $scope.facebookToken = "Here with Backand InAPP! ";
+          $scope.username = d.username;
+          $scope.role = d.role;
+        }, $scope.loginError);
+      });
+    }
+
+    var haveInAppPlugin = false;
+
+    try {
+      haveInAppPlugin = facebookConnectPlugin;
+    } catch (err) {
+
+    }
+
+    // facebookConnectPlugin is not defined on desktop
+    if (haveInAppPlugin) { // mobile
+      facebookConnectPlugin.login(["public_profile", "email"], fbLoginSuccess,
+        function(error) {
+          console.error(error)
+        }
+      );
+    } else { // desktop
+      LoginService.socialSignIn('facebook').then(function() {
+        var username = Backand.getUsername();
+        var userRole = Backand.getUserRole();
+
         $scope.isLoggedWihtBackand = true;
-        $scope.facebookToken = "Here with Backand InAPP! ";
-        $scope.username = d.username;
-        $scope.role = d.role;
-      }, $scope.loginError);
-    });
-  }
-
-  var haveInAppPlugin = false;
-
-  try {
-    haveInAppPlugin = facebookConnectPlugin;
-  }
-  catch (err){
-
-  }
-
-  // facebookConnectPlugin is not defined on desktop
-  if(haveInAppPlugin) { // mobile
-    facebookConnectPlugin.login(["public_profile", "email"], fbLoginSuccess,
-      function (error) {
-        console.error(error)
-      }
-    );
-  }
-  else { // desktop
-    LoginService.socialSignIn('facebook').then(function(){
-      var username = Backand.getUsername();
-      var userRole = Backand.getUserRole();
-
-      $scope.isLoggedWihtBackand = true;
-      $scope.facebookToken = "Here with Backand! ";
-      $scope.username = username;
-      $scope.role = userRole;
-    }, $scope.loginError)
-  }
-};
+        $scope.facebookToken = "Here with Backand! ";
+        $scope.username = username;
+        $scope.role = userRole;
+      }, $scope.loginError)
+    }
+  };
 
   $scope.doLogout = function() {
     if (ConnectivityMonitor.isOnline()) {
@@ -1501,4 +1499,31 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       }
     });
   };
+})
+
+/* -------------------------------------------------- */
+/* -------Social Media (AboutPage) Controller ------- */
+/* -------------------------------------------------- */
+.controller('SocialMediaCtrl', function($scope, Backand, $state, $rootScope, LoginService, $cordovaSocialSharing) {
+
+  console.log("inside SocialMediaCtrl");
+
+  $(function() {
+    $('.fadein img:gt(0)').hide();
+    setInterval(function() {
+      $('.fadein :first-child').fadeOut()
+        .next('img').fadeIn()
+        .end().appendTo('.fadein');
+    }, 4000);
+  })
+
+  $scope.goToProjectsPage = function() {
+    window.location.href = 'http://www.natural-apptitude.co.uk/projects/';
+  }
+
+
+  //	change the link to the app link
+  $scope.shareAnywhere = function() {
+    $cordovaSocialSharing.share("Check out this awesome app !!!", "This is a title for the share", null, "http://www.natural-apptitude.co.uk")
+  }
 });

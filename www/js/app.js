@@ -48,21 +48,13 @@ angular.module('PooperSnooper', ['ionic', 'backand', 'PooperSnooper.controllers'
     }
   })
 
+
   .state('app.about', {
     url: '/about',
     views: {
       'menuContent': {
-        templateUrl: 'templates/about.html'
-      }
-    }
-  })
-
-  .state('app.map', {
-    url: '/map',
-    views: {
-      'menuContent': {
-        templateUrl: 'templates/map.html',
-        controller: 'MapCtrl'
+        templateUrl: 'templates/about.html',
+        controller: 'SocialMediaCtrl'
       }
     }
   })

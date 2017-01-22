@@ -2,17 +2,6 @@
 /* ----- Screen dimensions (px) : 667 * 375 ----- */
 /*------------------------------------------------*/
 
-/*---------------------------*/
-/* ----- About us page ----- */
-/*---------------------------*/
-
-.aboutCompany{
-	font-family: 'Amatica SC', sans-serif;
-	text-align: center;
-	font-size: 30px;
-	line-height: 1.7em;
-}
-
 /*--------------------------*/
 /* ----- Welcome page ----- */
 /*--------------------------*/
@@ -24,6 +13,7 @@
 	width: 100%;
 	height: 56.2%;
 }
+
 #welcomeImage{
 	width: 80%;
 	height: 80%;
@@ -35,7 +25,6 @@
 		left: -40%;
 		top: 5%;
 }
-
 
 /*--------------------------------*/
 /* ----- Doggy Records page ----- */
@@ -263,3 +252,70 @@
 .slide-in-left.ng-leave, .slide-in-left > .ng-leave {
   -webkit-transition: all ease-in-out 300ms;
   transition: all ease-in-out 300ms; }
+
+
+/*---------------------------*/
+/* ----- About us page ----- */
+/*---------------------------*/
+
+.aboutCompany{
+	font-family: 'Amatica SC', sans-serif;
+	text-align: center;
+	font-size: 25px;
+	line-height: 1.4em;
+	margin-top: -2em;
+	margin-right: 1.2em;
+	margin-left	: 1.2em;
+}
+
+/*SLIDESHOW*/
+.img {
+    position: relative;
+    float: left;
+    width:  100px;
+    height: 100px;
+    background-position: 50% 50%;
+    background-repeat:   no-repeat;
+    background-size:     cover;
+}
+
+.fadein {
+  position:relative;
+  max-width:500px;
+  height:332px;
+  overflow: hidden;
+}
+
+.fadein img {
+  position:absolute;
+  left:0;
+  top:0;
+  height: auto;
+  max-width: 500px;
+}
+
+
+/*BUTTON*/
+
+.wrapper {
+	margin-top: 1.2em;
+    text-align: center;
+}
+
+.button-link {
+	background-color: #D2691E;
+	border-radius: 8px;
+	font-family:'Amatica SC', sans-serif;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 2em;
+/*    margin: 4px 2px;*/
+	margin-top: 0.1em;
+	margin-bottom: 0.1em;
+    cursor: pointer;
+	width: 95%;
+}
