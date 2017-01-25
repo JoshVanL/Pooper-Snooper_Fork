@@ -1510,7 +1510,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 /* -------------------------------------------------- */
 /* -------Social Media (AboutPage) Controller ------- */
 /* -------------------------------------------------- */
-.controller('SocialMediaCtrl', function($scope, Backand, $state, $rootScope, LoginService, $cordovaSocialSharing) {
+.controller('SocialMediaCtrl', function($scope, Backand, $state, $rootScope, LoginService, $cordovaSocialSharing, $cordovaInAppBrowser) {
 
   console.log("inside SocialMediaCtrl");
 
@@ -1524,7 +1524,18 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   })
 
   $scope.goToProjectsPage = function() {
-    window.location.href = 'http://www.natural-apptitude.co.uk/projects/';
+    var options = {
+    location: 'yes',
+    clearcache: 'yes',
+    toolbar: 'no'
+  };
+  $cordovaInAppBrowser.open("http://www.natural-apptitude.co.uk/projects/", '_blank', options)
+      .then(function(event) {
+        // success
+      })
+      .catch(function(event) {
+        // error
+      });
   }
 
 
