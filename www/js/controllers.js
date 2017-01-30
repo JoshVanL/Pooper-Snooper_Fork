@@ -121,14 +121,14 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     $scope.closeSignUp = function() {
       $scope.signUpModal.hide();
       $scope.signUpData = {};
-      $scope.signUpData.password='';
+      $scope.signUpData.password = '';
       $scope.modal.show();
     };
 
     //Open the signUp modal
     $scope.signUp = function() {
       $scope.signUpData = {};
-      $scope.signUpData.password='';
+      $scope.signUpData.password = '';
       $scope.modal.hide();
       // $scope.signUpData = {
       //   firstName: "fist",
@@ -176,19 +176,32 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     $scope.doSignUpFacebook = function() {
       console.log("clicked");
       LoginService.socialsignUp('facebook')
-        .then(function(result) {
-          console.log(JSON.stringify("HERE!"+result));
-          onLogin();
-        }, function(reason) {
-          if (reason.data.error_description !== undefined) {
-            console.log(JSON.stringify(reason));
-            $scope.signUpData.errorMessage = reason.data.error_description;
-          } else {
-            console.log(JSON.stringify(reason));
-            $scope.signUpData.errorMessage = reason.data;
-          }
-        });
+        .then(onValidLogin, onErrorInLogin);
+
+
+      //   console.log(JSON.stringify("HERE!"+result));
+      //   onLogin();
+      // }, function(reason) {
+      //   if (reason.data.error_description !== undefined) {
+      //     console.log(JSON.stringify(reason));
+      //     $scope.signUpData.errorMessage = reason.data.error_description;
+      //   } else {
+      //     console.log(JSON.stringify(reason));
+      //     $scope.signUpData.errorMessage = reason.data;
+      //   }
+      // });
     };
+
+    onValidLogin = function(response) {
+      console.log("on login");
+      onLogin();
+      //login.username = response.data || login.username;
+    }
+
+    onErrorInLogin = function(rejection) {
+      console.log("rejection");
+      console.log(JSON.stringify(rejection));
+    }
 
     function onLogin(username) {
       console.log("Logged in! > " + username);
