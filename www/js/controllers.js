@@ -27,6 +27,14 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         });
     }
 
+    $scope.getUserFindings = function(id) {
+      backandService.getUserFindings(id)
+        .then(function(result) {
+          $scope.userFindings = result.data.data;
+          console.log("Got user findings");
+        });
+    }
+
     $scope.selectFinding = function(id, viewModal) {
       backandService.selectFinding(id)
         .then(function(result) {
@@ -280,6 +288,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         LoginService.signout().then(function() {
           $ionicLoading.hide();
           $scope.loggedIn = 0;
+          $scope.userFindings = null;
           var alertPopup = $ionicPopup.alert({
             title: 'Logged out',
             template: $scope.username
@@ -320,6 +329,9 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   /* ------------------------------------------------ */
   .controller('RecordLogsCtrl', function($scope, $ionicModal, $cordovaCamera, $cordovaImagePicker, $filter, $ionicLoading, $cordovaGeolocation, GlobalService, backandService) {
 
+    if (!$scope.loggedIn) {
+      $scope.requireLogin('Please login to view your records');
+    }
 
     // Blank form used reset fields
     $scope.record = {
@@ -354,13 +366,18 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
 
     $scope.doRefresh = function() {
-      $scope.getAllFindings();
+      //$scope.getAllFindings();
+      if ($scope.loggedIn) {
+        $scope.getUserFindings($scope.userId);
+      } else {
+        $scope.requireLogin('You must login to view your records');
+      }
       // Stop the ion-refresher from spinning
       $scope.$broadcast('scroll.refreshComplete');
     };
 
 
-    $scope.doRefresh();
+    //$scope.doRefresh();
 
     // Called when the form is submitted
     $scope.createRecord = function() {
@@ -391,10 +408,14 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
     // Open our new record modal
     $scope.newRecord = function() {
-      clearRecord();
-      $scope.createEnabled = false;
-      console.log($scope.record.dateTime);
-      $scope.recordModal.show();
+      if ($scope.loggedIn) {
+        clearRecord();
+        $scope.createEnabled = false;
+        console.log($scope.record.dateTime);
+        $scope.recordModal.show();
+      } else {
+        $scope.requireLogin('You must be logged in to create a record');
+      }
     };
 
     $scope.selectRecord = function(id) {
@@ -1521,19 +1542,19 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
     // Confirm dialog for adding Bin to the map
     $scope.showBConfirm = function() {
-      if($scope.loggedIn){
-      var confirmPopup = $ionicPopup.confirm({
-        title: 'Add this Bin?',
-        template: 'It will be added to your Bin DataBase used to find your nearest bins.'
-      });
-      confirmPopup.then(function(res) {
-        if (res) {
-          $scope.addBinMarker();
-        }
-      });
-    } else {
-      $scope.requireLogin('Please login to add a record');
-    }
+      if ($scope.loggedIn) {
+        var confirmPopup = $ionicPopup.confirm({
+          title: 'Add this Bin?',
+          template: 'It will be added to your Bin DataBase used to find your nearest bins.'
+        });
+        confirmPopup.then(function(res) {
+          if (res) {
+            $scope.addBinMarker();
+          }
+        });
+      } else {
+        $scope.requireLogin('Please login to add a record');
+      }
     };
   })
 
