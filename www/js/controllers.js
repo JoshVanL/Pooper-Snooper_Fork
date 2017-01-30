@@ -293,6 +293,22 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       }
     };
 
+    $scope.requireLogin = function(text) {
+      var confirmPopup = $ionicPopup.confirm({
+        title: 'Not logged in',
+        template: text
+      });
+      confirmPopup.then(function(res) {
+        if (res) {
+          console.log('Pressed OK');
+          $scope.login();
+        } else {
+          console.log('Pressed cancel');
+        }
+      });
+
+    };
+
     $scope.getAllFindings();
     $scope.getAllBins();
 
@@ -1488,19 +1504,24 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
     // Confirm dialog for adding Poop to the map
     $scope.showPConfirm = function() {
-      var confirmPopup = $ionicPopup.confirm({
-        title: 'Add this doggy record?',
-        template: 'This logs your dog\'s mess. You can view all logs from your Doggy Records page.'
-      });
-      confirmPopup.then(function(res) {
-        if (res) {
-          $scope.newRecord();
-        }
-      });
+      if ($scope.loggedIn) {
+        var confirmPopup = $ionicPopup.confirm({
+          title: 'Add this doggy record?',
+          template: 'This logs your dog\'s mess. You can view all logs from your Doggy Records page.'
+        });
+        confirmPopup.then(function(res) {
+          if (res) {
+            $scope.newRecord();
+          }
+        });
+      } else {
+        $scope.requireLogin('Please login to add a record');
+      }
     };
 
     // Confirm dialog for adding Bin to the map
     $scope.showBConfirm = function() {
+      if($scope.loggedIn){
       var confirmPopup = $ionicPopup.confirm({
         title: 'Add this Bin?',
         template: 'It will be added to your Bin DataBase used to find your nearest bins.'
@@ -1510,6 +1531,9 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
           $scope.addBinMarker();
         }
       });
+    } else {
+      $scope.requireLogin('Please login to add a record');
+    }
     };
   })
 
