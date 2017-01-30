@@ -113,17 +113,22 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
     // Open the login modal
     $scope.login = function() {
+      $scope.loginData = {};
       $scope.modal.show();
     };
 
     // Triggered in the signUp modal to close it
     $scope.closeSignUp = function() {
       $scope.signUpModal.hide();
+      $scope.signUpData = {};
+      $scope.signUpData.password='';
       $scope.modal.show();
     };
 
     //Open the signUp modal
     $scope.signUp = function() {
+      $scope.signUpData = {};
+      $scope.signUpData.password='';
       $scope.modal.hide();
       // $scope.signUpData = {
       //   firstName: "fist",
@@ -154,14 +159,13 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
           }, function(reason) {
             console.log(JSON.stringify(reason));
             if (reason.data != undefined) {
-              $scope.signUpData.errorMessage = reason.data.error_description;
+              $scope.signUpData.errorMessage = reason.data;
               console.log("error");
               console.log($scope.signUpData.errorMessage);
             } else {
               // getting invalid grant - username or password is incorrect for some reason
               $scope.signUpData.errorMessage = reason.error;
               console.log($scope.signUpData.errorMessage);
-
             };
           });
       } else {
@@ -172,7 +176,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     $scope.doSignUpFacebook = function() {
       console.log("clicked");
       LoginService.socialsignUp('facebook')
-        .then(function() {
+        .then(function(result) {
+          console.log(JSON.stringify("HERE!"+result));
           onLogin();
         }, function(reason) {
           if (reason.data.error_description !== undefined) {
