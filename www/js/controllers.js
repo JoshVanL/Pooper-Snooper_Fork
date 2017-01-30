@@ -192,11 +192,13 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
       console.log('Doing login > ' + $scope.loginData.email + ' ' + $scope.loginData.password);
       LoginService.signin($scope.loginData.email, $scope.loginData.password)
-        .then(function() {
+        .then(function(res) {
           var loggedInPopup = $ionicPopup.alert({
             title: 'Logged in!',
             template: $scope.loginData.email
           });
+          console.log(JSON.stringify(res));
+          $scope.userId = res.userId;
           $ionicLoading.hide();
           loggedInPopup.then(function(res) {
             onLogin($scope.loginData.email);
@@ -1422,6 +1424,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     $scope.input.Long = $scope.record.long;
     $scope.input.DateTime = $scope.record.dateTime;
     $scope.input.ImageURI = $scope.record.imageURI;
+    $scope.input.user = $scope.userId;
     console.log(JSON.stringify($scope.input));
     $scope.addFinding();
     $scope.poopModal.hide();
