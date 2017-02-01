@@ -9,7 +9,7 @@
     </h1>
     <button id="brownFont" class="button button-clear button-positive" ng-click="closeViewRecord()" side="right">Close</button>
   </ion-header-bar>
-  <ion-content>
+  <ion-content scroll="false">
     <form name="viewRecord">
       <div class="list">
         <label class="item item-input">
@@ -31,7 +31,11 @@
           <span class="input-label">Created by : </span>
           {{selectedRec.Username}}
         </label>
-
+      </div>
+      <div>
+        <button type="submit" class="button button-block button-negative" ng-click="deleteRecord()" ng-show="ownRecord">
+          Delete record
+        </button>
       </div>
     </form>
 

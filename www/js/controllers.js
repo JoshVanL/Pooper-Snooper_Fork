@@ -40,7 +40,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         .then(function(result) {
           console.log("Selected finding");
           $scope.selectedRec = result.data;
-
+          $scope.ownRecord = 0;
+          if (result.data.user == $scope.userId) $scope.ownRecord = 1;
           console.log(JSON.stringify($scope.selectedRec));
           viewModal.show();
           $ionicLoading.hide();
@@ -60,7 +61,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     $scope.deleteFinding = function(id) {
       backandService.deleteFinding(id)
         .then(function(result) {
-          console.log("HERE");
+          console.log("Finding deleted");
           console.log(result);
         });
     }
@@ -264,6 +265,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
           $ionicLoading.hide();
           $scope.loggedIn = 0;
           $scope.userFindings = null;
+          $scope.userId = null;
           var alertPopup = $ionicPopup.alert({
             title: 'Logged out',
             template: $scope.username
@@ -292,6 +294,26 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       });
 
     };
+
+    $scope.showDConfirm = function(id, viewModal) {
+      if ($scope.loggedIn) {
+        var confirmPopup = $ionicPopup.confirm({
+          title: 'Delete this doggy finding?',
+          template: 'Deleted records cannot be retreived again. Are you sure?'
+        });
+        confirmPopup.then(function(res) {
+          if (res) {
+            $scope.deleteFinding(id);
+            viewModal.hide();
+            var deleteFindingPopup = $ionicPopup.alert({
+              title: 'Record Deleted',
+              template: 'Your record has been deleted'
+            });
+          }
+        });
+      }
+    };
+
 
     $scope.getAllFindings();
     $scope.getAllBins();
@@ -398,6 +420,11 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       console.log("Record Selected > " + id);
       $scope.selectFinding(id, $scope.viewRecordModal);
     };
+
+    $scope.deleteRecord = function() {
+      console.log("Record to delete > " + $scope.selectedRec.id);
+      $scope.showDConfirm($scope.selectedRec.id, $scope.viewRecordModal);
+    }
 
 
     // Close the new record modal
@@ -1516,6 +1543,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         $scope.requireLogin('Please login to add a record');
       }
     };
+
 
     // Confirm dialog for adding Bin to the map
     $scope.showBConfirm = function() {
