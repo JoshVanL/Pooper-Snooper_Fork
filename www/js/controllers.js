@@ -55,6 +55,10 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
           $scope.input = {};
           $scope.id = result.data.__metadata.id;
           console.log($scope.id);
+          var createdFindingPopup = $ionicPopup.alert({
+            title: 'Record Created',
+            template: 'Your finding has been added!'
+          });
         });
     }
 
@@ -62,7 +66,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       backandService.deleteFinding(id)
         .then(function(result) {
           console.log("Finding deleted");
-          console.log(result);
+          console.log(JSON.stringify(result));
         });
     }
 
@@ -295,25 +299,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
     };
 
-    $scope.showDConfirm = function(id, viewModal) {
-      if ($scope.loggedIn) {
-        var confirmPopup = $ionicPopup.confirm({
-          title: 'Delete this doggy finding?',
-          template: 'Deleted records cannot be retreived again. Are you sure?'
-        });
-        confirmPopup.then(function(res) {
-          if (res) {
-            $scope.deleteFinding(id);
-            viewModal.hide();
-            var deleteFindingPopup = $ionicPopup.alert({
-              title: 'Record Deleted',
-              template: 'Your record has been deleted'
-            });
-          }
-        });
-      }
-    };
-
 
     $scope.getAllFindings();
     $scope.getAllBins();
@@ -324,7 +309,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   /* ------------------------------------------------ */
   /* ------------ Record Logs Controller ------------ */
   /* ------------------------------------------------ */
-  .controller('RecordLogsCtrl', function($scope, $ionicModal, $cordovaCamera, $cordovaImagePicker, $filter, $ionicLoading, $cordovaGeolocation, GlobalService, backandService) {
+  .controller('RecordLogsCtrl', function($scope, $ionicModal, $cordovaCamera, $cordovaImagePicker, $filter, $ionicLoading, $cordovaGeolocation, $ionicPopup, GlobalService, backandService) {
 
     if (!$scope.loggedIn) {
       $scope.requireLogin('Please login to view your records');
@@ -422,8 +407,27 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     };
 
     $scope.deleteRecord = function() {
-      console.log("Record to delete > " + $scope.selectedRec.id);
-      $scope.showDConfirm($scope.selectedRec.id, $scope.viewRecordModal);
+
+      var confirmPopup = $ionicPopup.confirm({
+        title: 'Delete this doggy finding?',
+        template: 'Deleted records cannot be retreived again. Are you sure?'
+      });
+
+      confirmPopup.then(function(res) {
+        if (res) {
+          console.log("Record to delete > " + $scope.selectedRec.id);
+          $scope.deleteFinding($scope.selectedRec.id);
+          var deleteFindingPopup = $ionicPopup.alert({
+            title: 'Record Deleted',
+            template: 'Your record has been deleted'
+          });
+
+          deleteFindingPopup.then(function(res) {
+            $scope.closeViewRecord();
+            $scope.doRefresh();
+          });
+        }
+      });
     }
 
 
@@ -1459,6 +1463,27 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       $scope.poopModal.hide();
       clearRecord();
     };
+
+    $scope.deleteRecord = function() {
+      var confirmPopup = $ionicPopup.confirm({
+        title: 'Delete this doggy finding?',
+        template: 'Deleted records cannot be retreived again. Are you sure?'
+      });
+      confirmPopup.then(function(res) {
+        if (res) {
+          console.log("Record to delete > " + $scope.selectedRec.id);
+          $scope.deleteFinding($scope.selectedRec.id);
+          var deleteFindingPopup = $ionicPopup.alert({
+            title: 'Record Deleted',
+            template: 'Your record has been deleted'
+          });
+
+          deleteFindingPopup.then(function(res) {
+            $scope.closeViewRecord();
+          });
+        }
+      });
+    }
 
     // Create record item
     $scope.createRecord = function(record) {
