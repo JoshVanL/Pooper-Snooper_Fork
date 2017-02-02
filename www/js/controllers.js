@@ -17,6 +17,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     $scope.loggedIn = 0;
     $scope.username = "";
     $scope.facebookToken = "";
+    $scope.mapRec = null;
 
 
     $scope.getAllFindings = function() {
@@ -35,6 +36,42 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         });
     }
 
+
+    function mapInit() {
+      var lat = Number($scope.selectedRec.Lat);
+      var long = Number($scope.selectedRec.Long);
+      var latLng = new google.maps.LatLng(lat,long);
+      var mapOptions = {
+        center: latLng,
+        zoom: 16,
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        mapTypeControl: false,
+        fullscreenControl: false,
+        compass: false,
+        streetViewControl: false
+      };
+      $scope.mapRec = new google.maps.Map(document.getElementById("mapRec"), mapOptions);
+    }
+
+    function getGoogleMaps() {
+      var apiKey = "AIzaSyD1-OU4tSucidW9oHkB5CCpLqSUT5fcl-E";
+
+      //This function will be called once the SDK has been loaded
+      window.mapInit = function() {
+        mapInit();
+      };
+
+      //Create a script element to insert into the page
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.id = "googleMaps";
+
+      //Note the callback function in the URL is the one we created above
+      script.src = 'http://maps.google.com/maps/api/js?key=' + apiKey +
+        '&callback=mapInit';
+      document.body.appendChild(script);
+    }
+
     $scope.selectFinding = function(id, viewModal) {
       backandService.selectFinding(id)
         .then(function(result) {
@@ -43,10 +80,12 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
           $scope.ownRecord = 0;
           if (result.data.user == $scope.userId) $scope.ownRecord = 1;
           console.log(JSON.stringify($scope.selectedRec));
+          getGoogleMaps();
           viewModal.show();
           $ionicLoading.hide();
         });
     }
+
 
 
     $scope.addFinding = function() {
@@ -685,9 +724,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         // Wait until the map is loaded and add Marker to current location
         google.maps.event.addListenerOnce($scope.map, 'idle', function() {
 
-          // -------------------------------------------------
-          // CREATING DUMMY MARKERS TO TEST LOADING FUNCTION
-          // -------------------------------------------------
 
           //Get poop and bin markers from database
           getPoopMarkers();

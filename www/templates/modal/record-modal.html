@@ -1,4 +1,3 @@
-
 <div class="modal">
 
   <!-- Modal header bar -->
@@ -16,14 +15,11 @@
           <span class="input-label">DateTime</span>
           {{selectedRec.DateTime}}
         </label>
-        <label class="item item-input">
-          <span class="input-label">Lat</span>
-          {{selectedRec.Lat}}
-        </label>
-        <label class="item item-input">
-          <span class="input-label">Long</span>
-          {{selectedRec.Long}}
-        </label>
+      </form>
+        <ion-content>
+          <div class="padding" id="mapRec"></div>
+        </ion-content>
+      <form name="viewRecord">
         <label>
           <img ng-src="{{selectedRec.ImageURI}}" class="center"/>
         </label>
