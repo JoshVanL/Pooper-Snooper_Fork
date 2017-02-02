@@ -920,6 +920,38 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
     }
 
+    function distancecheck (currentlat, currentlng, nextlat, nextlng){
+        var radlat1 = Math.PI * currentlat/180;
+      	var radlat2 = Math.PI * nextlat/180;
+      	var theta = currentlng-nextlng;
+      	var radtheta = Math.PI * theta/180;
+      	var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+      	dist = Math.acos(dist);
+      	dist = dist * 180/Math.PI;
+      	dist = dist * 60 * 1.1515;
+      	dist = dist * 1.609344;
+        return dist;
+    }
+
+    $scope.addmarkerverify = function(marker){
+      var options = {
+        timeout: 10000,
+        enableHighAccuracy: true
+      };
+      $cordovaGeolocation.getCurrentPosition(options).then(function(position) {
+        var currentlat = position.coords.latitude;
+        var currentlng = position.coords.longitude;
+        if (distancecheck <= 0.1 && distancecheck >= 0){
+                console.log("enter true");
+          return true;
+        }else{
+                console.log("enter false");
+          return false;
+        }
+      }
+      console.log("not enter verify");
+    }
+
     //Adds the poop Marker to the map (after record has been created)
     $scope.addPoopMarker = function() {
       $scope.minimizePanel();
@@ -936,6 +968,9 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         lng: marker.getPosition().lng(),
         icon: marker.getIcon().url
       };
+      if($scope.addmarkerverify(markerData) == true){
+        console.log("YAYAYAYAYAY");
+      }
       GlobalService.push_poopMarkers(markerData);
 
       // Adds the marker to markerCache (so it won't be re-added)
