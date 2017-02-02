@@ -24,6 +24,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       backandService.getEveryFinding()
         .then(function(result) {
           $scope.findings = result.data.data;
+          console.log(JSON.stringify(result));
           console.log("Got all findings");
         });
     }

@@ -19,7 +19,9 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
   };
 
   getEveryFinding = function() {
-    return $http.get(Backand.getApiUrl() + baseUrl + dogFindingsName + '?pageSize=200');
+    var timeToDecay = new Date(Date.now() - 1.814e+9); //3 weeks
+    console.log(timeToDecay);
+    return $http.get(Backand.getApiUrl() + baseUrl + dogFindingsName + '?pageSize=200&filter=[{"fieldName":"DateTime","operator":"greaterThan","value":"'+ timeToDecay +'"}]');
   };
 
   getUserFindings = function(id) {
