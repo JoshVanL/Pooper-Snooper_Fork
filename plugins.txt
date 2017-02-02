@@ -1,0 +1,12 @@
+ionic plugin add cordova-plugin-camera
+ionic plugin add cordova-plugin-compat 
+ionic plugin add cordova-plugin-device
+ionic plugin add cordova-plugin-geolocation
+ionic plugin add cordova-plugin-image-picker
+ionic plugin add cordova-plugin-inappbrowser
+ionic plugin add cordova-plugin-network-information
+ionic plugin add cordova-plugin-statusbar
+ionic plugin add cordova-plugin-whitelist
+ionic plugin add ionic-plugin-keyboard
+ionic plugin add cordova-plugin-facebook4 --save --variable APP_ID="1791902807738120" --variable APP_NAME="Pooper Snooper"
+ionic plugin add cordova-plugin-googlemaps --variable API_KEY_FOR_ANDROID="AIzaSyD1-OU4tSucidW9oHkB5CCpLqSUT5fcl-E" --variable API_KEY_FOR_IOS="AIzaSyD1-OU4tSucidW9oHkB5CCpLqSUT5fcl-E"
