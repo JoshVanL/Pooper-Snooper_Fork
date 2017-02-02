@@ -130,6 +130,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       backandService.deleteBin(id)
         .then(function(result) {
           console.log(result);
+          initMap();
         });
     }
 
@@ -969,7 +970,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             lng: marker.getPosition().lng(),
             icon: marker.getIcon().url
           };
-          if ($scope.addmarkerverify(markerData) == true) {
+          if (addmarkerverify(markerData) == true) {
             console.log("YAYAYAYAYAY");
           }
           GlobalService.push_poopMarkers(markerData);
@@ -1552,6 +1553,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
               deleteFindingPopup.then(function(res) {
                 $scope.closeViewRecord();
+                initMap();
               });
             }
           });
