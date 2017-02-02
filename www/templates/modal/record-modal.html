@@ -15,13 +15,13 @@
           <span class="input-label">DateTime</span>
           {{selectedRec.DateTime}}
         </label>
-      </form>
-        <ion-content>
-          <div class="padding" id="mapRec"></div>
-        </ion-content>
-      <form name="viewRecord">
         <label>
-          <img ng-src="{{selectedRec.ImageURI}}" class="center"/>
+          <ion-content>
+            <div class="padding" id="mapRec"></div>
+          </ion-content>
+        </label>
+        <label>
+          <img id="viewIm" ng-src="{{selectedRec.ImageURI}}" class="center"/>
         </label>
         <label class="item item-input">
           <span class="input-label">Created by : </span>

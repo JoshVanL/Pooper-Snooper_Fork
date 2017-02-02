@@ -43,7 +43,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       var latLng = new google.maps.LatLng(lat,long);
       var mapOptions = {
         center: latLng,
-        zoom: 16,
+        zoom: 14,
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         mapTypeControl: false,
         fullscreenControl: false,
