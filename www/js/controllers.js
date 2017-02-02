@@ -936,6 +936,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       }
 
       function addmarkerverify(marker) {
+        console.log("hi");
         var options = {
           timeout: 10000,
           enableHighAccuracy: true
@@ -971,7 +972,12 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             icon: marker.getIcon().url
           };
           if (addmarkerverify(markerData) == true) {
-            console.log("YAYAYAYAYAY");
+            var myPopup = $ionicPopup.show({
+                template: '<input type = "text" ng-model = "data.model">',
+               title: 'Title',
+               subTitle: 'Subtitle',
+            })
+
           }
           GlobalService.push_poopMarkers(markerData);
 
