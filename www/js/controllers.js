@@ -935,7 +935,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         return dist;
       }
 
-      function addmarkerverify(marker) {
+      function addmarkerverify(targetlat, targetlng) {
         console.log("hi");
         var options = {
           timeout: 10000,
@@ -944,7 +944,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         $cordovaGeolocation.getCurrentPosition(options).then(function(position) {
             var currentlat = position.coords.latitude;
             var currentlng = position.coords.longitude;
-            if (distancecheck <= 0.1 && distancecheck >= 0) {
+            var dist = distancecheck(currentlat, currentlng, targetlat, targetlng)
+            if (dist <= 0.1 && dist >= 0) {
               console.log("enter true");
               return true;
             } else {
@@ -971,14 +972,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             lng: marker.getPosition().lng(),
             icon: marker.getIcon().url
           };
-          if (addmarkerverify(markerData) == true) {
-            var myPopup = $ionicPopup.show({
-                template: '<input type = "text" ng-model = "data.model">',
-               title: 'Title',
-               subTitle: 'Subtitle',
-            })
-
-          }
           GlobalService.push_poopMarkers(markerData);
 
           // Adds the marker to markerCache (so it won't be re-added)
@@ -1511,6 +1504,11 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
           console.log(JSON.stringify(iconLatLng.lng()));
           $scope.record.lat = iconLatLng.lat();
           $scope.record.long = iconLatLng.lng();
+          if (addmarkerverify(targetlat, targetlng) == true){
+            alert("yayayayya");
+          }else{
+            alert("awhhh");
+          }
           $scope.poopModal.show();
         };
 
