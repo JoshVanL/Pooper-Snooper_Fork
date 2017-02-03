@@ -27,8 +27,15 @@
           <span class="input-label">Created by : </span>
           {{selectedRec.Username}}
         </label>
+        <label class="item item-input" ng-show="selectedRec.Cleaned">
+          <span class="input-label">Cleaned up by : </span>
+          {{selectedRec.Cleanedby}}
+        </label>
       </div>
       <div>
+        <button type="submit" class="button button-block button-negative" ng-click="cleanUpRec()" ng-show="!selectedRec.Cleaned">
+          Cleaned up!
+        </button>
         <button type="submit" class="button button-block button-negative" ng-click="deleteRecord()" ng-show="ownRecord">
           Delete record
         </button>
