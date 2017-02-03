@@ -935,28 +935,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         return dist;
       }
 
-      function addmarkerverify(targetlat, targetlng) {
-        var options = {
-          timeout: 10000,
-          enableHighAccuracy: true
-        };
-        $cordovaGeolocation.getCurrentPosition(options).then(function(position) {
-            var currentlat = position.coords.latitude;
-            var currentlng = position.coords.longitude;
-            var dist = distancecheck(currentlat, currentlng, targetlat, targetlng);
-            console.log(currentlat);
-            console.log(currentlng);
-            console.log(dist);
-            if (dist <= 0.1 && dist >= 0) {
-              console.log("enter true");
-              return true;
-            } else {
-              console.log("enter false");
-              return false;
-            }
-            console.log("not enter verify");
-          });
-        }
 
         //Adds the poop Marker to the map (after record has been created)
         $scope.addPoopMarker = function() {
@@ -1506,12 +1484,19 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
           console.log(JSON.stringify(iconLatLng.lng()));
           $scope.record.lat = iconLatLng.lat();
           $scope.record.long = iconLatLng.lng();
-          if (addmarkerverify($scope.record.lat, $scope.record.long)){
-            alert("yayayayya");
-          }else{
-            alert("awhhh");
-          };
-          $scope.poopModal.show();
+          $cordovaGeolocation.getCurrentPosition(options).then(function(position) {
+              currentlat = position.coords.latitude;
+              currentlng = position.coords.longitude;
+              var dist = distancecheck(currentlat, currentlng, $scope.record.lat, $scope.record.long);
+              if (dist <= 0.1 && dist >= 0) {
+                console.log("enter true");
+                $scope.poopModal.show();
+              } else {
+                alert("you are too far from the marker");
+              }
+            }, function(error){
+               alert("Please check internet connection");
+            });
         };
 
 
