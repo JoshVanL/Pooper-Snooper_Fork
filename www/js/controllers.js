@@ -18,6 +18,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     $scope.username = "";
     $scope.facebookToken = "";
     $scope.mapRec = null;
+    $scope.numOfRecentRecords = 0; //Number of records user has made in last 24hrs
 
 
     $scope.getAllFindings = function() {
@@ -34,6 +35,14 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         .then(function(result) {
           $scope.userFindings = result.data.data;
           console.log("Got user findings");
+        });
+    }
+
+    $scope.getUserBins = function(id) {
+      backandService.getUserBins(id)
+        .then(function(result) {
+          $scope.userBins = result.data.data;
+          console.log("Got user bins");
         });
     }
 
@@ -265,6 +274,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       console.log("Logged in! > " + username);
       $scope.username = username;
       $scope.loggedIn = 1;
+      $scope.getUserFindings($scope.userId);
+      $scope.getUserBins($scope.userId);
     }
 
     // Perform the login action when the user submits the login form
@@ -351,6 +362,24 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
     };
 
+    $scope.isOverRecordLimit = function() {
+      //console.log(JSON.stringify($scope.userFindings));
+      var testTime = new Date(Date.now() - (24 * 60 * 60 * 1000)); // 24 hours ago
+      var recentRecs = 0;
+      var recDate = new Date();
+      for (var rec in $scope.userFindings) {
+        recDate = new Date($scope.userFindings[rec].DateTime);
+        if (recDate > testTime) recentRecs++;
+        if (recentRecs > 2) return true;
+      }
+      for (var rec in $scope.userBins) {
+        recDate = new Date($scope.userBins[rec].DateTime);
+        if (recDate > testTime) recentRecs++;
+        if (recentRecs > 2) return true;
+      }
+      return false;
+    };
+
 
     $scope.getAllFindings();
     $scope.getAllBins();
@@ -403,6 +432,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       //$scope.getAllFindings();
       if ($scope.loggedIn) {
         $scope.getUserFindings($scope.userId);
+        $scope.getUserBins($scope.userId);
       } else {
         $scope.requireLogin('You must login to view your records');
       }
@@ -426,6 +456,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       $scope.input.user = $scope.userId;
       console.log(JSON.stringify($scope.input));
       $scope.addFinding();
+      $scope.userFindings.push($scope.input);
 
       $scope.recordModal.hide();
       $scope.doRefresh();
@@ -446,10 +477,16 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     // Open our new record modal
     $scope.newRecord = function() {
       if ($scope.loggedIn) {
-        clearRecord();
-        $scope.createEnabled = false;
-        console.log($scope.record.dateTime);
-        $scope.recordModal.show();
+        if ($scope.isOverRecordLimit()) {
+          var limitRecsPopup = $ionicPopup.alert({
+            title: 'You have reached record limit',
+            template: 'Please wait before adding more records'
+          });
+        } else {
+          clearRecord();
+          $scope.createEnabled = false;
+          $scope.recordModal.show();
+        }
       } else {
         $scope.requireLogin('You must be logged in to create a record');
       }
@@ -1631,6 +1668,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       $scope.input.user = $scope.userId;
       console.log(JSON.stringify($scope.input));
       $scope.addFinding();
+      $scope.userFindings.push($scope.input);
       $scope.poopModal.hide();
       clearRecord();
 
@@ -1696,7 +1734,14 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         });
         confirmPopup.then(function(res) {
           if (res) {
-            $scope.newRecord();
+            if ($scope.isOverRecordLimit()) {
+              var limitRecsPopup = $ionicPopup.alert({
+                title: 'You have reached record limit',
+                template: 'Please wait before adding more records'
+              });
+            } else {
+              $scope.newRecord();
+            }
           }
         });
       } else {
@@ -1714,7 +1759,14 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         });
         confirmPopup.then(function(res) {
           if (res) {
-            $scope.addBinMarker();
+            if ($scope.isOverRecordLimit()) {
+              var limitRecsPopup = $ionicPopup.alert({
+                title: 'You have reached record limit',
+                template: 'Please wait before adding more records'
+              });
+            } else {
+              $scope.addBinMarker();
+            }
           }
         });
       } else {
