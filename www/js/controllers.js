@@ -762,6 +762,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
 
           //Get poop and bin markers from database
+          GlobalService.clear_allMarkers();
           getPoopMarkers();
           getBinMarkers();
 
@@ -1526,10 +1527,16 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
           console.log("enter true");
           $scope.poopModal.show();
         } else {
-          alert("you are too far from the marker");
+          var alertPopup = $ionicPopup.alert({
+            title: 'Too far from marker',
+            template: 'You are too far away to place a marker here'
+          });
         }
       }, function(error) {
-        alert("Please check internet connection");
+        var alertPopup = $ionicPopup.alert({
+          title: 'No internet connection',
+          template: 'Please connect to the internet to place a marker'
+        });
       });
     };
 
@@ -1578,7 +1585,13 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
           deleteFindingPopup.then(function(res) {
             $scope.closeViewRecord();
-            initMap();
+            // initMap();
+            // GlobalService.clear_allMarkers();
+            // $scope.getAllFindings();
+            // $scope.getAllBins();
+            // getPoopMarkers();
+            // getBinMarkers();
+            // initMap();
           });
         }
       });

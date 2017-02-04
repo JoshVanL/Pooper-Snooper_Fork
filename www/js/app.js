@@ -369,6 +369,12 @@ angular.module('PooperSnooper', ['ionic', 'backand', 'PooperSnooper.controllers'
       poopMarkers.push(t);
     },
 
+    clear_allMarkers: function() {
+    poopMarkers.splice(0, poopMarkers.length);
+    binMarkers.splice(0, binMarkers.length);
+
+    },
+
     // Return closest bin Marker
     get_NearestBin: function(loc) {
       // Reset the nearbyPoopMarker array
