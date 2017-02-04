@@ -1035,6 +1035,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
           template: '<p>Loading Finding</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
         });
         $scope.selectFinding($scope.id, $scope.viewRecordModal);
+        $scope.selectedMarker = marker;
       });
 
       GlobalService.set_activeIcon("");
@@ -1622,13 +1623,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
           deleteFindingPopup.then(function(res) {
             $scope.closeViewRecord();
-            // initMap();
-            // GlobalService.clear_allMarkers();
-            // $scope.getAllFindings();
-            // $scope.getAllBins();
-            // getPoopMarkers();
-            // getBinMarkers();
-            // initMap();
+            $scope.selectedMarker.setMap(null);
           });
         }
       });
