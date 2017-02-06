@@ -1,6 +1,6 @@
 angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
-  .controller('AppCtrl', function($scope, $ionicModal, ConnectivityMonitor, $timeout, $ionicPopup, backandService, $ionicLoading, LoginService) {
+  .controller('AppCtrl', function($scope, Backand, $ionicModal, ConnectivityMonitor, $timeout, $ionicPopup, backandService, $ionicLoading, LoginService) {
 
     // With the new view caching in Ionic, Controllers are only called
     // when they are recreated or on app start, instead of every page change.
@@ -260,9 +260,10 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     };
 
     onValidLogin = function(response) {
-      console.log("on login");
+      console.log("reaches on valid login");
       onLogin();
-      //login.username = response.data || login.username;
+      $scope.username = response.data || $scope.username;
+      console.log("Logged in as " + $scope.username);
     }
 
     onErrorInLogin = function(rejection) {
@@ -270,11 +271,12 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       console.log(JSON.stringify(rejection));
     }
 
-    function onLogin(username) {
-      console.log("Logged in! > " + username);
-      $scope.username = username;
+	function onLogin(username) {
+      console.log("Logged in as " + username);
+      $scope.username  = username || Backand.getUsername();
+      console.log("Logged in as " + username);
       $scope.loggedIn = 1;
-      $scope.getUserFindings($scope.userId);
+	  $scope.getUserFindings($scope.userId);
       $scope.getUserBins($scope.userId);
     }
 
@@ -318,7 +320,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
 
     $scope.socialSignIn = function(provider) {
-      console.log("inside socialsignin");
+      console.log("inside controllers.js socialSignIn()");
       LoginService.socialSignIn(provider)
         .then(onValidLogin, onErrorInLogin);
     };

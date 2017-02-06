@@ -1,5 +1,16 @@
 angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
 
+.service('APIInterceptor', function ($rootScope, $q) {
+    var service = this;
+
+    service.responseError = function (response) {
+        if (response.status === 401) {
+            $rootScope.$broadcast('unauthorized');
+        }
+        return $q.reject(response);
+    };
+})
+
 .service('backandService', function($http, Backand) {
   var baseUrl = '/1/objects/';
   var dogFindingsName = 'dogFindings/';
@@ -106,6 +117,7 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
   }
 
   service.socialSignIn = function(provider) {
+	console.log("inside the service.js for socialSignIn");
     return Backand.socialSignIn(provider);
   };
 
@@ -153,10 +165,10 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
   };
 
   self.socialSignIn = function(provider) {
+	console.log("inside self.socialSignIN")
     return Backand.socialSignIn(provider)
       .then(function(response) {
         loadUserDetails();
-        return response;
       });
   };
 

@@ -25,7 +25,7 @@ angular.module('PooperSnooper', ['ionic', 'backand', 'PooperSnooper.controllers'
 })
 
 // Navigate through page states
-.config(function($stateProvider, $urlRouterProvider, BackandProvider) {
+.config(function($stateProvider, $urlRouterProvider, BackandProvider, $httpProvider) {
   BackandProvider.setAppName('poopersnooper');
   BackandProvider.setSignUpToken('94a584dd-b34b-47e0-ba1d-ae63d5867b56');
   BackandProvider.setAnonymousToken('bba42d70-2df7-4490-82a5-5395c4e7347e');
@@ -86,6 +86,7 @@ angular.module('PooperSnooper', ['ionic', 'backand', 'PooperSnooper.controllers'
 
   // $urlRouterProvider.otherwise('/app/map');
   $urlRouterProvider.otherwise('/app/welcome');
+  $httpProvider.interceptors.push('APIInterceptor');
 })
 
 //'Draggable' and 'droppable' directions
