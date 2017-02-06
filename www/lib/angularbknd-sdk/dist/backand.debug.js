@@ -216,7 +216,7 @@ angular.module('backand', [])
             self.getSocialProviders = function () {
                 return socialProviders;
             };
-			
+
             self.socialSignin = function (provider, spec) {
 			    console.log("inside backand.debug.js for socialSignin");
                 return BackandAuthService.socialSignin(provider, spec)
@@ -459,7 +459,7 @@ function BackandAuthService($q, $rootScope, BackandHttpBufferService, BackandSoc
         console.log("inside BackandAuthService for socialSignIn ");
         return socialAuth(provider, false, spec);
     };
-	
+
     self.socialSignup = function (provider, parameters, spec, email) {
         self.signupParameters = parameters;
         self.inSocialSignup = true;
@@ -693,11 +693,11 @@ function BackandAuthService($q, $rootScope, BackandHttpBufferService, BackandSoc
             self.loginPromise = $q.defer();
         else
             self.signUpPromise = $q.defer();
-		
+
 		console.log("isMobile " + config.isMobile);
 
-        if (config.isMobile) {
-
+        if (true) { // should be config.ismobile but for some reason it is false when running on a smartphone so for now set to true
+    	       console.log("mobile devices");
             var ref = window.open(
                 config.apiUrl + '/1/'
                 + getSocialUrl(provider, isSignUp)
@@ -709,7 +709,7 @@ function BackandAuthService($q, $rootScope, BackandHttpBufferService, BackandSoc
             mobileSocialLoginInner(ref, isSignUp, provider, spec);
         }
         else {
-			console.log("not config.ismobile");
+			        console.log("not config.ismobile");
             self.socialAuthWindow = window.open(
                 config.apiUrl + '/1/'
                 + getSocialUrl(provider, isSignUp)
@@ -717,10 +717,11 @@ function BackandAuthService($q, $rootScope, BackandHttpBufferService, BackandSoc
                 + '&returnAddress=',
                 'id1',
                 spec || 'left=1, top=1, width=600, height=600');
-			console.log("in between");
+			      console.log("in between");
             window.addEventListener('message', (function (provider, spec) {
-                console.log("before removing");
-				return function (e) {
+                    console.log("before removing");
+				            return function (e) {
+                    console.log("inside closure");
                     window.removeEventListener('message', arguments.callee);
                     setUserDataFromToken(e, provider, spec)
                 }
@@ -731,7 +732,7 @@ function BackandAuthService($q, $rootScope, BackandHttpBufferService, BackandSoc
 
     function setUserDataFromToken(event, provider, spec) {
         console.log("inside setUserDataFromToken");
-		console.log(event, provider, spec);
+		    console.log(event, provider, spec);
         self.socialAuthWindow.close();
         self.socialAuthWindow = null;
 

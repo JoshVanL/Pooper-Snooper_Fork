@@ -83,6 +83,6 @@
   <plugin name="ionic-plugin-keyboard" spec="~2.2.1"/>
   <plugin name="cordova-plugin-facebook4" spec="https://github.com/jeduan/cordova-plugin-facebook4">
     <variable name="APP_ID" value="1791902807738120"/>
-    <variable name="APP_NAME" value="Pooper Snooper"/>
+    <variable name="APP_NAME" value="Pooper"/>
   </plugin>
 </widget>
