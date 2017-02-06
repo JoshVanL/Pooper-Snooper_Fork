@@ -264,6 +264,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       onLogin();
       $scope.username = response.data || $scope.username;
       console.log("Logged in as " + $scope.username);
+      $scope.closeLogin();
     }
 
     onErrorInLogin = function(rejection) {
