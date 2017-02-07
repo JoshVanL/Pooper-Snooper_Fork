@@ -169,6 +169,7 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
     return Backand.socialSignIn(provider)
       .then(function(response) {
         loadUserDetails();
+		return response;
       });
   };
 
