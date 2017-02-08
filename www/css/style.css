@@ -336,3 +336,21 @@
     cursor: pointer;
 	width: 95%;
 }
+
+.helper1{
+    font-family : "Ionicons";
+    font-size : 17px;
+    text-align: center;
+}
+
+.helper2{
+    font-family : "Ionicons";
+    font-size : 17px;
+    text-align: center;
+}
+
+.helper3{
+    font-family : "Ionicons";
+    font-size : 17px;
+    text-align: center;
+}
