@@ -20,6 +20,10 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
     $scope.mapRec = null;
     $scope.numOfRecentRecords = 0; //Number of records user has made in last 24hrs
 
+    $scope.userToken = $localStorage.userToken || null;
+    if($scope.userToken) console.log("User token : " +$scope.userToken);
+    else console.log("- No user token -");
+
 
     $scope.getAllFindings = function() {
       backandService.getEveryFinding()
@@ -305,6 +309,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
             });
             console.log(JSON.stringify(res));
 
+            $localStorage.userToken = res.access_token;
+            $scope.userToken = $localStorage.userToken;
             $scope.userId = res.userId;
             $ionicLoading.hide();
             loggedInPopup.then(function(res) {
