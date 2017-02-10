@@ -209,13 +209,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
       $scope.signUpData = {};
       $scope.signUpData.password = '';
       $scope.modal.hide();
-      // $scope.signUpData = {
-      //   firstName: "fist",
-      //   lastName: "last",
-      //   email: "test301@test.com",
-      //   password: "testtest",
-      //   again: "testtest"
-      // };
       $scope.signUpModal.show();
     };
 
@@ -239,11 +232,10 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
             console.log(JSON.stringify(reason));
             if (reason.data != undefined) {
               $scope.signUpData.errorMessage = reason.data;
-              console.log("error");
-              console.log($scope.signUpData.errorMessage);
+              console.log(JSON.stringify($scope.signUpData.errorMessage));
             } else {
               // getting invalid grant - username or password is incorrect for some reason
-              $scope.signUpData.errorMessage = reason.error;
+              $scope.signUpData.errorMessage = JSON.stringify(reason.error_description);
               console.log($scope.signUpData.errorMessage);
             };
           });
@@ -258,17 +250,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
         .then(onValidLogin, onErrorInLogin);
 
 
-      //   console.log(JSON.stringify("HERE!"+result));
-      //   onLogin();
-      // }, function(reason) {
-      //   if (reason.data.error_description !== undefined) {
-      //     console.log(JSON.stringify(reason));
-      //     $scope.signUpData.errorMessage = reason.data.error_description;
-      //   } else {
-      //     console.log(JSON.stringify(reason));
-      //     $scope.signUpData.errorMessage = reason.data;
-      //   }
-      // });
     };
 
     onValidLogin = function(response) {
@@ -294,8 +275,9 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
 
     function onLogin(username) {
       console.log("Logged in as " + username);
-      $scope.username = username || Backand.getUsername();
-      console.log("Logged in as " + username);
+      var data = Backand.getUserDetails();
+      $scope.userData  = data.$$state.value;
+      console.log(JSON.stringify($scope.userData));
       $scope.loggedIn = 1;
       $scope.getUserFindings($scope.userData.userId);
       $scope.getUserBins($scope.userData.userId);
