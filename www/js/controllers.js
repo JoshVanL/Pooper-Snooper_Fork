@@ -20,9 +20,16 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
     $scope.mapRec = null;
     $scope.numOfRecentRecords = 0; //Number of records user has made in last 24hrs
 
-    $scope.userToken = $localStorage.userToken || null;
-    if($scope.userToken) console.log("User token : " +$scope.userToken);
-    else console.log("- No user token -");
+    // $scope.userToken = $localStorage.userToken || null;
+    // if ($scope.userToken) console.log("User token : " + $scope.userToken);
+    // else console.log("- No user token -");
+
+    loadUserDetails();
+
+    function loadUserDetails() {
+      var username = Backand.getUsername();
+      console.log(JSON.stringify(username));
+    }
 
 
     $scope.getAllFindings = function() {
@@ -269,12 +276,12 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
       $scope.username = response.data || $scope.username;
       console.log("Logged in as " + $scope.username);
       var loginPopup = $ionicPopup.alert({
-          title : 'Logged in'
+        title: 'Logged in'
 
       })
-      loginPopup.then(function(res){
-          console.log('Welcome');
-          $scope.closeLogin();
+      loginPopup.then(function(res) {
+        console.log('Welcome');
+        $scope.closeLogin();
       });
     }
 
@@ -283,12 +290,12 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
       console.log(JSON.stringify(rejection));
     }
 
-	function onLogin(username) {
+    function onLogin(username) {
       console.log("Logged in as " + username);
-      $scope.username  = username || Backand.getUsername();
+      $scope.username = username || Backand.getUsername();
       console.log("Logged in as " + username);
       $scope.loggedIn = 1;
-	  $scope.getUserFindings($scope.userId);
+      $scope.getUserFindings($scope.userId);
       $scope.getUserBins($scope.userId);
     }
 
