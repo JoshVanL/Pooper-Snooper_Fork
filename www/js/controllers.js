@@ -1,6 +1,6 @@
-angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
+angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'ngStorage'])
 
-  .controller('AppCtrl', function($scope, Backand, $ionicModal, ConnectivityMonitor, $timeout, $ionicPopup, backandService, $ionicLoading, LoginService) {
+  .controller('AppCtrl', function($scope, $localStorage, Backand, $ionicModal, ConnectivityMonitor, $timeout, $ionicPopup, backandService, $ionicLoading, LoginService) {
 
     // With the new view caching in Ionic, Controllers are only called
     // when they are recreated or on app start, instead of every page change.
@@ -265,8 +265,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       $scope.username = response.data || $scope.username;
       console.log("Logged in as " + $scope.username);
       var loginPopup = $ionicPopup.alert({
-          title : 'Logged in' 
-          
+          title : 'Logged in'
+
       })
       loginPopup.then(function(res){
           console.log('Welcome');
@@ -304,6 +304,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
               template: $scope.loginData.email
             });
             console.log(JSON.stringify(res));
+
             $scope.userId = res.userId;
             $ionicLoading.hide();
             loggedInPopup.then(function(res) {
