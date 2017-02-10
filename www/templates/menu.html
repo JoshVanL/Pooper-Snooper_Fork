@@ -37,7 +37,7 @@
           Login
         </ion-item>
         <ion-item ng-show="loggedIn">
-          Logged in as : {{username}}
+          Logged in as : {{userData.username}}
         </ion-item>
         <ion-item menu-close ng-click="doLogout()" ng-show="loggedIn">
           Log out

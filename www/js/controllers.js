@@ -1,6 +1,6 @@
 angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'ngStorage'])
 
-  .controller('AppCtrl', function($scope, $localStorage, Backand, $ionicModal, ConnectivityMonitor, $timeout, $ionicPopup, backandService, $ionicLoading, LoginService) {
+  .controller('AppCtrl', function($scope, Backand, $ionicModal, ConnectivityMonitor, $timeout, $ionicPopup, backandService, $ionicLoading, LoginService) {
 
     // With the new view caching in Ionic, Controllers are only called
     // when they are recreated or on app start, instead of every page change.
@@ -15,20 +15,21 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
     $scope.poopMarkers = [{}];
     $scope.id = 0;
     $scope.loggedIn = 0;
-    $scope.username = "";
     $scope.facebookToken = "";
     $scope.mapRec = null;
     $scope.numOfRecentRecords = 0; //Number of records user has made in last 24hrs
 
-    // $scope.userToken = $localStorage.userToken || null;
-    // if ($scope.userToken) console.log("User token : " + $scope.userToken);
-    // else console.log("- No user token -");
-
     loadUserDetails();
 
     function loadUserDetails() {
-      var username = Backand.getUsername();
-      console.log(JSON.stringify(username));
+      var data = Backand.getUserDetails();
+      if(data) {
+        console.log("User already logged in!");
+        //console.log(JSON.stringify(data));
+        $scope.userData = data.$$state.value;
+        console.log(JSON.stringify($scope.userData));
+        $scope.loggedIn = 1;
+      }
     }
 
 
@@ -99,7 +100,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
           console.log("Selected finding");
           $scope.selectedRec = result.data;
           $scope.ownRecord = 0;
-          if (result.data.user == $scope.userId) $scope.ownRecord = 1;
+          if (result.data.user == $scope.userData.userId) $scope.ownRecord = 1;
           console.log(JSON.stringify($scope.selectedRec));
           //getGoogleMaps();
           viewModal.show();
@@ -273,6 +274,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
     onValidLogin = function(response) {
       console.log("reaches on valid login");
       onLogin();
+
       $scope.username = response.data || $scope.username;
       console.log("Logged in as " + $scope.username);
       var loginPopup = $ionicPopup.alert({
@@ -295,8 +297,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
       $scope.username = username || Backand.getUsername();
       console.log("Logged in as " + username);
       $scope.loggedIn = 1;
-      $scope.getUserFindings($scope.userId);
-      $scope.getUserBins($scope.userId);
+      $scope.getUserFindings($scope.userData.userId);
+      $scope.getUserBins($scope.userData.userId);
     }
 
     // Perform the login action when the user submits the login form
@@ -312,16 +314,15 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
           .then(function(res) {
             var loggedInPopup = $ionicPopup.alert({
               title: 'Logged in!',
-              template: $scope.loginData.email
+              template: res.username
             });
             console.log(JSON.stringify(res));
 
-            $localStorage.userToken = res.access_token;
-            $scope.userToken = $localStorage.userToken;
-            $scope.userId = res.userId;
+
+            $scope.userData = res;
             $ionicLoading.hide();
             loggedInPopup.then(function(res) {
-              onLogin($scope.loginData.email);
+              onLogin($scope.userData.username);
               $scope.closeLogin();
             });
           }, function(error) {
@@ -356,10 +357,10 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
           $ionicLoading.hide();
           $scope.loggedIn = 0;
           $scope.userFindings = null;
-          $scope.userId = null;
+          $scope.userData = null;
           var alertPopup = $ionicPopup.alert({
             title: 'Logged out',
-            template: $scope.username
+            template: 'You are now logged out'
           });
         })
       } else {
@@ -455,8 +456,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
     $scope.doRefresh = function() {
       //$scope.getAllFindings();
       if ($scope.loggedIn) {
-        $scope.getUserFindings($scope.userId);
-        $scope.getUserBins($scope.userId);
+        $scope.getUserFindings($scope.userData.userId);
+        $scope.getUserBins($scope.userData.userId);
       } else {
         $scope.requireLogin('You must login to view your records');
       }
@@ -477,7 +478,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
       $scope.input.Username = $scope.username;
       $scope.input.Cleaned = false;
       $scope.input.Cleanedby = null;
-      $scope.input.user = $scope.userId;
+      $scope.input.user = $scope.userData.userId;
       console.log(JSON.stringify($scope.input));
       $scope.addFinding();
       $scope.userFindings.push($scope.input);
@@ -1086,7 +1087,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
       $scope.input.Lat = markerData.lat;
       $scope.input.Long = markerData.lng;
       $scope.input.DateTime = new Date();
-      $scope.input.user = $scope.userId;
+      $scope.input.user = $scope.userData.userId;
       console.log(JSON.stringify($scope.input));
       $scope.addBin();
 
@@ -1684,7 +1685,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
       $scope.input.Username = $scope.username;
       $scope.input.Cleaned = false;
       $scope.input.Cleanedby = null;
-      $scope.input.user = $scope.userId;
+      $scope.input.user = $scope.userData.userId;
       console.log(JSON.stringify($scope.input));
       $scope.addFinding();
       $scope.userFindings.push($scope.input);
