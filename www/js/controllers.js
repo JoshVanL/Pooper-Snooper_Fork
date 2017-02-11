@@ -60,6 +60,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
 
     function mapInit() {
+      console.log("New google map init");
       var lat = Number($scope.selectedRec.Lat);
       var long = Number($scope.selectedRec.Long);
       var latLng = new google.maps.LatLng(lat, long);
@@ -102,7 +103,14 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
           $scope.ownRecord = 0;
           if (result.data.user == $scope.userData.userId) $scope.ownRecord = 1;
           console.log(JSON.stringify($scope.selectedRec));
-          getGoogleMaps();
+          if(!$scope.mapRec) getGoogleMaps();
+          else {
+            console.log("Reusing");
+            var lat = Number($scope.selectedRec.Lat);
+            var long = Number($scope.selectedRec.Long);
+            var latLng = new google.maps.LatLng(lat, long);
+            $scope.mapRec.latLng = latLng;
+          }
           viewModal.show();
           $ionicLoading.hide();
         });
