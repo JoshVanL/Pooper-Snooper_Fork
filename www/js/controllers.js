@@ -102,7 +102,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
           $scope.ownRecord = 0;
           if (result.data.user == $scope.userData.userId) $scope.ownRecord = 1;
           console.log(JSON.stringify($scope.selectedRec));
-          //getGoogleMaps();
+          getGoogleMaps();
           viewModal.show();
           $ionicLoading.hide();
         });
