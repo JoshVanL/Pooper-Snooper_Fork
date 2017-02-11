@@ -1,4 +1,4 @@
-angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'ngStorage'])
+angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
   .controller('AppCtrl', function($scope, Backand, $ionicModal, ConnectivityMonitor, $timeout, $ionicPopup, backandService, $ionicLoading, LoginService) {
 
