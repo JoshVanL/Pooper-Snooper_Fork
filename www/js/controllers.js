@@ -90,6 +90,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
           var mapOptions = {
             center: latLng,
             zoom: 15,
+            draggable: false,
             mapTypeId: google.maps.MapTypeId.ROADMAP,
             mapTypeControl: false,
             fullscreenControl: false,
