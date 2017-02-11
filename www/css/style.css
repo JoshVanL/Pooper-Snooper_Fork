@@ -235,15 +235,16 @@
 }
 
 #viewIm {
-	position: relative;
+	position: relative;;
 	top:50%;
 }
 
 #mapRec {
 	position: relative;
 	width: 100%;
-	top: 17%;
-	height: 40%;
+	top: 0;
+	height: 100%;
+	padding:30%;
 }
 /* ------ ?! ------ */
 .scroll {
