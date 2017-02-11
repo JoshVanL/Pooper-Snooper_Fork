@@ -23,7 +23,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
     function loadUserDetails() {
       var data = Backand.getUserDetails();
-      if(data) {
+      if (data) {
         console.log("User already logged in!");
         //console.log(JSON.stringify(data));
         $scope.userData = data.$$state.value;
@@ -59,40 +59,58 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     }
 
 
-    function mapInit() {
-      console.log("New google map init");
+    function moveMap() {
       var lat = Number($scope.selectedRec.Lat);
       var long = Number($scope.selectedRec.Long);
       var latLng = new google.maps.LatLng(lat, long);
-      var mapOptions = {
-        center: latLng,
-        zoom: 14,
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
-        mapTypeControl: false,
-        fullscreenControl: false,
-        compass: false,
-        streetViewControl: false
+      var poop_icon = {
+        url: "img/Assets/poop_small.png",
+        scaledSize: new google.maps.Size(20, 20)
       };
-      $scope.mapRec = new google.maps.Map(document.getElementById("mapRec"), mapOptions);
+      if($scope.mapRecMarker) $scope.mapRecMarker.setMap(null);
+      $scope.mapRecMarker = new google.maps.Marker({
+        map: $scope.mapRec,
+        //animation: google.maps.Animation.DROP,
+        zIndex: 100,
+        icon: poop_icon,
+        position: latLng
+      });
+      $scope.mapRec.setCenter(latLng);
     }
 
     function getGoogleMaps() {
-      var apiKey = "AIzaSyD1-OU4tSucidW9oHkB5CCpLqSUT5fcl-E";
+      if (!$scope.mapRec) {
+        var apiKey = "AIzaSyD1-OU4tSucidW9oHkB5CCpLqSUT5fcl-E";
 
-      //This function will be called once the SDK has been loaded
-      window.mapInit = function() {
-        mapInit();
-      };
+        //This function will be called once the SDK has been loaded
+        window.moveMap = function() {
+          var lat = Number($scope.selectedRec.Lat);
+          var long = Number($scope.selectedRec.Long);
+          var latLng = new google.maps.LatLng(lat, long);
+          var mapOptions = {
+            center: latLng,
+            zoom: 15,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            mapTypeControl: false,
+            fullscreenControl: false,
+            streetViewControl: false
+          };
+          $scope.mapRec = new google.maps.Map(document.getElementById("mapRec"), mapOptions);
+          moveMap();
+        };
 
-      //Create a script element to insert into the page
-      var script = document.createElement("script");
-      script.type = "text/javascript";
-      script.id = "googleMaps";
+        //Create a script element to insert into the page
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.id = "googleMaps";
 
-      //Note the callback function in the URL is the one we created above
-      script.src = 'http://maps.google.com/maps/api/js?key=' + apiKey +
-        '&callback=mapInit';
-      document.body.appendChild(script);
+        //Note the callback function in the URL is the one we created above
+        script.src = 'http://maps.google.com/maps/api/js?key=' + apiKey +
+          '&callback=moveMap';
+        document.body.appendChild(script);
+      } else {
+        moveMap();
+      }
     }
 
     $scope.selectFinding = function(id, viewModal) {
@@ -103,14 +121,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
           $scope.ownRecord = 0;
           if (result.data.user == $scope.userData.userId) $scope.ownRecord = 1;
           console.log(JSON.stringify($scope.selectedRec));
-          if(!$scope.mapRec) getGoogleMaps();
-          else {
-            console.log("Reusing");
-            var lat = Number($scope.selectedRec.Lat);
-            var long = Number($scope.selectedRec.Long);
-            var latLng = new google.maps.LatLng(lat, long);
-            $scope.mapRec.latLng = latLng;
-          }
+          getGoogleMaps();
           viewModal.show();
           $ionicLoading.hide();
         });
@@ -284,7 +295,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     function onLogin(username) {
       console.log("Logged in as " + username);
       var data = Backand.getUserDetails();
-      $scope.userData  = data.$$state.value;
+      $scope.userData = data.$$state.value;
       console.log(JSON.stringify($scope.userData));
       $scope.loggedIn = 1;
       $scope.getUserFindings($scope.userData.userId);
