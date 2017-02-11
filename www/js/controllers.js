@@ -59,6 +59,30 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     }
 
 
+    // Attempts to load the map
+    function loadGoogleMaps() {
+      $ionicLoading.show({
+        template: '<p>Loading Google Maps</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
+      });
+
+      //This function will be called once the SDK has been loaded
+      window.getGoogleMaps = function() {
+        getGoogleMaps();
+      };
+
+      //Create a script element to insert into the page
+      $scope.script = document.createElement("script");
+      $scope.script.type = "text/javascript";
+      $scope.script.id = "googleMaps";
+      var apiKey = "AIzaSyD1-OU4tSucidW9oHkB5CCpLqSUT5fcl-E";
+
+      //Note the callback function in the URL is the one we created above
+      $scope.script.src = 'http://maps.google.com/maps/api/js?key=' + apiKey +
+        '&callback=getGoogleMaps';
+
+      document.body.appendChild($scope.script);
+    }
+
     function moveMap() {
       var lat = Number($scope.selectedRec.Lat);
       var long = Number($scope.selectedRec.Long);
@@ -67,7 +91,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         url: "img/Assets/poop_small.png",
         scaledSize: new google.maps.Size(20, 20)
       };
-      if($scope.mapRecMarker) $scope.mapRecMarker.setMap(null);
+      if ($scope.mapRecMarker) $scope.mapRecMarker.setMap(null);
       $scope.mapRecMarker = new google.maps.Marker({
         map: $scope.mapRec,
         //animation: google.maps.Animation.DROP,
@@ -79,37 +103,43 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     }
 
     function getGoogleMaps() {
-      if (!$scope.mapRec) {
-        var apiKey = "AIzaSyD1-OU4tSucidW9oHkB5CCpLqSUT5fcl-E";
-
+      if (typeof google == "undefined" || typeof google.maps == "undefined") {
+        loadGoogleMaps();
+        console.log("google maps needs to be loaded");
+      } else if (1) {
+        console.log("google maps sdk loaded, need modal map.");
         //This function will be called once the SDK has been loaded
-        window.moveMap = function() {
-          var lat = Number($scope.selectedRec.Lat);
-          var long = Number($scope.selectedRec.Long);
-          var latLng = new google.maps.LatLng(lat, long);
-          var mapOptions = {
-            center: latLng,
-            zoom: 15,
-            draggable: false,
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            mapTypeControl: false,
-            fullscreenControl: false,
-            streetViewControl: false
-          };
-          $scope.mapRec = new google.maps.Map(document.getElementById("mapRec"), mapOptions);
-          moveMap();
+        //window.moveMap = function() {
+        var lat = Number($scope.selectedRec.Lat);
+        var long = Number($scope.selectedRec.Long);
+        var latLng = new google.maps.LatLng(lat, long);
+        var mapOptions = {
+          center: latLng,
+          zoom: 15,
+          draggable: false,
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+          mapTypeControl: false,
+          fullscreenControl: false,
+          streetViewControl: false
         };
+        $scope.mapRec = new google.maps.Map(document.getElementById("mapRec"), mapOptions);
+        moveMap();
+        //};
 
-        //Create a script element to insert into the page
-        var script = document.createElement("script");
-        script.type = "text/javascript";
-        script.id = "googleMaps";
-
-        //Note the callback function in the URL is the one we created above
-        script.src = 'http://maps.google.com/maps/api/js?key=' + apiKey +
-          '&callback=moveMap';
-        document.body.appendChild(script);
+        // //Create a script element to insert into the page
+        //document.createElement("script");
+        // $scope.script = document.createElement("script");
+        // $scope.script.type = "text/javascript";
+        // $scope.script.id = "googleMaps";
+        //
+        // //Note the callback function in the URL is the one we created above
+        // $scope.script.src = 'http://maps.google.com/maps/api/js?key=' + apiKey +
+        //   '&callback=moveMap';
+        // //console.log(JSON.stringify($scope.script));
+        // document.body.appendChild($scope.script);
+        //moveMap();
       } else {
+        console.log("sdk and modal map exist");
         moveMap();
       }
     }
@@ -1061,8 +1091,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         $ionicLoading.show({
           template: '<p>Loading Finding</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
         });
-        $scope.selectFinding($scope.id, $scope.viewRecordModal);
         $scope.selectedMarker = marker;
+        $scope.selectFinding($scope.id, $scope.viewRecordModal);
       });
 
       GlobalService.set_activeIcon("");
@@ -1163,15 +1193,15 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       };
 
       //Create a script element to insert into the page
-      var script = document.createElement("script");
-      script.type = "text/javascript";
-      script.id = "googleMaps";
+      $scope.script = document.createElement("script");
+      $scope.script.type = "text/javascript";
+      $scope.script.id = "googleMaps";
 
       //Note the callback function in the URL is the one we created above
-      script.src = 'http://maps.google.com/maps/api/js?key=' + apiKey +
+      $scope.script.src = 'http://maps.google.com/maps/api/js?key=' + apiKey +
         '&callback=mapInit';
 
-      document.body.appendChild(script);
+      document.body.appendChild($scope.script);
     }
 
     // Checks if the Map has been loaded. Attempts to load otherwise.
