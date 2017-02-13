@@ -548,7 +548,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     };
 
     // Open our new record modal
-    $scope.newRecord = function() {
+    $scope.newRecord = function(phrase) {
       if ($scope.loggedIn) {
         if ($scope.isOverRecordLimit()) {
           var limitRecsPopup = $ionicPopup.alert({
@@ -558,6 +558,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         } else {
           clearRecord();
           $scope.createEnabled = false;
+          $scope.recordModal.phrase = phrase;
           $scope.recordModal.show();
         }
       } else {
@@ -1613,8 +1614,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     $scope.createEnabled = false;
 
     // Create and load the Modal
-    $ionicModal.fromTemplateUrl('templates/modal/newPoop-modal.html', function(modal) {
-      $scope.poopModal = modal;
+    $ionicModal.fromTemplateUrl('templates/modal/newMapRecord-modal.html', function(modal) {
+      $scope.recordModal = modal;
     }, {
       scope: $scope,
       animation: 'slide-in-up'
@@ -1643,7 +1644,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     };
 
     // Open our new record modal
-    $scope.newRecord = function() {
+    $scope.newRecord = function(phrase) {
       clearRecord();
       $scope.createEnabled = false;
       console.log(JSON.stringify(iconLatLng.lat()));
@@ -1656,7 +1657,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         var dist = distancecheck(currentlat, currentlng, $scope.record.lat, $scope.record.long);
         if (dist <= 0.1 && dist >= 0) {
           console.log("enter true");
-          $scope.poopModal.show();
+          $scope.recordModal.phrase = phrase;
+          $scope.recordModal.show();
         } else {
           var alertPopup = $ionicPopup.alert({
             title: 'Too far from marker',
@@ -1696,7 +1698,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
     // Close the new record modal
     $scope.closeNewRecord = function(record) {
-      $scope.poopModal.hide();
+      $scope.recordModal.hide();
       clearRecord();
     };
 
@@ -1757,7 +1759,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       console.log(JSON.stringify($scope.input));
       $scope.addFinding();
       //$scope.userFindings.push($scope.input);
-      $scope.poopModal.hide();
+      $scope.recordModal.hide();
       clearRecord();
 
       //Adds the marker to your map upon creating the Record
@@ -1828,7 +1830,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                 template: 'Please wait before adding more records'
               });
             } else {
-              $scope.newRecord();
+              $scope.newRecord('Add new finding');
             }
           }
         });
@@ -1853,7 +1855,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                 template: 'Please wait before adding more records'
               });
             } else {
-              $scope.addBinMarker();
+              $scope.newRecord('New bin');
             }
           }
         });
