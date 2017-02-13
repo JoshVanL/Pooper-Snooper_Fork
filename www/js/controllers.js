@@ -150,13 +150,24 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
           $scope.ownRecord = 0;
           if (result.data.user == $scope.userData.userId) $scope.ownRecord = 1;
           console.log(JSON.stringify($scope.selectedRec));
-          getGoogleMaps();
+          //getGoogleMaps();
           viewModal.show();
           $ionicLoading.hide();
         });
     }
 
-
+    $scope.selectBin = function(id, viewModal) {
+      backandService.selectBin(id)
+        .then(function(result) {
+          console.log("Selected finding");
+          $scope.selectedRec = result.data;
+          $scope.ownRecord = 0;
+          if (result.data.user == $scope.userData.userId) $scope.ownRecord = 1;
+          console.log(JSON.stringify($scope.selectedRec));
+          viewModal.show();
+          $ionicLoading.hide();
+        });
+    }
 
     $scope.addFinding = function() {
       backandService.addFinding($scope.input)
@@ -442,7 +453,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
     $scope.getAllFindings();
     $scope.getAllBins();
-//	
+//
 //	$scope.username = '';
 //	onLogin();
 
@@ -957,7 +968,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
           var markerData = {
             lat: marker.getPosition().lat(),
             lng: marker.getPosition().lng(),
-            icon: marker.getIcon().url
+            icon: marker.getIcon().url,
+            id: $scope.bins[i].id
           };
           GlobalService.push_binMarkers(markerData);
         }
@@ -1136,6 +1148,15 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       // Adds the marker to markerCache (so it won't be re-added)
       addMarkerToCache(marker);
 
+      google.maps.event.addListener(marker, 'click', function() {
+        console.log("clicked " + $scope.id);
+        $ionicLoading.show({
+          template: '<p>Loading Bin</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
+        });
+        $scope.selectedMarker = marker;
+        $scope.selectBin($scope.id, $scope.viewRecordModal);
+      });
+
       GlobalService.set_activeIcon("");
     }
 
@@ -1303,6 +1324,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
           // Adds the marker to markerCache (so it won't be re-added)
           addMarkerToCache(marker);
           var id = markers[i].id;
+          console.log(JSON.stringify(markers[i]));
 
           if (currentIcon == poop_icon) {
             google.maps.event.addListener(marker, 'click', function() {
@@ -1313,6 +1335,14 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
               $scope.selectFinding(id, $scope.viewRecordModal);
             });
             console.log(JSON.stringify(id));
+          } else {
+            google.maps.event.addListener(marker, 'click', function() {
+              console.log("clicked " + id);
+              $ionicLoading.show({
+                template: '<p>Loading Bin</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
+              });
+              $scope.selectBin(id, $scope.viewRecordModal);
+            });
           }
 
 

@@ -46,6 +46,18 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
       return $http.get(getFindingsUrlForId(id));
     }
 
+    function getBinsUrl() {
+      return Backand.getApiUrl() + baseUrl + binLocationsName;
+    }
+
+    function getBinsUrlForId(id) {
+      return getBinsUrl() + id;
+    }
+
+    selectBin = function(id) {
+      return $http.get(getBinUrlForId(id));
+    }
+
     addFinding = function(finding) {
       return $http.post(getFindingsUrl(), finding);
     }
@@ -94,6 +106,7 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
       deleteFinding: deleteFinding,
       updateFinding: updateFinding,
       selectFinding: selectFinding,
+      selectBin: selectBin,
       getUserFindings: getUserFindings,
       getUserBins: getUserBins,
       getBins: getBins,
