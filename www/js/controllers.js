@@ -1749,13 +1749,13 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       $scope.input.Long = $scope.record.long;
       $scope.input.DateTime = $scope.record.dateTime;
       $scope.input.ImageURI = $scope.record.imageURI;
-      $scope.input.Username = $scope.username;
+      $scope.input.Username = $scope.userData.username;
       $scope.input.Cleaned = false;
       $scope.input.Cleanedby = null;
       $scope.input.user = $scope.userData.userId;
       console.log(JSON.stringify($scope.input));
       $scope.addFinding();
-      $scope.userFindings.push($scope.input);
+      //$scope.userFindings.push($scope.input);
       $scope.poopModal.hide();
       clearRecord();
 
