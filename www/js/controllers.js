@@ -1137,6 +1137,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       $scope.input.Long = markerData.lng;
       $scope.input.DateTime = new Date();
       $scope.input.user = $scope.userData.userId;
+      $scope.input.Username = $scope.userData.username;
       console.log(JSON.stringify($scope.input));
       $scope.addBin();
 
