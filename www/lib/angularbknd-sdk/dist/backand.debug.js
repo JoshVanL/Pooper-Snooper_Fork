@@ -1003,6 +1003,7 @@ function BackandUserService ($q) {
     var self = this;
 
     self.getUserDetails = function (force) {
+		console.log("inside get user details");
         var deferred = $q.defer();
         if (force) {
             http({
@@ -1010,12 +1011,15 @@ function BackandUserService ($q) {
                 url: config.apiUrl + '/api/account/profile'
             })
                 .success(function (profile) {
+					console.log("force == true");
                     BKStorage.user.set(angular.extend(BKStorage.user.get(), profile));
                     deferred.resolve(BKStorage.user.get());
                 })
         } else {
+			console.log("force == false");
             deferred.resolve(BKStorage.user.get());
         }
+		console.log("deferred promise is " + JSON.stringify(deferred.promise));
         return deferred.promise;
     };
 

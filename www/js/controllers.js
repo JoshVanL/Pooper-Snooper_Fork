@@ -1,6 +1,6 @@
 angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
-  .controller('AppCtrl', function($scope, Backand, $ionicModal, ConnectivityMonitor, $timeout, $ionicPopup, backandService, $ionicLoading, LoginService) {
+  .controller('AppCtrl', function($scope, $state, Backand, $ionicModal, ConnectivityMonitor, $timeout, $ionicPopup, backandService, $ionicLoading, LoginService) {
 
     // With the new view caching in Ionic, Controllers are only called
     // when they are recreated or on app start, instead of every page change.
@@ -38,7 +38,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         .then(function(result) {
           $scope.findings = result.data.data;
           // console.log(JSON.stringify(result));
-          console.log("Got all findings");
         });
     }
 
@@ -46,7 +45,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       backandService.getUserFindings(id)
         .then(function(result) {
           $scope.userFindings = result.data.data;
-          console.log("Got user findings");
+
         });
     }
 
@@ -54,7 +53,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       backandService.getUserBins(id)
         .then(function(result) {
           $scope.userBins = result.data.data;
-          console.log("Got user bins");
         });
     }
 
@@ -303,9 +301,9 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     };
 
     onValidLogin = function(response) {
+	  console.log("inside onValidLogin");
       console.log("reaches on valid login");
       onLogin();
-
       $scope.username = response.data || $scope.username;
       console.log("Logged in as " + $scope.username);
       var loginPopup = $ionicPopup.alert({
@@ -324,9 +322,11 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     }
 
     function onLogin(username) {
+	  console.log("inside onLogin");
       console.log("Logged in as " + username);
       var data = Backand.getUserDetails();
       $scope.userData = data.$$state.value;
+	  console.log("userdata is: ");
       console.log(JSON.stringify($scope.userData));
       $scope.loggedIn = 1;
       $scope.getUserFindings($scope.userData.userId);
@@ -395,6 +395,9 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             template: 'You are now logged out'
           });
         })
+		$state.reload();
+		$scope.username = '';
+		console.log("state has been reloaded");
       } else {
         var alertPopup = $ionicPopup.alert({
           title: 'Can\'t Logout',
@@ -437,9 +440,11 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       return false;
     };
 
-
     $scope.getAllFindings();
     $scope.getAllBins();
+//	
+//	$scope.username = '';
+//	onLogin();
 
   })
 
