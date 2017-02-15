@@ -272,6 +272,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     };
 
     $scope.doSignUp = function() {
+		console.log("inside doSignUp");
       $scope.signUpData.errorMessage = '';
       if ($scope.signUpData.password.length >= 6) {
         LoginService.signup($scope.signUpData.firstName, $scope.signUpData.lastName, $scope.signUpData.email, $scope.signUpData.password, $scope.signUpData.again)
@@ -290,10 +291,20 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
           }, function(reason) {
             console.log(JSON.stringify(reason));
             if (reason.data != undefined) {
+				console.log('reason.data!= undefined');
               $scope.signUpData.errorMessage = reason.data;
+			  if ($scope.signUpData.errorMessage.error_description == "The user is already signed up to this app"){
+				  var emailAlreadyExistsPopUp = $ionicPopup.alert({
+					  title: 'The email address, ' + $scope.signUpData.email + ', is already in use'
+				  })
+				  emailAlreadyExistsPopUp.then(function(res) {
+//					$scope.signUpModal.hide();
+				  });
+			  }
               console.log(JSON.stringify($scope.signUpData.errorMessage));
             } else {
               // getting invalid grant - username or password is incorrect for some reason
+			  console.log('getting invalid grant');
               $scope.signUpData.errorMessage = JSON.stringify(reason.error_description);
               console.log($scope.signUpData.errorMessage);
             };
@@ -387,6 +398,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
     $scope.socialSignIn = function(provider) {
       console.log("inside controllers.js socialSignIn()");
+		console.log("username before signing in " + $scope.username);
       LoginService.socialSignIn(provider)
         .then(onValidLogin, onErrorInLogin);
     };
@@ -406,8 +418,10 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             template: 'You are now logged out'
           });
         })
+		console.log("username before signning out " + $scope.username);
 		$state.reload();
 		$scope.username = '';
+		console.log("username after signning out " + $scope.username);
 		console.log("state has been reloaded");
       } else {
         var alertPopup = $ionicPopup.alert({
