@@ -75,6 +75,15 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
       })
     }
 
+    updateBinValidate = function(id, data) {
+      var returnObject;
+      return $http({
+        method: 'PUT',
+        url: Backand.getApiUrl() + baseUrl + binLocationsName + id,
+        data: data
+      })
+    }
+
     function getBinUrl() {
       return Backand.getApiUrl() + baseUrl + binLocationsName;
     }
@@ -105,6 +114,7 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
       addFinding: addFinding,
       deleteFinding: deleteFinding,
       updateFinding: updateFinding,
+      updateBinValidate: updateBinValidate,
       selectFinding: selectFinding,
       selectBin: selectBin,
       getUserFindings: getUserFindings,

@@ -201,6 +201,17 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         });
     }
 
+    $scope.updateBin = function(id, data) {
+      backandService.updateBinValidate(id, data)
+        .then(function(result) {
+          console.log(JSON.stringify(result));
+          var createdFindingPopup = $ionicPopup.alert({
+            title: 'Validated!',
+            template: 'This bin has been confirmed by you!'
+          });
+        });
+    }
+
     $scope.getAllBins = function() {
       backandService.getEveryBin()
         .then(function(result) {
@@ -630,6 +641,9 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       });
     }
 
+    $scope.validateBin = function(){
+
+    }
 
     // Close the new record modal
     $scope.closeNewRecord = function() {
