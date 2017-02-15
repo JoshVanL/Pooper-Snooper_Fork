@@ -282,8 +282,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       $scope.signUpModal.show();
     };
 
-    $scope.doSignUp = function() {
-		console.log("inside doSignUp");
+$scope.doSignUp = function() {
+	  console.log("inside doSignUp");
       $scope.signUpData.errorMessage = '';
       if ($scope.signUpData.password.length >= 6) {
         LoginService.signup($scope.signUpData.firstName, $scope.signUpData.lastName, $scope.signUpData.email, $scope.signUpData.password, $scope.signUpData.again)
@@ -302,17 +302,52 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
           }, function(reason) {
             console.log(JSON.stringify(reason));
             if (reason.data != undefined) {
-				console.log('reason.data!= undefined');
+			  console.log('reason.data!= undefined');
               $scope.signUpData.errorMessage = reason.data;
 			  if ($scope.signUpData.errorMessage.error_description == "The user is already signed up to this app"){
-				  var emailAlreadyExistsPopUp = $ionicPopup.alert({
-					  title: 'The email address, ' + $scope.signUpData.email + ', is already in use'
-				  })
-				  emailAlreadyExistsPopUp.then(function(res) {
-//					$scope.signUpModal.hide();
+				  $scope.open = function(){}
+				  var emailAlreadyExistsPopUp = $ionicPopup.show({
+//					  templateUrl: 'orderPopup.html',
+					  template: '',
+					  title: 'The email address,<br>' + $scope.signUpData.email + ',<br>is already in use',
+					  subTitle: 'Did you forget your password?',
+					  scope: $scope,
+					  buttons: [
+						  {text: '<b>Try \n different\n email</b>',
+						   type: 'button-energized',
+						   onTap: function(e){
+//							   		$scope.closeLogin();
+							   		emailAlreadyExistsPopUp.close();
+							   		emailAlreadyExistsPopUp.then(function(res) {
+										 console.log('Does the menu button respond now?No');
+									});
+							   		$scope.signUp();
+						   		 }
+						   },
+//						  {text: '<b>Log in</b>',
+//						   type: 'button-royal',
+//						   onTap: function(e){
+//						   			console.log('redirect to login');
+//						  		  }  
+//						   },
+						  {text: '<b>Reset \n password</b>',
+						   type: 'button-assertive',
+						   onTap: function(e){
+							   		$scope.resetPwd($scope.signUpData.email);
+							   		$scope.closeSignUp();
+							   		var emailSentPopUp = $ionicPopup.show({
+										title: 'Email<br>with instructions<br>was sent to<br>' + $scope.signUpData.email //why??
+									});
+							   		closePopUpAuto(emailSentPopUp);
+							   		emailSentPopUp.then(function(res) {
+										 console.log('Does the menu button respond now?Yes');
+									});
+						  		  }
+						  }
+					  ]
 				  });
 			  }
-              console.log(JSON.stringify($scope.signUpData.errorMessage));
+//            console.log(JSON.stringify($scope.signUpData.errorMessage));
             } else {
               // getting invalid grant - username or password is incorrect for some reason
 			  console.log('getting invalid grant');
@@ -324,13 +359,21 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         $scope.signUpData.errorMessage = 'Password must be at least 6 characters';
       }
     };
+	
+	function closePopUpAuto (popup){ //close popup automatically
+	 $timeout(function() {
+		 popup.close(); //close the popup after 2 seconds
+	  }, 2000);
+	 };
+	
+	$scope.resetPwd = function(email){
+		console.log("reset password request for " + $scope.signUpData.email);
+	}
 
     $scope.doSignUpFacebook = function() {
       console.log("clicked");
       LoginService.socialsignUp('facebook')
         .then(onValidLogin, onErrorInLogin);
-
-
     };
 
     onValidLogin = function(response) {
