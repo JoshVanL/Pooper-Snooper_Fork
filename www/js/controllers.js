@@ -303,11 +303,10 @@ $scope.doSignUp = function() {
             console.log(JSON.stringify(reason));
             if (reason.data != undefined) {
 			  console.log('reason.data!= undefined');
-              $scope.signUpData.errorMessage = reason.data;
-			  if ($scope.signUpData.errorMessage.error_description == "The user is already signed up to this app"){
+//              $scope.signUpData.errorMessage = reason.data;
+			  if (reason.data.error_description == "The user is already signed up to this app"){
 				  $scope.open = function(){}
 				  var emailAlreadyExistsPopUp = $ionicPopup.show({
-//					  templateUrl: 'orderPopup.html',
 					  template: '',
 					  title: 'The email address,<br>' + $scope.signUpData.email + ',<br>is already in use',
 					  subTitle: 'Did you forget your password?',
@@ -330,7 +329,7 @@ $scope.doSignUp = function() {
 //						   			console.log('redirect to login');
 //						  		  }  
 //						   },
-						  {text: '<b>Reset \n password</b>',
+						  {text: '<b>Reset<br>password</b>',
 						   type: 'button-assertive',
 						   onTap: function(e){
 							   		$scope.resetPwd($scope.signUpData.email);
@@ -347,11 +346,10 @@ $scope.doSignUp = function() {
 					  ]
 				  });
 			  }
-//            console.log(JSON.stringify($scope.signUpData.errorMessage));
             } else {
               // getting invalid grant - username or password is incorrect for some reason
 			  console.log('getting invalid grant');
-              $scope.signUpData.errorMessage = JSON.stringify(reason.error_description);
+//              $scope.signUpData.errorMessage = JSON.stringify(reason.error_description);
               console.log($scope.signUpData.errorMessage);
             };
           });
