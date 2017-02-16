@@ -1,6 +1,6 @@
 angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
-  .controller('AppCtrl', function($scope, $state, Backand, $ionicModal, ConnectivityMonitor, $timeout, $ionicPopup, backandService, $ionicLoading, LoginService) {
+  .controller('AppCtrl', function($scope, $state, Backand, $ionicModal, ConnectivityMonitor, $timeout, $ionicPopup, backandService, $ionicLoading, LoginService, AuthService) {
 
     // With the new view caching in Ionic, Controllers are only called
     // when they are recreated or on app start, instead of every page change.
@@ -364,7 +364,14 @@ $scope.doSignUp = function() {
 	 };
 	
 	$scope.resetPwd = function(email){
-		console.log("reset password request for " + $scope.signUpData.email);
+		console.log("reset password request for " + email);
+		AuthService.requestResetPassword(email)
+		 .then(function(response){
+			console.log("The response is " + JSON.stringify(response));
+		}, function(rejection){
+			console.log("rejected + "+JSON.stringify(rejection))
+		}); 
+		
 	}
 
     $scope.doSignUpFacebook = function() {
