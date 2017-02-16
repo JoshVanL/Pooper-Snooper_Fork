@@ -315,12 +315,7 @@ $scope.doSignUp = function() {
 						  {text: '<b>Try \n different\n email</b>',
 						   type: 'button-energized',
 						   onTap: function(e){
-//							   		$scope.closeLogin();
 							   		emailAlreadyExistsPopUp.close();
-							   		emailAlreadyExistsPopUp.then(function(res) {
-										 console.log('Does the menu button respond now?No');
-									});
-							   		$scope.signUp();
 						   		 }
 						   },
 //						  {text: '<b>Log in</b>',
@@ -345,6 +340,10 @@ $scope.doSignUp = function() {
 						  }
 					  ]
 				  });
+				  
+				  emailAlreadyExistsPopUp.then(function(res) {
+					console.log('Does the menu button respond now?Yes');
+				  });
 			  }
             } else {
               // getting invalid grant - username or password is incorrect for some reason
@@ -361,7 +360,7 @@ $scope.doSignUp = function() {
 	function closePopUpAuto (popup){ //close popup automatically
 	 $timeout(function() {
 		 popup.close(); //close the popup after 2 seconds
-	  }, 2000);
+	  }, 3000);
 	 };
 	
 	$scope.resetPwd = function(email){
@@ -465,10 +464,11 @@ $scope.doSignUp = function() {
           $scope.loggedIn = 0;
           $scope.userFindings = null;
           $scope.userData = null;
-          var alertPopup = $ionicPopup.alert({
+          var alertPopup = $ionicPopup.show({
             title: 'Logged out',
             template: 'You are now logged out'
           });
+		  closePopUpAuto(alertPopup);
         })
 		console.log("username before signning out " + $scope.username);
 		$state.reload();
