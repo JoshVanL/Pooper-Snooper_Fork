@@ -172,6 +172,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     $scope.addFinding = function() {
       backandService.addFinding($scope.input)
         .then(function(result) {
+		  console.log(JSON.stringify(result));
           $scope.input = {};
           $scope.id = result.data.__metadata.id;
           console.log($scope.id);
@@ -384,8 +385,8 @@ $scope.doSignUp = function() {
 	  console.log("inside onValidLogin");
       console.log("reaches on valid login");
       onLogin();
-      $scope.username = response.data || $scope.username;
-      console.log("Logged in as " + $scope.username);
+      $scope.userData.username = response.data || $scope.userData.username;
+      console.log("Logged in as " + $scope.userData.username);
       var loginPopup = $ionicPopup.alert({
         title: 'Logged in'
 
@@ -456,7 +457,7 @@ $scope.doSignUp = function() {
 
     $scope.socialSignIn = function(provider) {
       console.log("inside controllers.js socialSignIn()");
-		console.log("username before signing in " + $scope.username);
+		console.log("username before signing in " + $scope.userData.username);
       LoginService.socialSignIn(provider)
         .then(onValidLogin, onErrorInLogin);
     };
@@ -477,11 +478,9 @@ $scope.doSignUp = function() {
           });
 		  closePopUpAuto(alertPopup);
         })
-		console.log("username before signning out " + $scope.username);
+		console.log("username before signning out " + $scope.userData.username);
 		$state.reload();
-		$scope.username = '';
-		console.log("username after signning out " + $scope.username);
-		console.log("state has been reloaded");
+		$scope.userData.username = '';
       } else {
         var alertPopup = $ionicPopup.alert({
           title: 'Can\'t Logout',
@@ -596,7 +595,7 @@ $scope.doSignUp = function() {
       $scope.input.Long = $scope.record.long;
       $scope.input.DateTime = $scope.record.dateTime;
       $scope.input.ImageURI = $scope.record.imageURI;
-      $scope.input.Username = $scope.username;
+      $scope.input.Username = $scope.userData.username;
       $scope.input.Cleaned = false;
       $scope.input.Cleanedby = null;
       $scope.input.user = $scope.userData.userId;
@@ -656,7 +655,7 @@ $scope.doSignUp = function() {
           if (res) {
             var updateData = {
               Cleaned: true,
-              Cleanedby: $scope.username
+              Cleanedby: $scope.userData.username
             };
             $scope.updateFinding($scope.selectedRec.id, updateData);
             $scope.viewRecordModal.hide();
@@ -1812,7 +1811,7 @@ $scope.doSignUp = function() {
           if (res) {
             var updateData = {
               Cleaned: true,
-              Cleanedby: $scope.username
+              Cleanedby: $scope.userData.username
             };
             $scope.updateFinding($scope.selectedRec.id, updateData);
             $scope.closeViewRecord();
