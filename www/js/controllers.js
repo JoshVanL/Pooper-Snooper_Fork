@@ -159,7 +159,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     $scope.selectBin = function(id, viewModal) {
       backandService.selectBin(id)
         .then(function(result) {
-          console.log("Selected finding");
+          console.log("Selected bin");
+		  $scope.selectedRec = {};	
           $scope.selectedRec = result.data;
           $scope.ownRecord = 0;
           if (result.data.user == $scope.userData.userId) $scope.ownRecord = 1;
@@ -225,6 +226,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       backandService.addBin($scope.input)
         .then(function(result) {
           console.log(JSON.stringify(result));
+		  console.log("here");
           $scope.input = {};
         });
     }
@@ -505,6 +507,10 @@ $scope.doSignUp = function() {
 
     };
 
+	$scope.validatePoop = function(){
+	 
+	}
+
     $scope.isOverRecordLimit = function() {
       //console.log(JSON.stringify($scope.userFindings));
       var testTime = new Date(Date.now() - (24 * 60 * 60 * 1000)); // 24 hours ago
@@ -595,7 +601,7 @@ $scope.doSignUp = function() {
       $scope.input.Long = $scope.record.long;
       $scope.input.DateTime = $scope.record.dateTime;
       $scope.input.ImageURI = $scope.record.imageURI;
-      $scope.input.Username = $scope.userData.username;
+      $scope.input.Username = $scope.userData.Username;
       $scope.input.Cleaned = false;
       $scope.input.Cleanedby = null;
       $scope.input.user = $scope.userData.userId;
@@ -620,7 +626,7 @@ $scope.doSignUp = function() {
     };
 
     // Open our new record modal
-    $scope.newRecord = function(phrase) {
+    $scope.newRecord = function(phrase, type) {
       if ($scope.loggedIn) {
         if ($scope.isOverRecordLimit()) {
           var limitRecsPopup = $ionicPopup.alert({
@@ -631,6 +637,8 @@ $scope.doSignUp = function() {
           clearRecord();
           $scope.createEnabled = false;
           $scope.recordModal.phrase = phrase;
+		  $scope.recordModal.type = type; //finding = 0, bin = 1
+		  console.log($scope.recordModal.type);
           $scope.recordModal.show();
         }
       } else {
@@ -688,9 +696,6 @@ $scope.doSignUp = function() {
       });
     }
 
-    $scope.validateBin = function(){
-
-    }
 
     // Close the new record modal
     $scope.closeNewRecord = function() {
@@ -1719,7 +1724,7 @@ $scope.doSignUp = function() {
     };
 
     // Open our new record modal
-    $scope.newRecord = function(phrase) {
+    $scope.newRecord = function(phrase, type) {
       clearRecord();
       $scope.createEnabled = false;
       console.log(JSON.stringify(iconLatLng.lat()));
@@ -1731,8 +1736,9 @@ $scope.doSignUp = function() {
         currentlng = position.coords.longitude;
         var dist = distancecheck(currentlat, currentlng, $scope.record.lat, $scope.record.long);
         if (dist <= 0.1 && dist >= 0) {
-          console.log("enter true");
           $scope.recordModal.phrase = phrase;
+		  $scope.recordModal.type = type; //finding = 0, bin = 1
+		  console.log($scope.recordModal.type);
           $scope.recordModal.show();
         } else {
           var alertPopup = $ionicPopup.alert({
@@ -1828,11 +1834,18 @@ $scope.doSignUp = function() {
       $scope.input.DateTime = $scope.record.dateTime;
       $scope.input.ImageURI = $scope.record.imageURI;
       $scope.input.Username = $scope.userData.username;
+	  $scope.input.user = $scope.userData.userId;
+	  if($scope.recordModal.type){
+		//bin
+		$scope.input.Votes = 1;
+		$scope.addBin();
+	  } else {
+		//poop
       $scope.input.Cleaned = false;
       $scope.input.Cleanedby = null;
-      $scope.input.user = $scope.userData.userId;
-      console.log(JSON.stringify($scope.input));
       $scope.addFinding();
+	  }
+      console.log(JSON.stringify($scope.input));
       //$scope.userFindings.push($scope.input);
       $scope.recordModal.hide();
       clearRecord();
@@ -1905,7 +1918,7 @@ $scope.doSignUp = function() {
                 template: 'Please wait before adding more records'
               });
             } else {
-              $scope.newRecord('Add new finding');
+              $scope.newRecord('Add new finding', 0);
             }
           }
         });
@@ -1930,7 +1943,7 @@ $scope.doSignUp = function() {
                 template: 'Please wait before adding more records'
               });
             } else {
-              $scope.newRecord('New bin');
+              $scope.newRecord('Add new bin', 1);
             }
           }
         });
