@@ -29,10 +29,14 @@
           <span class="input-label">Cleaned up by : </span>
           {{selectedRec.Cleanedby}}
         </label>
+		<label class="input item-input" ng-show="selectedRec.type">
+		  <span class="input-label">Votes :</span>		
+		  {{selectedRec.Votes}}
+		</label>
       </div>
       <div class ="button-bar">
-        <a class="button button-balanced">Validated!</a>
-        <a class="button button-assertive">Report!</a>
+        <a class="button button-balanced" ng-show="selectedRec.type">Validated!</a>
+        <a class="button button-assertive" ng-show="selectedRec.type">Report!</a>
       </div>
       <div>
         <button type="submit" class="button button-block button-negative" ng-click="cleanUpRec()" ng-show="!selectedRec.Cleaned">

@@ -147,6 +147,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         .then(function(result) {
           console.log("Selected finding");
           $scope.selectedRec = result.data;
+		  $scope.selectedRec.type = 0; //finding
           $scope.ownRecord = 0;
           if (result.data.user == $scope.userData.userId) $scope.ownRecord = 1;
           console.log(JSON.stringify($scope.selectedRec));
@@ -162,6 +163,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
           console.log("Selected bin");
 		  $scope.selectedRec = {};	
           $scope.selectedRec = result.data;
+		  $scope.selectedRec.type = 1; //bin
           $scope.ownRecord = 0;
           if (result.data.user == $scope.userData.userId) $scope.ownRecord = 1;
           console.log(JSON.stringify($scope.selectedRec));
