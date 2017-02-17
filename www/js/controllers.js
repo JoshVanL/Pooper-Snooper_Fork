@@ -205,14 +205,22 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         });
     }
 
-    $scope.updateBin = function(id, data) {
+    $scope.updateBin = function(id, data, type) {
       backandService.updateBin(id, data)
         .then(function(result) {
           console.log(JSON.stringify(result));
-          var createdFindingPopup = $ionicPopup.alert({
-            title: 'Validated!',
-            template: 'This bin has been confirmed by you!'
-          });
+		  if(type){
+           	var createdFindingPopup = $ionicPopup.alert({
+				title: 'Validated!',
+				template: 'This bin has been confirmed by you!'
+            });
+		   } else {
+			var createdFindingPopup = $ionicPopup.alert({
+				title: 'Reported!',
+				template: 'This bin has been reported by you!'
+            });
+
+		   }	
         });
     }
 
@@ -222,11 +230,23 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 			var updateData = {
 				Votes: ($scope.selectedRec.Votes)
 			};
-			$scope.updateBin($scope.selectedRec.id, updateData);
+			$scope.updateBin($scope.selectedRec.id, updateData, 1);  //type 1 for validate
 		} else {
 			$scope.requireLogin('You must be logged in to validate or report a bin');
 		}
 
+	}
+    // This should be made dry
+	$scope.reportBin = function() {
+		if($scope.loggedIn){
+			$scope.selectedRec.Votes -= 1;
+			var updateData = {
+				Votes: ($scope.selectedRec.Votes)
+			};
+			$scope.updateBin($scope.selectedRec.id, updateData, 0); //type 0 for report
+		} else {
+			$scope.requireLogin('You must be logged in to validate or report a bin');
+		}
 	}
 
     $scope.getAllBins = function() {
