@@ -35,8 +35,8 @@
 		</label>
       </div>
       <div class ="button-bar">
-        <a class="button button-balanced" ng-show="selectedRec.type">Validated!</a>
-        <a class="button button-assertive" ng-show="selectedRec.type">Report!</a>
+        <button type="submit" class="button button-balanced" ng-show="selectedRec.type" ng-click="validateBin()">Validated!</button>
+        <button type="submit" class="button button-assertive" ng-show="selectedRec.type">Report!</button>
       </div>
       <div>
         <button type="submit" class="button button-block button-negative" ng-click="cleanUpRec()" ng-show="!selectedRec.Cleaned&&!selectedRec.type">

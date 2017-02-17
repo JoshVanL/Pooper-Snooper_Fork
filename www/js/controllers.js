@@ -206,7 +206,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     }
 
     $scope.updateBin = function(id, data) {
-      backandService.updateBinValidate(id, data)
+      backandService.updateBin(id, data)
         .then(function(result) {
           console.log(JSON.stringify(result));
           var createdFindingPopup = $ionicPopup.alert({
@@ -215,6 +215,19 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
           });
         });
     }
+
+	$scope.validateBin = function() {
+		if($scope.loggedIn){
+			$scope.selectedRec.Votes += 1;
+			var updateData = {
+				Votes: ($scope.selectedRec.Votes)
+			};
+			$scope.updateBin($scope.selectedRec.id, updateData);
+		} else {
+			$scope.requireLogin('You must be logged in to validate or report a bin');
+		}
+
+	}
 
     $scope.getAllBins = function() {
       backandService.getEveryBin()
@@ -287,7 +300,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       $scope.signUpModal.show();
     };
 
-$scope.doSignUp = function() {
+	$scope.doSignUp = function() {
 	  console.log("inside doSignUp");
       $scope.signUpData.errorMessage = '';
       if ($scope.signUpData.password.length >= 6) {
@@ -509,9 +522,6 @@ $scope.doSignUp = function() {
 
     };
 
-	$scope.validatePoop = function(){
-	 
-	}
 
     $scope.isOverRecordLimit = function() {
       //console.log(JSON.stringify($scope.userFindings));

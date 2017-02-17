@@ -71,18 +71,24 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
       return $http({
         method: 'PUT',
         url: Backand.getApiUrl() + baseUrl + dogFindingsName + id,
-        data: data
+        data: data, 
+		params: {
+			returnObject: returnObject
+		}
       })
-    }
+    };
 
-    updateBinValidate = function(id, data) {
+    updateBin = function(id, data) {
       var returnObject;
       return $http({
         method: 'PUT',
         url: Backand.getApiUrl() + baseUrl + binLocationsName + id,
-        data: data
+        data: data,
+		params: {
+			returnObject: returnObject
+		}
       })
-    }
+    };
 
     function getBinUrl() {
       return Backand.getApiUrl() + baseUrl + binLocationsName;
@@ -114,7 +120,7 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
       addFinding: addFinding,
       deleteFinding: deleteFinding,
       updateFinding: updateFinding,
-      updateBinValidate: updateBinValidate,
+      updateBin: updateBin,
       selectFinding: selectFinding,
       selectBin: selectBin,
       getUserFindings: getUserFindings,
