@@ -494,7 +494,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
     $scope.socialSignIn = function(provider) {
       console.log("inside controllers.js socialSignIn()");
-		console.log("username before signing in " + $scope.userData.username);
+//	  console.log("username before signing in " + $scope.userData.username);
       LoginService.socialSignIn(provider)
         .then(onValidLogin, onErrorInLogin);
     };
