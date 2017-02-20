@@ -27,8 +27,8 @@ angular.module('PooperSnooper', ['ionic', 'backand', 'PooperSnooper.controllers'
   // Navigate through page states
   .config(function($stateProvider, $urlRouterProvider, BackandProvider, $httpProvider) {
     BackandProvider.setAppName('poopersnooper');
-    BackandProvider.setSignUpToken('94a584dd-b34b-47e0-ba1d-ae63d5867b56');
-    BackandProvider.setAnonymousToken('bba42d70-2df7-4490-82a5-5395c4e7347e');
+    BackandProvider.setSignUpToken('194caf17-58cf-4bdc-aa39-d4ab37817ef1');
+    BackandProvider.setAnonymousToken('4bdd76e1-73c2-468e-a465-88869a34ac54');
 
 	BackandProvider.runSocket(true);
 	
