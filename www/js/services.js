@@ -15,6 +15,7 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
     var baseUrl = '/1/objects/';
     var dogFindingsName = 'dogFindings/';
     var binLocationsName = 'binLocations/';
+    var user_binValidationsName = 'user_binValidations/';
 
 
     function getFindingsUrl() {
@@ -90,6 +91,14 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
       })
     };
 
+    addUser_binValidation = function(data) {
+      return $http.post(getUser_binValidationsUrl(), data);
+    }
+
+    function getUser_binValidationsUrl() {
+      return Backand.getApiUrl() + baseUrl + user_binValidationsName;
+    }
+
     function getBinUrl() {
       return Backand.getApiUrl() + baseUrl + binLocationsName;
     }
@@ -128,6 +137,7 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
       getBins: getBins,
       getEveryBin: getEveryBin,
       addBin: addBin,
+      addUser_binValidation: addUser_binValidation,
       deleteBin: deleteBin
     }
   })

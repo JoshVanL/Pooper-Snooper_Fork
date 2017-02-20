@@ -206,21 +206,32 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     }
 
     $scope.updateBin = function(id, data, type) {
+      $ionicLoading.show({
+        template: '<p>Submitting Vote</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
+      });
       backandService.updateBin(id, data)
         .then(function(result) {
           console.log(JSON.stringify(result));
-		  if(type){
-           	var createdFindingPopup = $ionicPopup.alert({
-				title: 'Validated!',
-				template: 'This bin has been confirmed by you!'
+          var valData = {
+            user: $scope.userData.userId,
+            bin: $scope.selectedRec.id
+            };
+          backandService.addUser_binValidation(valData)
+            .then(function(result2) {
+            $ionicLoading.hide();
+              console.log(JSON.stringify(result2));
+		      if(type){
+              	var createdFindingPopup = $ionicPopup.alert({
+		    	title: 'Validated!',
+			    template: 'This bin has been confirmed by you!'
+                });
+              } else {
+    		      var createdFindingPopup = $ionicPopup.alert({
+	    		    title: 'Reported!',
+	    		    template: 'This bin has been reported by you!'
+                    });
+		         }	
             });
-		   } else {
-			var createdFindingPopup = $ionicPopup.alert({
-				title: 'Reported!',
-				template: 'This bin has been reported by you!'
-            });
-
-		   }	
         });
     }
 
@@ -1871,19 +1882,19 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 		//bin
 		$scope.input.Votes = 1;
 		$scope.addBin();
+        $scope.addBinMarker();
 	  } else {
 		//poop
       $scope.input.Cleaned = false;
       $scope.input.Cleanedby = null;
       $scope.addFinding();
+      $scope.addPoopMarker();
 	  }
       console.log(JSON.stringify($scope.input));
       //$scope.userFindings.push($scope.input);
       $scope.recordModal.hide();
       clearRecord();
 
-      //Adds the marker to your map upon creating the Record
-      $scope.addPoopMarker();
     };
 
     //---------------------------->
