@@ -30,6 +30,8 @@ angular.module('PooperSnooper', ['ionic', 'backand', 'PooperSnooper.controllers'
     BackandProvider.setSignUpToken('94a584dd-b34b-47e0-ba1d-ae63d5867b56');
     BackandProvider.setAnonymousToken('bba42d70-2df7-4490-82a5-5395c4e7347e');
 
+	BackandProvider.runSocket(true);
+	
     $stateProvider
 
       .state('app', {

@@ -10,3 +10,6 @@ ionic plugin add cordova-plugin-whitelist
 ionic plugin add ionic-plugin-keyboard
 ionic plugin add cordova-plugin-facebook4 --save --variable APP_ID="1791902807738120" --variable APP_NAME="Pooper Snooper"
 ionic plugin add cordova-plugin-googlemaps --variable API_KEY_FOR_ANDROID="AIzaSyD1-OU4tSucidW9oHkB5CCpLqSUT5fcl-E" --variable API_KEY_FOR_IOS="AIzaSyD1-OU4tSucidW9oHkB5CCpLqSUT5fcl-E"
+
+
+bower install socket.io-client
