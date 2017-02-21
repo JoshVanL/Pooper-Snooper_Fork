@@ -161,14 +161,20 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       backandService.selectBin(id)
         .then(function(result) {
           console.log("Selected bin");
-		  $scope.selectedRec = {};	
-          $scope.selectedRec = result.data;
-		  $scope.selectedRec.type = 1; //bin
-          $scope.ownRecord = 0;
-          if (result.data.user == $scope.userData.userId) $scope.ownRecord = 1;
-          console.log(JSON.stringify($scope.selectedRec));
-          viewModal.show();
-          $ionicLoading.hide();
+          if($scope.loggedIn) { 
+            backandService.filterBinValidations($scope.userData.userId, id)
+            .then(function(result2) {
+             if(result2) console.log("User has already validated");
+		     $scope.selectedRec = {};	
+             $scope.selectedRec = result.data;
+		     $scope.selectedRec.type = 1; //bin
+             $scope.ownRecord = 0;
+             if (result.data.user == $scope.userData.userId) $scope.ownRecord = 1;
+             console.log(JSON.stringify($scope.selectedRec));
+             viewModal.show();
+             $ionicLoading.hide();
+          });
+          }
         });
     }
 
@@ -272,6 +278,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       backandService.addBin($scope.input)
         .then(function(result) {
           console.log(JSON.stringify(result));
+          $scope.id = result.data.__metadata.id;
+          console.log($scope.id);
 		  console.log("here");
           $scope.input = {};
         });
@@ -1449,6 +1457,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
           // Adds the marker to markerCache (so it won't be re-added)
           addMarkerToCache(marker);
           var id = markers[i].id;
+          console.log(id);
           console.log(JSON.stringify(markers[i]));
 
           if (currentIcon == poop_icon) {
@@ -1462,6 +1471,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             console.log(JSON.stringify(id));
           } else {
             google.maps.event.addListener(marker, 'click', function() {
+              console.log(JSON.stringify(id));
               console.log("clicked " + id);
               $ionicLoading.show({
                 template: '<p>Loading Bin</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'

@@ -59,6 +59,10 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
       return $http.get(getBinUrlForId(id));
     }
 
+    filterBinValidations= function(userId, binId) {
+      return $http.get(Backand.getApiUrl() + baseUrl + user_binValidationsName + '?pageSize=20&filter=[{"fieldName": "user", "operator": "in", "value": "' + userId + '"}, {"fieldName": "bin", "operator": "in", "value": "' + binId + '"}]');
+    }
+
     addFinding = function(finding) {
       return $http.post(getFindingsUrl(), finding);
     }
@@ -131,6 +135,7 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
       updateFinding: updateFinding,
       updateBin: updateBin,
       selectFinding: selectFinding,
+      filterBinValidations: filterBinValidations,
       selectBin: selectBin,
       getUserFindings: getUserFindings,
       getUserBins: getUserBins,
