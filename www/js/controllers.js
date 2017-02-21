@@ -23,9 +23,9 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
     function loadUserDetails() {
         var data = Backand.getUserDetails();
-        if (data) {
+        if (data.$$state.value) {
             console.log("User already logged in!");
-            //console.log(JSON.stringify(data));
+            console.log(JSON.stringify(data));
             $scope.userData = data.$$state.value;
             console.log(JSON.stringify($scope.userData));
             $scope.loggedIn = 1;
