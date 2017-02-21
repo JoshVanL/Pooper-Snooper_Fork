@@ -1,6 +1,6 @@
 angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
-.controller('AppCtrl', function($scope, $state, Backand, $ionicModal, ConnectivityMonitor, $timeout, $ionicPopup, backandService, $ionicLoading, LoginService, AuthService) {
+.controller('AppCtrl', function($scope, $state, Backand, $ionicModal, ConnectivityMonitor, $timeout, $ionicPopup, $q, backandService, $ionicLoading, LoginService, AuthService) {
 
     // With the new view caching in Ionic, Controllers are only called
     // when they are recreated or on app start, instead of every page change.
@@ -157,32 +157,50 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         });
     }
 
+    $scope.checkAbleToVote = function(id) {
+        var defer = $q.defer();
+        backandService.filterBinValidations($scope.userData.userId, id)
+        .then(function(result) {
+            if(result.data.totalRows ==0)  {
+                console.log(JSON.stringify(result));
+                console.log("User has not validated");
+                backandService.filterBinReports($scope.userData.userId, id)
+                .then(function(result2) {
+                    if(result2.data.totalRows ==0) {
+                        console.log("User has not reported");
+                        $scope.selectedRec.canValidate = $scope.selectedRec.canReport = 1;
+                        return 0;
+                    }
+                });
+            }
+        }); 
+        defer.resolve();
+        return defer.promise;
+    };
+    
     $scope.selectBin = function(id, viewModal) {
         backandService.selectBin(id)
         .then(function(result) {
             console.log("Selected bin");
+            $scope.selectedRec = {};	
+            $scope.selectedRec = result.data;
+            $scope.selectedRec.type = 1; //bin
+            $scope.ownRecord = 0;
+            $scope.selectedRec.canValidate = $scope.selectedRec.canReport = 0;
             if($scope.loggedIn) { 
-                backandService.filterBinValidations($scope.userData.userId, id)
-                .then(function(result2) {
-                    $scope.selectedRec = {};	
-                    $scope.selectedRec = result.data;
-                    $scope.selectedRec.type = 1; //bin
-                    $scope.ownRecord = 0;
-                    $scope.selectedRec.canValidate = $scope.selectedRec.canReport = 1;
-                    if(result2.data.totalRows !=0)  {
-                        console.log(JSON.stringify(result2));   
-                        console.log("User has already validated");
-                        $scope.selectedRec.canValidate = 0;
-                    } 
+                $scope.checkAbleToVote(id).then(function(res) {
                     if (result.data.user == $scope.userData.userId){
-                         $scope.ownRecord = 1;
-                         $scope.selectedRec.canValidate = 0;
-                         $scope.selectedRec.canReport = 0;
+                        $scope.ownRecord = 1;
+                        $scope.selectedRec.canValidate = $scope.selectedRec.canReport = 0;
                     }
                     console.log(JSON.stringify($scope.selectedRec));
                     viewModal.show();
                     $ionicLoading.hide();
                 });
+            } else {
+                console.log(JSON.stringify($scope.selectedRec));
+                viewModal.show();
+                $ionicLoading.hide();
             }
         });
     }

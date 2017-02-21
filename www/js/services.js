@@ -16,6 +16,7 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
     var dogFindingsName = 'dogFindings/';
     var binLocationsName = 'binLocations/';
     var user_binValidationsName = 'user_binValidations/';
+    var user_binReportsName = 'user_binReports/';
 
 
     function getFindingsUrl() {
@@ -61,6 +62,11 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
 
     filterBinValidations= function(userId, binId) {
         return $http.get(Backand.getApiUrl() + baseUrl + user_binValidationsName + '?pageSize=20&filter=[{"fieldName": "user", "operator": "in", "value": "' + userId + '"}, {"fieldName": "bin", "operator": "in", "value": "' + binId + '"}]');
+    }
+
+
+    filterBinReports= function(userId, binId) {
+        return $http.get(Backand.getApiUrl() + baseUrl + user_binReportsName + '?pageSize=20&filter=[{"fieldName": "user", "operator": "in", "value": "' + userId + '"}, {"fieldName": "bin", "operator": "in", "value": "' + binId + '"}]');
     }
 
     addFinding = function(finding) {
@@ -136,6 +142,7 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
         updateBin: updateBin,
         selectFinding: selectFinding,
         filterBinValidations: filterBinValidations,
+        filterBinReports: filterBinReports,
         selectBin: selectBin,
         getUserFindings: getUserFindings,
         getUserBins: getUserBins,
