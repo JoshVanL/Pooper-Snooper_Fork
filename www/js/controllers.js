@@ -179,6 +179,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     }
 
     $scope.addFinding = function() {
+     return new Promise(function(resolve, reject) {
       backandService.addFinding($scope.input)
         .then(function(result) {
 		  console.log(JSON.stringify(result));
@@ -189,6 +190,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             title: 'Record Created',
             template: 'Your finding has been added!'
           });
+          resolve();
+        });
         });
     }
 
@@ -275,6 +278,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     }
 
     $scope.addBin = function() {
+      return new Promise(function(resolve, reject) {
       backandService.addBin($scope.input)
         .then(function(result) {
           console.log(JSON.stringify(result));
@@ -282,6 +286,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
           console.log($scope.id);
 		  console.log("here");
           $scope.input = {};
+          resolve();
+          });
         });
     }
 
@@ -1216,6 +1222,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
     //Adds the poop Marker to the map (after record has been created)
     $scope.addPoopMarker = function() {
+      console.log("here");
       $scope.minimizePanel();
 
       var marker = new google.maps.Marker({
@@ -1890,14 +1897,16 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 	  if($scope.recordModal.type){
 		//bin
 		$scope.input.Votes = 1;
-		$scope.addBin();
-        $scope.addBinMarker();
+		$scope.addBin().then(function() {
+          $scope.addBinMarker();
+        });
 	  } else {
 		//poop
       $scope.input.Cleaned = false;
       $scope.input.Cleanedby = null;
-      $scope.addFinding();
-      $scope.addPoopMarker();
+      $scope.addFinding().then(function() {
+        $scope.addPoopMarker();
+       });
 	  }
       console.log(JSON.stringify($scope.input));
       //$scope.userFindings.push($scope.input);
@@ -2008,7 +2017,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
   /* -------------------------------------------------- */
   /* -------Social Media (AboutPage) Controller ------- */
   /* -------------------------------------------------- */
-  .controller('SocialMediaCtrl', function($scope, Backand, $state, $rootScope, LoginService, $cordovaSocialSharing, $cordovaInAppBrowser) {
+  .controller('SocialMediaCtrl', function($scope, Backand, $state, LoginService, $cordovaSocialSharing, $cordovaInAppBrowser) {
 
     console.log("inside SocialMediaCtrl");
 
