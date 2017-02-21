@@ -1223,7 +1223,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         map: $scope.map,
         animation: google.maps.Animation.DROP,
         zIndex: 0,
-        icon: poop_icon
+        icon: poop_icon,
+        id: $scope.id
       });
       var markerData = {
         lat: marker.getPosition().lat(),
@@ -1236,12 +1237,12 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       addMarkerToCache(marker);
 
       google.maps.event.addListener(marker, 'click', function() {
-        console.log("clicked " + $scope.id);
+        console.log("clicked " + this.id);
         $ionicLoading.show({
           template: '<p>Loading Finding</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
         });
         $scope.selectedMarker = marker;
-        $scope.selectFinding($scope.id, $scope.viewRecordModal);
+        $scope.selectFinding(this.id, $scope.viewRecordModal);
       });
 
       GlobalService.set_activeIcon("");
@@ -1256,7 +1257,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         map: $scope.map,
         animation: google.maps.Animation.DROP,
         zIndex: 0,
-        icon: bin_icon
+        icon: bin_icon,
+        id: $scope.id
       });
 
       var markerData = {
@@ -1282,12 +1284,12 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
       addMarkerToCache(marker);
 
       google.maps.event.addListener(marker, 'click', function() {
-        console.log("clicked " + $scope.id);
+        console.log("clicked " + this.id);
         $ionicLoading.show({
           template: '<p>Loading Bin</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
         });
         $scope.selectedMarker = marker;
-        $scope.selectBin($scope.id, $scope.viewRecordModal);
+        $scope.selectBin(this.id, $scope.viewRecordModal);
       });
 
       GlobalService.set_activeIcon("");
@@ -1457,27 +1459,23 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
           // Adds the marker to markerCache (so it won't be re-added)
           addMarkerToCache(marker);
-          var id = markers[i].id;
-          console.log(id);
-          console.log(JSON.stringify(markers[i]));
 
           if (currentIcon == poop_icon) {
             google.maps.event.addListener(marker, 'click', function() {
-              console.log("clicked " + id);
+              console.log("clicked " + this.id);
               $ionicLoading.show({
                 template: '<p>Loading Finding</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
               });
-              $scope.selectFinding(id, $scope.viewRecordModal);
+              $scope.selectFinding(this.id, $scope.viewRecordModal);
             });
-            console.log(JSON.stringify(id));
           } else {
             google.maps.event.addListener(marker, 'click', function() {
-              console.log(JSON.stringify(marker.id));
-              console.log("clicked " + marker.id);
+              console.log(JSON.stringify(this.id));
+              console.log("clicked " + this.id);
               $ionicLoading.show({
                 template: '<p>Loading Bin</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
               });
-              $scope.selectBin(marker.id, $scope.viewRecordModal);
+              $scope.selectBin(this.id, $scope.viewRecordModal);
             });
           }
 
