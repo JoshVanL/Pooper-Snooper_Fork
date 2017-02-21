@@ -1451,7 +1451,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             position: latLng,
             zIndex: 0,
             visible: markerVisibility,
-            icon: currentIcon
+            icon: currentIcon,
+            id : markers[i].id
           });
 
           // Adds the marker to markerCache (so it won't be re-added)
@@ -1471,12 +1472,12 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             console.log(JSON.stringify(id));
           } else {
             google.maps.event.addListener(marker, 'click', function() {
-              console.log(JSON.stringify(id));
-              console.log("clicked " + id);
+              console.log(JSON.stringify(marker.id));
+              console.log("clicked " + marker.id);
               $ionicLoading.show({
                 template: '<p>Loading Bin</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
               });
-              $scope.selectBin(id, $scope.viewRecordModal);
+              $scope.selectBin(marker.id, $scope.viewRecordModal);
             });
           }
 
