@@ -629,8 +629,11 @@ function BackandAuthService($q, $rootScope, BackandHttpBufferService, BackandSoc
     }
 
     function mobileSocialLoginInner(ref, isSignUp, provider, spec) {
+		console.log('entered mobileSocialLogInnner');
         ref.addEventListener('loadstart', function (e) {
                 if (e.url.indexOf(dummyReturnAddress) == 0) { // mean startWith
+					
+					console.log('event happened');
 
                     try {
                         ref.close();
@@ -695,6 +698,8 @@ function BackandAuthService($q, $rootScope, BackandHttpBufferService, BackandSoc
             self.signUpPromise = $q.defer();
 
 		console.log("isMobile " + config.isMobile);
+		console.log('isSignUp = '+ isSignUp);
+		console.log('isSignUp = '+ config.isSignUp);
 
         if (true) { // should be config.ismobile but for some reason it is false when running on a smartphone so for now set to true
     	       console.log("mobile devices");
@@ -705,7 +710,7 @@ function BackandAuthService($q, $rootScope, BackandHttpBufferService, BackandSoc
                 + '&returnAddress=' + dummyReturnAddress,
                 'id1',
                 spec || 'left=1, top=1, width=600, height=600');
-
+			  console.log('before mobileSocialLoginInner');
             mobileSocialLoginInner(ref, isSignUp, provider, spec);
         }
         else {
