@@ -173,21 +173,21 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                     }
                 });
             }
-        }); 
+        });
         defer.resolve();
         return defer.promise;
     };
-    
+
     $scope.selectBin = function(id, viewModal) {
         backandService.selectBin(id)
         .then(function(result) {
             console.log("Selected bin");
-            $scope.selectedRec = {};	
+            $scope.selectedRec = {};
             $scope.selectedRec = result.data;
             $scope.selectedRec.type = 1; //bin
             $scope.ownRecord = 0;
             $scope.selectedRec.canValidate = $scope.selectedRec.canReport = 0;
-            if($scope.loggedIn) { 
+            if($scope.loggedIn) {
                 $scope.checkAbleToVote(id).then(function(res) {
                     if (result.data.user == $scope.userData.userId){
                         $scope.ownRecord = 1;
@@ -266,7 +266,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                         title: 'Reported!',
                         template: 'This bin has been reported by you!'
                     });
-                }	
+                }
             });
         });
     }
@@ -430,7 +430,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                                     //						   type: 'button-royal',
                                     //						   onTap: function(e){
                                         //						   			console.log('redirect to login');
-                                        //						  		  }  
+                                        //						  		  }
                                         //						   },
                                         {text: '<b>Reset<br>password</b>',
                                             type: 'button-assertive',
@@ -478,7 +478,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             console.log("The response is " + JSON.stringify(response));
         }, function(rejection){
             console.log("rejected + "+JSON.stringify(rejection))
-        }); 
+        });
 
     }
 

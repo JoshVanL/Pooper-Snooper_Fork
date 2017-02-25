@@ -41,7 +41,7 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
     };
 
     getUserBins = function(id) {
-        return $http.get(Backand.getApiUrl() + baseUrl + binLocationsName + '?pageSize=200&filter=[{"fieldName":"user","operator":"in","value":"' + id + '"}]');
+        return $http.get();
     };
 
     selectFinding = function(id) {
@@ -82,7 +82,7 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
         return $http({
             method: 'PUT',
             url: Backand.getApiUrl() + baseUrl + dogFindingsName + id,
-            data: data, 
+            data: data,
             params: {
                 returnObject: returnObject
             }
@@ -118,7 +118,7 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
     }
 
     getBins = function() {
-        return $http.get(getBinUrl());
+        return $http.get(Backand.getApiUrl() + baseUrl + binLocationsName + '?pageSize=200&filter=[{"fieldName":"user","operator":"in","value":"' + id + '"}]');
     };
 
     getEveryBin = function() {
