@@ -31,9 +31,13 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
         return $http.get(getFindingsUrl());
     };
 
-    getEveryFinding = function() {
+    getEveryFinding = function(lat, lng) {
+        var minLat = lat - 1;
+        var maxLat = lat + 1;
+        var minLng = lng -1;
+        var maxLng = lng +1;
         var timeToDecay = new Date(Date.now() - 1.814e+9); //3 weeks
-        return $http.get(Backand.getApiUrl() + baseUrl + dogFindingsName + '?pageSize=200&filter=[{"fieldName":"DateTime","operator":"greaterThan","value":"' + timeToDecay.toJSON() + '"}]');
+        return $http.get(Backand.getApiUrl() + baseUrl + dogFindingsName + '?pageSize=201&filter=[{"fieldName":"DateTime","operator":"greaterThan","value":"' + timeToDecay.toJSON() + '"}, {"fieldName":"Lat","operator":"greaterThan","value":"' + minLat + '"}, {"fieldName":"Lat","operator":"lessThan","value":"' + maxLat + '"}, {"fieldName":"Long","operator":"greaterThan","value":"' + minLng + '"}, {"fieldName":"Long","operator":"lessThan","value":"' + maxLng + '"}]');
     };
 
     getUserFindings = function(id) {
@@ -121,8 +125,12 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
         return $http.get(getBinUrl());
     };
 
-    getEveryBin = function() {
-        return $http.get(Backand.getApiUrl() + baseUrl + binLocationsName + '?pageSize=200');
+    getEveryBin = function(lat, lng) {
+        var minLat = lat - 1;
+        var maxLat = lat + 1;
+        var minLng = lng -1;
+        var maxLng = lng +1;
+        return $http.get(Backand.getApiUrl() + baseUrl + binLocationsName + '?pageSize=200&filter=[{"fieldName":"Lat","operator":"greaterThan","value":"' + minLat + '"}, {"fieldName":"Lat","operator":"lessThan","value":"' + maxLat + '"}, {"fieldName":"Long","operator":"greaterThan","value":"' + minLng + '"}, {"fieldName":"Long","operator":"lessThan","value":"' + maxLng + '"}]"');
     };
 
     addBin = function(bin) {
