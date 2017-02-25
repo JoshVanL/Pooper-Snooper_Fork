@@ -30,13 +30,13 @@
           {{selectedRec.Cleanedby}}
         </label>
 		<label class="input item-input" ng-show="selectedRec.type">
-		  <span class="input-label">Votes :</span>		
+		  <span class="input-label">Votes :</span>
 		   {{selectedRec.Votes}}
 		</label>
       </div>
       <div class ="button-bar">
-        <button type="submit" class="button button-balanced" ng-show="selectedRec.type&&selectedRec.canValidate" ng-click="validateBin()">Validated!</button>
-        <button type="submit" class="button button-assertive" ng-show="selectedRec.type&&selectedRec.canReport"ng-click="reportBin()">Report!</button>
+        <button type="submit" class="button button-balanced" ng-show="selectedRec.type&&selectedRec.canValidate&&!ownRecord" ng-click="validateBin()">Validated!</button>
+        <button type="submit" class="button button-assertive" ng-show="selectedRec.type&&selectedRec.canReport&&!ownRecord"ng-click="reportBin()">Report!</button>
       </div>
       <div>
         <button type="submit" class="button button-block button-negative" ng-click="cleanUpRec()" ng-show="!selectedRec.Cleaned&&!selectedRec.type">

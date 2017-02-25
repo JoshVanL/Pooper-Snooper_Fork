@@ -783,6 +783,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
         confirmPopup.then(function(res) {
             if (res) {
+              if(!$scope.selectedRec.type) {
                 console.log("Record to delete > " + $scope.selectedRec.id);
                 $scope.deleteFinding($scope.selectedRec.id);
                 var deleteFindingPopup = $ionicPopup.alert({
@@ -794,6 +795,19 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                     $scope.closeViewRecord();
                     $scope.doRefresh();
                 });
+              } else {
+                console.log("Record to delete > " + $scope.selectedRec.id);
+                $scope.deleteBin($scope.selectedRec.id);
+                var deleteBin = $ionicPopup.alert({
+                    title: 'Record Deleted',
+                    template: 'Your record has been deleted'
+                });
+
+                deleteBin.then(function(res) {
+                    $scope.closeViewRecord();
+                    $scope.doRefresh();
+                });
+              }
             }
         });
     }
@@ -1892,6 +1906,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         });
         confirmPopup.then(function(res) {
             if (res) {
+              if(!$scope.selectedRec.type) {
                 console.log("Record to delete > " + $scope.selectedRec.id);
                 $scope.deleteFinding($scope.selectedRec.id);
                 var deleteFindingPopup = $ionicPopup.alert({
@@ -1901,8 +1916,21 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
                 deleteFindingPopup.then(function(res) {
                     $scope.closeViewRecord();
-                    $scope.selectedMarker.setMap(null);
+                    $scope.doRefresh();
                 });
+              } else {
+                console.log("Record to delete > " + $scope.selectedRec.id);
+                $scope.deleteBin($scope.selectedRec.id);
+                var deleteBin = $ionicPopup.alert({
+                    title: 'Record Deleted',
+                    template: 'Your record has been deleted'
+                });
+
+                deleteBin.then(function(res) {
+                    $scope.closeViewRecord();
+                    $scope.doRefresh();
+                });
+              }
             }
         });
     };
