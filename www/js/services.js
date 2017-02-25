@@ -118,7 +118,7 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
     }
 
     getBins = function() {
-        return $http.get(Backand.getApiUrl() + baseUrl + binLocationsName + '?pageSize=200&filter=[{"fieldName":"user","operator":"in","value":"' + id + '"}]');
+        return $http.get(Backand.getApiUrl() + baseUrl + binLocationsName + '?pageSize=200&filter=[{"fieldName":"user","operator":"greaterThan","value":"-5"}]');
     };
 
     getEveryBin = function() {
