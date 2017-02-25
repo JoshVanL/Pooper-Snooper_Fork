@@ -4,8 +4,37 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-  <meta http-equiv="Content-Security-Policy" content="default-src *; script-src 'self' 'unsafe-inline' 'unsafe-eval' *; style-src  'self' 'unsafe-inline' *">  <!-- Allow links to facebook.com -->
-  <allow-navigation href="http://facebook.com/*">
+  
+	<meta http-equiv="Content-Security-Policy" content="default-src *; script-src 'self' 'unsafe-inline' 'unsafe-eval' *; style-src  'self' 'unsafe-inline' *">  <!-- Allow links to facebook.com -->
+	
+	<!-- <meta http-equiv="Content-Security-Policy"
+		content="default-src *; 
+			img-src 'self' data:;
+			script-src 'self' 'unsafe-inline' 'unsafe-eval'
+			
+				http://*.google.com
+				http://*.gstatic.com
+				http://*.googleapis.com
+				https://*.google.com
+				https://*.gstatic.com
+				https://*.googleapis.com
+			
+			; 
+			style-src  'self' 'unsafe-inline'
+			
+				http://*.google.com
+				http://*.gstatic.com
+				http://*.googleapis.com
+				https://*.google.com
+				https://*.gstatic.com
+				https://*.googleapis.com 
+			
+				">   -->
+			<!-- Allow links to facebook.com -->
+  
+	
+	
+	<allow-navigation href="http://facebook.com/*">
   <title></title>
 
   <link rel="manifest" href="manifest.json">

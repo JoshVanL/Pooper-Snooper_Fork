@@ -149,9 +149,11 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             $scope.selectedRec = result.data;
             $scope.selectedRec.type = 0; //finding
             $scope.ownRecord = 0;
-            if (result.data.user == $scope.userData.userId) $scope.ownRecord = 1;
+						if ($scope.userData.userId){
+							if (result.data.user == $scope.userData.userId) $scope.ownRecord = 1;
             console.log(JSON.stringify($scope.selectedRec));
             //getGoogleMaps();
+						}
             viewModal.show();
             $ionicLoading.hide();
         });
@@ -318,7 +320,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         backandService.getEveryBin()
         .then(function(result) {
             $scope.bins = result.data.data;
-            console.log("Got all Bins");
+            //console.log(JSON.stringify(result));
         });
     }
 
@@ -631,8 +633,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         return false;
     };
 
-    $scope.getAllFindings();
-    $scope.getAllBins();
     //
     //	$scope.username = '';
     //	onLogin();
@@ -864,6 +864,10 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 //Note : removed $state from dependencies (dunno what it did!)
 .controller('MapCtrl', function($scope, $cordovaGeolocation, $ionicModal, $window, $ionicPopup, $ionicLoading, $rootScope, $cordovaNetwork, $ionicSideMenuDelegate, GlobalService, ConnectivityMonitor, $cordovaCamera, $cordovaImagePicker) {
 
+		// INITIAL STUFF HERE FOR NOW
+		$scope.getAllFindings();
+    $scope.getAllBins();
+
     //Disables swipe to side menu feature on entering page
     $scope.$on('$ionicView.enter', function() {
         $ionicSideMenuDelegate.canDragContent(false);
@@ -879,7 +883,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     var apiKey = "AIzaSyD1-OU4tSucidW9oHkB5CCpLqSUT5fcl-E";
     var map = null;
     var iconLatLng = null;
-
 
     var markerCache = []; // Cache of all markerData. THESE ARE NOT REFERENCES TO MARKER OBJECTS!
     // It stores the MARKER DATA currently containing: 'lat', 'lng', 'icon.url'
@@ -897,11 +900,18 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
     var connLost = false;
 
+		var appInBackground = false;
+		
     var nearestBinMarker; // Reference to the nearest bin marker (original) that we hide and
     // replace with the GIF marker indicating the nearest bin
 
     var tempBinMarker; // Reference to a temp Marker (gif) that indicates where the nearest bin is
 
+		
+		var binMarkerCount = 0;
+		var poopMarkerCount = 0;
+		
+		
     // Icon resources
     var poop_icon = {
         url: "img/Assets/poop_small.png",
@@ -948,7 +958,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         if (autoUpdateOption == false) {
             autoUpdateOption = true;
             autoUpdate();
-            console.log("ABC");
         }
         if (connLost == true && ConnectivityMonitor.isOnline()) {
             connLost = false;
@@ -1050,10 +1059,9 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
             // Wait until the map is loaded and add Marker to current location
             google.maps.event.addListenerOnce($scope.map, 'idle', function() {
-
-
+							
                 //Get poop and bin markers from database
-                GlobalService.clear_allMarkers();
+                GlobalService.clear_allMarkers();					//To refresh markers incase some had been removed/hidden
                 getPoopMarkers();
                 getBinMarkers();
 
@@ -1067,6 +1075,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                 });
                 $scope.userMarker = marker;
 
+								loadMarkers();
+								
                 //Reload markers every time the map moves
                 google.maps.event.addListener($scope.map, 'dragend', function() {
                     loadMarkers();
@@ -1094,7 +1104,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     function getPoopMarkers() {
         var poopLats = [];
         var poopLngs = [];
-        var marker = {};
         console.log("Number of findings > " + $scope.findings.length);
         if ($scope.findings.length > 0) {
             for (var i = 0; i < $scope.findings.length; i++) {
@@ -1106,7 +1115,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                     lat: poopLats[i],
                     lng: poopLngs[i]
                 });
-                marker = new google.maps.Marker({
+                var marker = new google.maps.Marker({
                     position: myLatLng,
                     icon: poop_icon
                 });
@@ -1122,9 +1131,9 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
             }
 
-            console.log("poop > " + poopLats + poopLngs);
+            //console.log("poop > " + poopLats + poopLngs);
         }
-        loadMarkers();
+        //loadMarkers();
     }
 
 
@@ -1155,15 +1164,15 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                 GlobalService.push_binMarkers(markerData);
             }
 
-            console.log("bins > " + binLats + binLngs);
+            //console.log("bins > " + binLats + binLngs);
         }
-        loadMarkers();
+        //loadMarkers();
     }
 
 
     // Auto Updates lngLat and user location
     function autoUpdate() {
-        if (autoUpdateOption) {
+        if (autoUpdateOption && !appInBackground) {
             var options = {
                 timeout: 10000,
                 enableHighAccuracy: true
@@ -1185,7 +1194,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             });
 
             // Call the autoUpdate() function every 1 seconds
-            setTimeout(autoUpdate, 5);
+            setTimeout(autoUpdate, 1000);
         }
     }
 
@@ -1323,7 +1332,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         $scope.input.user = $scope.userData.userId;
         $scope.input.Username = $scope.userData.username;
         console.log(JSON.stringify($scope.input));
-        $scope.addBin();
+        //$scope.addBin();
 
         GlobalService.push_binMarkers(markerData);
 
@@ -1471,9 +1480,20 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             markers.push(bMarkers[i]);
         }
 
+				console.log("bMarkers : " + bMarkers.length);
+				
         for (var i = 0; i < markers.length; i++) {
             if (!markerExists(markers[i].lat, markers[i].lng, markers[i].icon)) {
-
+								
+								if (markers[i].icon == poop_icon.url){
+									poopMarkerCount++;
+									console.log ("Poop > " + poopMarkerCount);
+								} else if (markers[i].icon == bin_icon.url){
+									binMarkerCount++;
+									console.log ("Bin > " + binMarkerCount);
+								}
+								
+								
                 if (markers[i].icon == poop_icon.url) {
                     currentIcon = poop_icon;
                 } else if (markers[i].icon == bin_icon.url) {
@@ -1499,7 +1519,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                 // Adds the (new) marker to the map
                 var marker = new google.maps.Marker({
                     map: $scope.map,
-                    //animation: google.maps.Animation.DROP,
+                    animation: google.maps.Animation.DROP,
                     position: latLng,
                     zIndex: 0,
                     visible: markerVisibility,
@@ -1635,7 +1655,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
     // Gets bounding radius
     function getBoundingRadius(center, bounds) {
-        return getDistanceBetweenPoints(center, bounds.northeast, 'miles');
+        return getDistanceBetweenPoints(center, bounds.northeast, 'km');	// GETS BOUNDING RADIUS IN KM
     }
 
     // Calculates the distance between two points
@@ -1648,6 +1668,9 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         };
 
         var R = earthRadius[units || 'miles'];
+				
+				console.log ("abc : " + R);
+				
         var lat1 = pos1.lat;
         var lon1 = pos1.lng;
         var lat2 = pos2.lat;
@@ -1963,99 +1986,128 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     //--------------------------->
 
     $ionicModal.fromTemplateUrl('templates/modal/map-help/map-help-modal.html',
-        function(modal) {
-            $scope.helpModal = modal;
-        }, {
-            scope: $scope,
-            animation: 'slide-in-left'
-        });
+		function(modal) {
+				$scope.helpModal = modal;
+		}, {
+				scope: $scope,
+				animation: 'slide-in-left'
+		});
 
-        // Tutorial modal open
-        $scope.tutorialStart = function() {
-            $scope.helpModal.show();
+		// Tutorial modal open
+		$scope.tutorialStart = function() {
+				$scope.helpModal.show();
 
-            $scope.data = {};
+				$scope.data = {};
 
-            var setupSlider = function() {
-                //some options to pass to our slider
-                $scope.data.sliderOptions = {
-                    loop: false,
-                    effect: 'fade',
-                    speed: 300,
-                };
+				var setupSlider = function() {
+						//some options to pass to our slider
+						$scope.data.sliderOptions = {
+								loop: false,
+								effect: 'fade',
+								speed: 300,
+						};
 
-                $scope.$on("$ionicSlides.sliderInitialized", function(event, data) {
-                    $scope.slider = data.slider;
-                });
+						$scope.$on("$ionicSlides.sliderInitialized", function(event, data) {
+								$scope.slider = data.slider;
+						});
 
-                $scope.$on("$ionicSlides.slideChangeStart", function(event, data) {});
+						$scope.$on("$ionicSlides.slideChangeStart", function(event, data) {});
 
-                $scope.$on("$ionicSlides.slideChangeEnd", function(event, data) {
-                    $scope.activeIndex = data.slider.activeIndex;
-                    $scope.previousIndex = data.slider.previousIndex;
-                });
-            };
-            setupSlider();
-        }
+						$scope.$on("$ionicSlides.slideChangeEnd", function(event, data) {
+								$scope.activeIndex = data.slider.activeIndex;
+								$scope.previousIndex = data.slider.previousIndex;
+						});
+				};
+				setupSlider();
+		}
 
-        // Tutorial modal close
-        $scope.tutorialEnd = function() {
-            $scope.helpModal.hide();
-        }
+		// Tutorial modal close
+		$scope.tutorialEnd = function() {
+				$scope.helpModal.hide();
+		}
 
-        //------------------------------------------------>
-        //---- Confirm dialog resources and Functions ---->
-        //----------------------------------------------->
+		//------------------------------------------------>
+		//---- Confirm dialog resources and Functions ---->
+		//----------------------------------------------->
 
-        // Confirm dialog for adding Poop to the map
-        $scope.showPConfirm = function() {
-            if ($scope.loggedIn) {
-                var confirmPopup = $ionicPopup.confirm({
-                    title: 'Add this doggy record?',
-                    template: 'This logs your dog\'s mess. You can view all logs from your Doggy Records page.'
-                });
-                confirmPopup.then(function(res) {
-                    if (res) {
-                        if ($scope.isOverRecordLimit()) {
-                            var limitRecsPopup = $ionicPopup.alert({
-                                title: 'You have reached record limit',
-                                template: 'Please wait before adding more records'
-                            });
-                        } else {
-                            $scope.newRecord('Add new finding', 0);
-                        }
-                    }
-                });
-            } else {
-                $scope.requireLogin('Please login to add a record');
-            }
-        };
+		// Confirm dialog for adding Poop to the map
+		$scope.showPConfirm = function() {
+				if ($scope.loggedIn) {
+						var confirmPopup = $ionicPopup.confirm({
+								title: 'Add this doggy record?',
+								template: 'This logs your dog\'s mess. You can view all logs from your Doggy Records page.'
+						});
+						confirmPopup.then(function(res) {
+								if (res) {
+										if ($scope.isOverRecordLimit()) {
+												var limitRecsPopup = $ionicPopup.alert({
+														title: 'You have reached record limit',
+														template: 'Please wait before adding more records'
+												});
+										} else {
+												$scope.newRecord('Add new finding', 0);
+										}
+								}
+						});
+				} else {
+						$scope.requireLogin('Please login to add a record');
+				}
+		};
 
 
-        // Confirm dialog for adding Bin to the map
-        $scope.showBConfirm = function() {
-            if ($scope.loggedIn) {
-                var confirmPopup = $ionicPopup.confirm({
-                    title: 'Add this Bin?',
-                    template: 'It will be added to your Bin DataBase used to find your nearest bins.'
-                });
-                confirmPopup.then(function(res) {
-                    if (res) {
-                        if ($scope.isOverRecordLimit()) {
-                            var limitRecsPopup = $ionicPopup.alert({
-                                title: 'You have reached record limit',
-                                template: 'Please wait before adding more records'
-                            });
-                        } else {
-                            $scope.newRecord('Add new bin', 1);
-                        }
-                    }
-                });
-            } else {
-                $scope.requireLogin('Please login to add a record');
-            }
-        };
+		// Confirm dialog for adding Bin to the map
+		$scope.showBConfirm = function() {
+				if ($scope.loggedIn) {
+						var confirmPopup = $ionicPopup.confirm({
+								title: 'Add this Bin?',
+								template: 'It will be added to your Bin DataBase used to find your nearest bins.'
+						});
+						confirmPopup.then(function(res) {
+								if (res) {
+										if ($scope.isOverRecordLimit()) {
+												var limitRecsPopup = $ionicPopup.alert({
+														title: 'You have reached record limit',
+														template: 'Please wait before adding more records'
+												});
+										} else {
+												$scope.newRecord('Add new bin', 1);
+										}
+								}
+						});
+				} else {
+						$scope.requireLogin('Please login to add a record');
+				}
+		};
+		
+		
+		// Wait for device API libraries to load
+    //
+    function onLoad() {
+        document.addEventListener("deviceready", onDeviceReady, false);
+    }
+
+    // device APIs are available
+    //
+    function onDeviceReady() {
+        document.addEventListener("pause", onPause, false);
+				document.addEventListener("resume", onResume, false);
+    }
+
+    // Handle the pause event
+    //
+    function onPause() {
+			appInBackground = true;
+    }
+		
+		// Handle the resume event
+    //
+		function onResume() {
+			appInBackground = false;
+    }
+		
 })
+
+
 
 /* -------------------------------------------------- */
 /* -------Social Media (AboutPage) Controller ------- */

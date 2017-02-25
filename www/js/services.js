@@ -31,9 +31,20 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
         return $http.get(getFindingsUrl());
     };
 
-    getEveryFinding = function() {
-        var timeToDecay = new Date(Date.now() - 1.814e+9); //3 weeks
-        return $http.get(Backand.getApiUrl() + baseUrl + dogFindingsName + '?pageSize=200&filter=[{"fieldName":"DateTime","operator":"greaterThan","value":"' + timeToDecay.toJSON() + '"}]');
+    getEveryFinding = function(params) {
+				var timeToDecay = new Date(Date.now() - 1.814e+9); //3 weeks
+				var maxLat = params.centre.lat() + (params.boundingRadius/110.574);
+				var maxLng = params.centre.lng() + params.boundingRadius/(111.320 * Math.cos((params.boundingRadius/110.574) * (Math.PI / 180)));
+				var minLat = params.centre.lat() - (params.boundingRadius/110.574);
+				var minLng = params.centre.lng() - params.boundingRadius/(111.320 * Math.cos((params.boundingRadius/110.574) * (Math.PI / 180)));
+				
+				
+        return $http.get(Backand.getApiUrl() + baseUrl + dogFindingsName + 
+				'?pageSize=200&filter=[{"fieldName":"DateTime","operator":"greaterThan","value":"' + 
+				timeToDecay.toJSON() + '"}, {"fieldName":"Lat","operator":"greaterThan","value":"' + minLat + '"},
+				{"fieldName":"Lat","operator":"lessThan","value":"' + maxLat + '"},
+				{"fieldName":"Long","operator":"greaterThan","value":"' + minLng + '"},
+				{"fieldName":"Long","operator":"lessThan","value":"' + maxLng + '"}]');]');
     };
 
     getUserFindings = function(id) {
@@ -121,8 +132,18 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
         return $http.get(getBinUrl());
     };
 
-    getEveryBin = function() {
-        return $http.get(Backand.getApiUrl() + baseUrl + binLocationsName + '?pageSize=200');
+    getEveryBin = function(params) {
+				var maxLat = params.centre.lat() + (params.boundingRadius/110.574);
+				var maxLng = params.centre.lng() + params.boundingRadius/(111.320 * Math.cos((params.boundingRadius/110.574) * (Math.PI / 180)));
+				var minLat = params.centre.lat() - (params.boundingRadius/110.574);
+				var minLng = params.centre.lng() - params.boundingRadius/(111.320 * Math.cos((params.boundingRadius/110.574) * (Math.PI / 180)));
+			
+        return $http.get(Backand.getApiUrl() + baseUrl + binLocationsName + 
+				'?pageSize=200&filter=[{"fieldName":"DateTime","operator":"greaterThan","value":"' + 
+				timeToDecay.toJSON() + '"}, {"fieldName":"Lat","operator":"greaterThan","value":"' + minLat + '"},
+				{"fieldName":"Lat","operator":"lessThan","value":"' + maxLat + '"},
+				{"fieldName":"Long","operator":"greaterThan","value":"' + minLng + '"},
+				{"fieldName":"Long","operator":"lessThan","value":"' + maxLng + '"}]');]');
     };
 
     addBin = function(bin) {
