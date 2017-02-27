@@ -470,6 +470,34 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         }, 3000);
     };
 
+   $scope.resetPw = function () {
+        var resetPopup = $ionicPopup.show({
+            title: 'Enter your username',
+            template: '<input type = "username">',
+            scope: $scope,
+            buttons: [
+                { text: 'Cancel' },
+                {
+                    text: '<b>Send Email</b>',
+                    type: 'button-assertive',
+                    onTap: function (e) {
+                        $scope.resetPwd($scope.signUpData.email);
+                        var sendPopup = $ionicPopup.show({
+                            title: 'Reset email is sent to you'
+                        });
+                        closePopUpAuto(sendPopup);
+
+                    }
+                }
+
+            ]
+
+
+
+        })
+
+    }
+
     $scope.resetPwd = function(email){
         console.log("reset password request for " + email);
         AuthService.requestResetPassword(email)
