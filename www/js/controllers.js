@@ -470,6 +470,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         }, 3000);
     };
 
+/*Reset password button*/
    $scope.resetPw = function () {
         var resetPopup = $ionicPopup.show({
             title: 'Enter your username',
