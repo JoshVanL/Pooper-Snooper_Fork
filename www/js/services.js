@@ -211,7 +211,7 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
         return Backand.socialSignIn(provider);
     };
 
-    service.socialsignUp = function(provider) {
+    service.socialSignUp = function(provider) {
         console.log(JSON.stringify(provider));
         return Backand.socialSignUp(provider);
 

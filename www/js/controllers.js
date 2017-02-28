@@ -306,6 +306,17 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         }
     }
 
+<<<<<<< HEAD
+=======
+    $scope.getAllBins = function() {
+        backandService.getEveryBin()
+        .then(function(result) {
+            $scope.bins = result.data.data;
+      
+        });
+    }
+
+>>>>>>> e2f7858dbc956212d653d9eddd19f2f582c52695
     $scope.addBin = function() {
         return new Promise(function(resolve, reject) {
             backandService.addBin($scope.input)
@@ -313,7 +324,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                 console.log(JSON.stringify(result));
                 $scope.id = result.data.__metadata.id;
                 console.log($scope.id);
-                console.log("here");
                 $scope.input = {};
                 resolve();
             });
@@ -375,14 +385,14 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     };
 
     $scope.doSignUp = function() {
-        console.log("inside doSignUp");
+      
         $scope.signUpData.errorMessage = '';
         if ($scope.signUpData.password.length >= 6) {
             LoginService.signup($scope.signUpData.firstName, $scope.signUpData.lastName, $scope.signUpData.email, $scope.signUpData.password, $scope.signUpData.again)
             .then(function(response) {
                 //getting invalid grant - username or password is incorrect for some reason
                 // success
-                console.log("signUp sucsess");
+   
                 var signedUpPopup = $ionicPopup.alert({
                     title: 'Signed Up!',
                     template: $scope.signUpData.email
@@ -395,7 +405,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                 console.log(JSON.stringify(reason));
                 if (reason.data != undefined) {
                     console.log('reason.data!= undefined');
-                    //              $scope.signUpData.errorMessage = reason.data;
+                    $scope.signUpData.errorMessage = reason.data;
                     if (reason.data.error_description == "The user is already signed up to this app"){
                         $scope.open = function(){}
                         var emailAlreadyExistsPopUp = $ionicPopup.show({
@@ -455,6 +465,35 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         }, 3000);
     };
 
+/*Reset password button*/
+   $scope.resetPw = function () {
+        var resetPopup = $ionicPopup.show({
+            title: 'Enter your username',
+            template: '<input type = "username">',
+            scope: $scope,
+            buttons: [
+                { text: 'Cancel' },
+                {
+                    text: '<b>Send Email</b>',
+                    type: 'button-assertive',
+                    onTap: function (e) {
+                        $scope.resetPwd($scope.signUpData.email);
+                        var sendPopup = $ionicPopup.show({
+                            title: 'Reset email is sent to you'
+                        });
+                        closePopUpAuto(sendPopup);
+
+                    }
+                }
+
+            ]
+
+
+
+        })
+
+    }
+
     $scope.resetPwd = function(email){
         console.log("reset password request for " + email);
         AuthService.requestResetPassword(email)
@@ -465,25 +504,35 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         });
 
     }
-
-    $scope.doSignUpFacebook = function() {
-        console.log("clicked");
-        LoginService.socialsignUp('facebook')
+	
+	$scope.signInOrUp = function(provider){
+		$scope.doSocSignUp(provider);
+	};
+	
+    $scope.doSocSignUp = function(provider) { 
+        var response = LoginService.socialSignUp(provider)
+//		LoginService.signup($scope.signUpData.firstName, $scope.signUpData.lastName, $scope.signUpData.email, $scope.signUpData.password, $scope.signUpData.again)
+         .then(onValidLogin, $scope.socialSignIn(provider));
+		var data = Backand.getUserDetails()
+		console.log("  ");
+		console.log('RESPONSE is' + JSON.stringify(response));
+		console.log('USERDETAILS' + JSON.stringify(data));
+		console.log('  ');
+    };
+	
+	$scope.socialSignIn = function(provider) {
+        LoginService.socialSignIn(provider)
         .then(onValidLogin, onErrorInLogin);
     };
 
     onValidLogin = function(response) {
-        console.log("inside onValidLogin");
-        console.log("reaches on valid login");
         onLogin();
         $scope.userData.username = response.data || $scope.userData.username;
-        console.log("Logged in as " + $scope.userData.username);
+//		console.log( "User Data is " + JSON.stringify($scope.userData));
         var loginPopup = $ionicPopup.alert({
             title: 'Logged in'
-
         })
         loginPopup.then(function(res) {
-            console.log('Welcome');
             $scope.closeLogin();
         });
     }
@@ -491,15 +540,16 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     onErrorInLogin = function(rejection) {
         console.log("rejection");
         console.log(JSON.stringify(rejection));
+		if (rejection.data == "The user already signed up to poopersnooper (signing in with facebook)"){
+			console.log("EQUAL");
+		}
     }
 
     function onLogin(username) {
-        console.log("inside onLogin");
-        console.log("Logged in as " + username);
         var data = Backand.getUserDetails();
         $scope.userData = data.$$state.value;
-        console.log("userdata is: ");
-        console.log(JSON.stringify($scope.userData));
+//        console.log("userdata is: ");
+//        console.log(JSON.stringify($scope.userData));
         $scope.loggedIn = 1;
         $scope.getUserFindings($scope.userData.userId);
         $scope.getUserBins($scope.userData.userId);
@@ -545,13 +595,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         }
     };
 
-
-    $scope.socialSignIn = function(provider) {
-        console.log("inside controllers.js socialSignIn()");
-        //	  console.log("username before signing in " + $scope.userData.username);
-        LoginService.socialSignIn(provider)
-        .then(onValidLogin, onErrorInLogin);
-    };
 
     $scope.doLogout = function() {
         if (ConnectivityMonitor.isOnline()) {
@@ -2111,7 +2154,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 /* -------------------------------------------------- */
 .controller('SocialMediaCtrl', function($scope, Backand, $state, LoginService, $cordovaSocialSharing, $cordovaInAppBrowser) {
 
-    console.log("inside SocialMediaCtrl");
 
     $(function() {
         $('.fadein img:gt(0)').hide();

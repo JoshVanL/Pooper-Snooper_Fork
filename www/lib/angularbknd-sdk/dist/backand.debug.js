@@ -631,6 +631,8 @@ function BackandAuthService($q, $rootScope, BackandHttpBufferService, BackandSoc
     function mobileSocialLoginInner(ref, isSignUp, provider, spec) {
         ref.addEventListener('loadstart', function (e) {
                 if (e.url.indexOf(dummyReturnAddress) == 0) { // mean startWith
+					
+					console.log('user is already registered so log in');
 
                     try {
                         ref.close();
@@ -664,6 +666,8 @@ function BackandAuthService($q, $rootScope, BackandHttpBufferService, BackandSoc
                         };
 
                         rejection.error_description = rejection.data;
+//						console.log("The rejection is: ");
+//						console.log(JSON.stringify(rejection.error_description));
                         self.loginPromise.reject(rejection);
                         return;
                     }
@@ -679,12 +683,15 @@ function BackandAuthService($q, $rootScope, BackandHttpBufferService, BackandSoc
                     }
                     signinWithToken(userData);
                 }
+				else {
+					
+				}
             }
         );
     }
 
     function socialAuth(provider, isSignUp, spec, email) {
-		console.log("inside socialAuth for socialsignin");
+
         if (!socialProviders[provider]) {
             throw Error('Unknown Social Provider');
         }
@@ -694,10 +701,10 @@ function BackandAuthService($q, $rootScope, BackandHttpBufferService, BackandSoc
         else
             self.signUpPromise = $q.defer();
 
-		console.log("isMobile " + config.isMobile);
 
         if (true) { // should be config.ismobile but for some reason it is false when running on a smartphone so for now set to true
-    	       console.log("mobile devices");
+			
+    
             var ref = window.open(
                 config.apiUrl + '/1/'
                 + getSocialUrl(provider, isSignUp)
@@ -705,8 +712,9 @@ function BackandAuthService($q, $rootScope, BackandHttpBufferService, BackandSoc
                 + '&returnAddress=' + dummyReturnAddress,
                 'id1',
                 spec || 'left=1, top=1, width=600, height=600');
-
+			  console.log('before mobileSocialLoginInner');
             mobileSocialLoginInner(ref, isSignUp, provider, spec);
+			console.log('returned from mobilesociallogin');
         }
         else {
 			        console.log("not config.ismobile");
@@ -732,7 +740,7 @@ function BackandAuthService($q, $rootScope, BackandHttpBufferService, BackandSoc
 
     function setUserDataFromToken(event, provider, spec) {
         console.log("inside setUserDataFromToken");
-		    console.log(event, provider, spec);
+		console.log(event, provider, spec);
         self.socialAuthWindow.close();
         self.socialAuthWindow = null;
 
