@@ -925,6 +925,9 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         url: "img/Assets/dog_bin_small.png",
         //scaledSize: ''
     };
+    var bin_green_icon = {
+        url: "img/Assets/dog_bin_small_green.png"
+    }
     var man_icon = {
         url: "img/Assets/man-walking-dog_small.png",
         scaledSize: ''
@@ -1491,6 +1494,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                 if (markers[i].icon == poop_icon.url) {
                     currentIcon = poop_icon;
                 } else if (markers[i].icon == bin_icon.url) {
+
                     currentIcon = bin_icon;
                 }
 
