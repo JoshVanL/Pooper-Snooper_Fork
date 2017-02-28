@@ -74,8 +74,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     }
 
     function moveMap() {
-        var lat = ($scope.selectedRec.Lat);
-        var long =($scope.selectedRec.Long);
+        var lat = ($scope.selectedRec.LatLng.lat());
+        var long =($scope.selectedRec.LatLng.lng());
         var latLng = new google.maps.LatLng(lat, long);
         var poop_icon = {
             url: "img/Assets/poop_small.png",
