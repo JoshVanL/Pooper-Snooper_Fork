@@ -74,8 +74,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     }
 
     function moveMap() {
-        var lat = Number($scope.selectedRec.Lat);
-        var long = Number($scope.selectedRec.Long);
+        var lat = ($scope.selectedRec.Lat);
+        var long =($scope.selectedRec.Long);
         var latLng = new google.maps.LatLng(lat, long);
         var poop_icon = {
             url: "img/Assets/poop_small.png",
@@ -100,8 +100,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             console.log("google maps sdk loaded, need modal map.");
             //This function will be called once the SDK has been loaded
             //window.moveMap = function() {
-                var lat = Number($scope.selectedRec.Lat);
-                var long = Number($scope.selectedRec.Long);
+                var lat = ($scope.selectedRec.Lat);
+                var long =($scope.selectedRec.Long);
                 var latLng = new google.maps.LatLng(lat, long);
                 var mapOptions = {
                     center: latLng,
@@ -143,7 +143,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             $scope.ownRecord = 0;
             if (result.data.user == $scope.userData.userId) $scope.ownRecord = 1;
             console.log(JSON.stringify($scope.selectedRec));
-            getGoogleMaps();
+            //getGoogleMaps();
             viewModal.show();
             $ionicLoading.hide();
         });
@@ -684,17 +684,16 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     // Called when the form is submitted
     $scope.createRecord = function() {
         //insert record in database
-        $scope.input.Lat = $scope.record.lat;
-        $scope.input.Long = $scope.record.long;
+        $scope.input.LatLng = [$scope.record.lat, $scope.record.long];
         $scope.input.DateTime = $scope.record.dateTime;
         $scope.input.ImageURI = $scope.record.imageURI;
-        $scope.input.Username = $scope.userData.Username;
+        $scope.input.Username = $scope.userData.username;
         $scope.input.Cleaned = false;
         $scope.input.Cleanedby = null;
         $scope.input.user = $scope.userData.userId;
         console.log(JSON.stringify($scope.input));
         $scope.addFinding();
-        $scope.userFindings.push($scope.input);
+        //$scope.userFindings.push($scope.input);
 
         $scope.recordModal.hide();
         $scope.doRefresh();
@@ -863,13 +862,16 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         var center = $scope.map.getCenter();
         console.log(JSON.stringify(center));
         console.log(JSON.stringify(center.lng()));
+        var returnObject = {};
         backandService.getEveryFinding(center.lat(), center.lng())
         .then(function(result) {
-            console.log("here");
+            console.log("succ");
             $scope.findings = result.data.data;
-            getPoopMarkers();
             console.log(JSON.stringify(result));
+            console.log(JSON.stringify($scope.findings));
+            getPoopMarkers();
         }, function(error) {
+            console.log("err");
             console.log(JSON.stringify(error));
         });
     }
@@ -1118,8 +1120,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         console.log("Number of findings > " + $scope.findings.length);
         if ($scope.findings.length > 0) {
             for (var i = 0; i < $scope.findings.length; i++) {
-                poopLats.push(Number($scope.findings[i].Lat));
-                poopLngs.push(Number($scope.findings[i].Long));
+                poopLats.push(($scope.findings[i].Lat));
+                poopLngs.push(($scope.findings[i].Long));
             }
             for (i = 0; i < poopLats.length; i++) {
                 var myLatLng = new google.maps.LatLng({
@@ -1149,18 +1151,16 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
 
     function getBinMarkers() {
-        var binLats = [];
-        var binLngs = [];
+        var binLatLng = [];
         console.log("Number of bins > " + $scope.bins.length);
         if ($scope.bins.length > 0) {
             for (var i = 0; i < $scope.bins.length; i++) {
-                binLats.push(Number($scope.bins[i].Lat));
-                binLngs.push(Number($scope.bins[i].Long));
+                binLatLng.push(($scope.bins[i].Lat));
             }
             for (i = 0; i < binLats.length; i++) {
                 var myLatLng = new google.maps.LatLng({
-                    lat: binLats[i],
-                    lng: binLngs[i]
+                    lat: binLatLng[i].lat(),
+                    lng: binLatLng[i].lng()
                 });
                 var marker = new google.maps.Marker({
                     position: myLatLng,
@@ -1337,13 +1337,11 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             icon: marker.getIcon().url
         };
 
-        $scope.input.Lat = markerData.lat;
-        $scope.input.Long = markerData.lng;
+        $scope.input.LatLng = [markerData.lat, markerData.lng];
         $scope.input.DateTime = new Date();
         $scope.input.user = $scope.userData.userId;
         $scope.input.Username = $scope.userData.username;
         console.log(JSON.stringify($scope.input));
-        $scope.addBin();
 
         GlobalService.push_binMarkers(markerData);
 
@@ -1951,8 +1949,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     // Create record item
     $scope.createRecord = function(record) {
         //insert record in database
-        $scope.input.Lat = $scope.record.lat;
-        $scope.input.Long = $scope.record.long;
+        $scope.input.LatLng = [$scope.record.lat, $scope.record.long];
         $scope.input.DateTime = $scope.record.dateTime;
         $scope.input.ImageURI = $scope.record.imageURI;
         $scope.input.Username = $scope.userData.username;

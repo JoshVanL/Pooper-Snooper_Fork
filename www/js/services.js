@@ -32,13 +32,29 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
     };
 
     getEveryFinding = function(lat, lng) {
-        var minLat = lat - 1;
-        var maxLat = lat + 1;
-        var minLng = lng -1;
-        var maxLng = lng +1;
+        console.log("Here");
+        var time = new Date();
+        str = time.toJSON();
+        str = str.substring(0, str.length - 1);
         var timeToDecay = new Date(Date.now() - 1.814e+9); //3 weeks
-        return $http.get(Backand.getApiUrl() + baseUrl + dogFindingsName + '?pageSize=201&filter=[{"fieldName":"DateTime","operator":"greaterThan","value":"' + timeToDecay.toJSON() + '"}, {"fieldName":"Lat","operator":"greaterThan","value":"' + minLat + '"}, {"fieldName":"Lat","operator":"lessThan","value":"' + maxLat + '"}, {"fieldName":"Long","operator":"greaterThan","value":"' + minLng + '"}, {"fieldName":"Long","operator":"lessThan","value":"' + maxLng + '"}]');
+        console.log(JSON.stringify(time));
+        return $http({
+            method: 'GET',
+            url: Backand.getApiUrl() + '/1/objects/dogFindings',
+            params: {
+                pageSize: 1000,
+                pageNumber: 1,
+                sort: [],
+                filter: {
+                    "q":{ 
+                        "LatLng" : {"$withinKilometers":[[lat,lng],200]}
+                    }
+                }
+               }
+            });
     };
+
+
 
     getUserFindings = function(id) {
         return $http.get(Backand.getApiUrl() + baseUrl + dogFindingsName + '?pageSize=200&filter=[{"fieldName":"user","operator":"in","value":"' + id + '"}]');
@@ -126,11 +142,21 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
     };
 
     getEveryBin = function(lat, lng) {
-        var minLat = lat - 1;
-        var maxLat = lat + 1;
-        var minLng = lng -1;
-        var maxLng = lng +1;
-        return $http.get(Backand.getApiUrl() + baseUrl + binLocationsName + '?pageSize=200&filter=[{"fieldName":"Lat","operator":"greaterThan","value":"' + minLat + '"}, {"fieldName":"Lat","operator":"lessThan","value":"' + maxLat + '"}, {"fieldName":"Long","operator":"greaterThan","value":"' + minLng + '"}, {"fieldName":"Long","operator":"lessThan","value":"' + maxLng + '"}]"');
+        return $http({
+            method: 'GET',
+            url: Backand.getApiUrl() + '/1/objects/binLocations',
+            params: {
+                pageSize: 1000,
+                pageNumber: 1,
+                sort: [],
+                filter: {
+                    "q": {
+                        "LatLng" : {"$withinKilometers":[[lat,lng],200]},
+                    }
+                }
+
+            }
+        });
     };
 
     addBin = function(bin) {
