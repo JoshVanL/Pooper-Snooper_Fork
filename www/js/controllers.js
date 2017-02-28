@@ -1171,19 +1171,17 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     //------------------------------>
 
     function getPoopMarkers() {
-        var poopLats = [];
-        var poopLngs = [];
+        var poopLatLng = [];
         var marker = {};
         console.log("Number of findings > " + $scope.findings.length);
         if ($scope.findings.length > 0) {
             for (var i = 0; i < $scope.findings.length; i++) {
-                poopLats.push(($scope.findings[i].Lat));
-                poopLngs.push(($scope.findings[i].Long));
+                poopLatLng.push(($scope.findings[i].LatLng));
             }
-            for (i = 0; i < poopLats.length; i++) {
+            for (i = 0; i < poopLatLng.length; i++) {
                 var myLatLng = new google.maps.LatLng({
-                    lat: poopLats[i],
-                    lng: poopLngs[i]
+                    lat: poopLatLng[i][0],
+                    lng: poopLatLng[i][1]
                 });
                 marker = new google.maps.Marker({
                     position: myLatLng,
@@ -1201,7 +1199,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
             }
 
-            console.log("poop > " + poopLats + poopLngs);
+            console.log("poop > " + poopLatLng);
         }
         loadMarkers();
     }
@@ -1212,12 +1210,14 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         console.log("Number of bins > " + $scope.bins.length);
         if ($scope.bins.length > 0) {
             for (var i = 0; i < $scope.bins.length; i++) {
-                binLatLng.push(($scope.bins[i].Lat));
+                binLatLng.push(($scope.bins[i].LatLng));
+                console.log(JSON.stringify(binLatLng));
             }
             for (i = 0; i < binLatLng.length; i++) {
+            console.log(JSON.stringify(binLatLng));
                 var myLatLng = new google.maps.LatLng({
-                    lat: binLatLng[i].lat(),
-                    lng: binLatLng[i].lng()
+                    lat: binLatLng[i][0],
+                    lng: binLatLng[i][1]
                 });
                 var marker = new google.maps.Marker({
                     position: myLatLng,
@@ -1232,7 +1232,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                 GlobalService.push_binMarkers(markerData);
             }
 
-            console.log("bins > " + binLats + binLngs);
+            console.log("bins > " + binLatLng);
         }
         loadMarkers();
     }
