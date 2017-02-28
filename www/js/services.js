@@ -31,10 +31,30 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
         return $http.get(getFindingsUrl());
     };
 
-    getEveryFinding = function() {
+    getEveryFinding = function(lat, lng) {
+        console.log("Here");
+        var time = new Date();
+        str = time.toJSON();
+        str = str.substring(0, str.length - 1);
         var timeToDecay = new Date(Date.now() - 1.814e+9); //3 weeks
-        return $http.get(Backand.getApiUrl() + baseUrl + dogFindingsName + '?pageSize=200&filter=[{"fieldName":"DateTime","operator":"greaterThan","value":"' + timeToDecay.toJSON() + '"}]');
+        console.log(JSON.stringify(time));
+        return $http({
+            method: 'GET',
+            url: Backand.getApiUrl() + '/1/objects/dogFindings',
+            params: {
+                pageSize: 1000,
+                pageNumber: 1,
+                sort: [],
+                filter: {
+                    "q":{ 
+                        "LatLng" : {"$withinKilometers":[[lat,lng],200]}
+                    }
+                }
+               }
+            });
     };
+
+
 
     getUserFindings = function(id) {
         return $http.get(Backand.getApiUrl() + baseUrl + dogFindingsName + '?pageSize=200&filter=[{"fieldName":"user","operator":"in","value":"' + id + '"}]');
@@ -121,8 +141,27 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
         return $http.get(Backand.getApiUrl() + baseUrl + binLocationsName + '?pageSize=200&filter=[{"fieldName":"Votes","operator":"greaterThan","value":"-5"}]');
     };
 
+<<<<<<< HEAD
     getEveryBin = function() {
         return $http.get(Backand.getApiUrl() + baseUrl + binLocationsName + '?pageSize=200&filter=[{"fieldName":"Votes","operator":"greaterThan","value":"-5"}]');
+=======
+    getEveryBin = function(lat, lng) {
+        return $http({
+            method: 'GET',
+            url: Backand.getApiUrl() + '/1/objects/binLocations',
+            params: {
+                pageSize: 1000,
+                pageNumber: 1,
+                sort: [],
+                filter: {
+                    "q": {
+                        "LatLng" : {"$withinKilometers":[[lat,lng],200]},
+                    }
+                }
+
+            }
+        });
+>>>>>>> c3b14f567df6a7d165c9308ef506ea85af6552e8
     };
 
     addBin = function(bin) {
