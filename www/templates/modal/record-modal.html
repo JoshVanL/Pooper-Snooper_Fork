@@ -1,52 +1,52 @@
 <div class="modal">
 
-  <!-- Modal header bar -->
-  <ion-header-bar class="bar-secondary">
+    <!-- Modal header bar -->
+    <ion-header-bar class="bar-secondary">
     <h1 class="title">
-      Doggy finding record
-      <i class="icon ion-trash-b"></i>
+        Doggy finding record
+        <i class="icon ion-trash-b"></i>
     </h1>
     <button id="brownFont" class="button button-clear button-positive" ng-click="closeViewRecord()" side="right">Close</button>
-  </ion-header-bar>
-  <ion-content scroll="true">
+    </ion-header-bar>
+    <ion-content scroll="true">
     <form name="viewRecord">
-      <div class="list">
-        <label class="item item-input">
-          <span class="input-label">DateTime</span>
-          {{selectedRec.DateTime}}
-        </label>
-        <fieldset>
-            <div id="mapRec"></div>
-        </fieldset>
-        <label>
-          <img id="viewIm" ng-src="{{selectedRec.ImageURI}}" class="center"/>
-        </label>
-        <label class="item item-input">
-          <span class="input-label">Created by : </span>
-          {{selectedRec.Username}}
-        </label>
-        <label class="item item-input" ng-show="selectedRec.Cleaned">
-          <span class="input-label">Cleaned up by : </span>
-          {{selectedRec.Cleanedby}}
-        </label>
-		<label class="input item-input" ng-show="selectedRec.type">
-		  <span class="input-label">Votes :</span>
-		   {{selectedRec.Votes}}
-		</label>
-      </div>
-      <div class ="button-bar">
-        <button type="submit" class="button button-balanced" ng-show="selectedRec.type&&selectedRec.canValidate&&!ownRecord" ng-click="validateBin()">Validated!</button>
-        <button type="submit" class="button button-assertive" ng-show="selectedRec.type&&selectedRec.canReport&&!ownRecord"ng-click="reportBin()">Report!</button>
-      </div>
-      <div>
-        <button type="submit" class="button button-block button-negative" ng-click="cleanUpRec()" ng-show="!selectedRec.Cleaned&&!selectedRec.type">
-          Cleaned up!
-        </button>
-        <button type="submit" class="button button-block button-negative" ng-click="deleteRecord()" ng-show="ownRecord">
-          Delete record
-        </button>
-      </div>
+        <div class="list">
+            <label class="item item-input">
+                <span class="input-label">DateTime</span>
+                {{selectedRec.DateTime}}
+            </label>
+            <fieldset>
+                <div id="mapRec"></div>
+            </fieldset>
+            <label>
+                <img id="viewIm" ng-src="{{selectedRec.ImageURI}}" class="center"/>
+            </label>
+            <label class="item item-input">
+                <span class="input-label">Created by : </span>
+                {{selectedRec.Username}}
+            </label>
+            <label class="item item-input" ng-show="selectedRec.Cleaned">
+                <span class="input-label">Cleaned up by : </span>
+                {{selectedRec.Cleanedby}}
+            </label>
+            <label class="input item-input" ng-show="selectedRec.type">
+                <span class="input-label">Votes :</span>
+                {{selectedRec.Votes}}
+            </label>
+        </div>
+        <div class ="button-bar">
+            <button type="submit" class="button button-balanced" ng-show="selectedRec.type&&selectedRec.canValidate&&!ownRecord" ng-click="validateBin()">Validated!</button>
+            <button type="submit" class="button button-assertive" ng-show="selectedRec.type&&selectedRec.canReport&&!ownRecord"ng-click="reportBin()">Report!</button>
+        </div>
+        <div>
+            <button type="submit" class="button button-block button-negative" ng-click="cleanUpRec()" ng-show="!selectedRec.Cleaned&&!selectedRec.type">
+                Cleaned up!
+            </button>
+            <button type="submit" class="button button-block button-negative" ng-click="deleteRecord()" ng-show="ownRecord">
+                Delete record
+            </button>
+        </div>
     </form>
 
-  </ion-content>
+    </ion-content>
 </div>

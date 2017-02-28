@@ -398,6 +398,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                     onLogin($scope.signUpData.email);
                     $scope.signUpModal.hide();
                 });
+            
             }, function(reason) {
                 console.log(JSON.stringify(reason));
                 if (reason.data != undefined) {
@@ -1211,7 +1212,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         if ($scope.bins.length > 0) {
             for (var i = 0; i < $scope.bins.length; i++) {
                 binLatLng.push(($scope.bins[i].LatLng));
-                console.log(JSON.stringify(binLatLng));
             }
             for (i = 0; i < binLatLng.length; i++) {
             console.log(JSON.stringify(binLatLng));
