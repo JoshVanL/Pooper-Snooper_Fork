@@ -62,7 +62,7 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
     };
 
     getUserBins = function(id) {
-        return $http.get();
+        return $http.get(Backand.getApiUrl() + baseUrl + binLocationsName + '?pageSize=200&filter=[{"fieldName":"user","operator":"in","value":"' + id + '"}]');
     };
 
     selectFinding = function(id) {
