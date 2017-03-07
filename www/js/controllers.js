@@ -1,13 +1,16 @@
 angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
-.controller('AppCtrl', function($scope, $state, Backand, $ionicModal, ConnectivityMonitor, $timeout, $ionicPopup, $q, backandService, $ionicLoading, LoginService, AuthService) {
+// ----------------------------------------- >
+// ------------ App Controller ------------ >
+// --------------------------------------- >
+.controller('AppCtrl', function($scope, $state, Backand, $ionicModal, ConnectivityMonitor,
+ $timeout, $ionicPopup, $q, backandService, $ionicLoading, LoginService, AuthService) {
 
     // With the new view caching in Ionic, Controllers are only called
     // when they are recreated or on app start, instead of every page change.
     // To listen for when this page is active (for example, to refresh data),
     // listen for the $ionicView.enter event:
-    //$scope.$on('$ionicView.enter', function(e))
-    //
+    // $scope.$on('$ionicView.enter', function(e))
 
     $scope.findings = [];
     $scope.bins = [];
@@ -106,36 +109,36 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             console.log("google maps needs to be loaded");
         } else if (1) {
             console.log("google maps sdk loaded, need modal map.");
-            //This function will be called once the SDK has been loaded
-            //window.moveMap = function() {
-                var lat = Number($scope.selectedRec.Lat);
-                var long = Number($scope.selectedRec.Long);
-                var latLng = new google.maps.LatLng(lat, long);
-                var mapOptions = {
-                    center: latLng,
-                    zoom: 15,
-                    draggable: false,
-                    mapTypeId: google.maps.MapTypeId.ROADMAP,
-                    mapTypeControl: false,
-                    fullscreenControl: false,
-                    streetViewControl: false
-                };
-                $scope.mapRec = new google.maps.Map(document.getElementById("mapRec"), mapOptions);
-                moveMap();
-                //};
+									//This function will be called once the SDK has been loaded
+									//window.moveMap = function() {
+							var lat = Number($scope.selectedRec.Lat);
+							var long = Number($scope.selectedRec.Long);
+							var latLng = new google.maps.LatLng(lat, long);
+							var mapOptions = {
+									center: latLng,
+									zoom: 15,
+									draggable: false,
+									mapTypeId: google.maps.MapTypeId.ROADMAP,
+									mapTypeControl: false,
+									fullscreenControl: false,
+									streetViewControl: false
+							};
+							$scope.mapRec = new google.maps.Map(document.getElementById("mapRec"), mapOptions);
+							moveMap();
+									/* }; */
 
-                // //Create a script element to insert into the page
-                //document.createElement("script");
-                // $scope.script = document.createElement("script");
-                // $scope.script.type = "text/javascript";
-                // $scope.script.id = "googleMaps";
-                //
-                // //Note the callback function in the URL is the one we created above
-                // $scope.script.src = 'http://maps.google.com/maps/api/js?key=' + apiKey +
-                    //   '&callback=moveMap';
-                // //console.log(JSON.stringify($scope.script));
-                // document.body.appendChild($scope.script);
-                //moveMap();
+									// //Create a script element to insert into the page
+									// document.createElement("script");
+									// $scope.script = document.createElement("script");
+									// $scope.script.type = "text/javascript";
+									// $scope.script.id = "googleMaps";
+									//
+									// //Note the callback function in the URL is the one we created above
+									// $scope.script.src = 'http://maps.google.com/maps/api/js?key=' + apiKey +
+											//   '&callback=moveMap';
+									// //console.log(JSON.stringify($scope.script));
+									// document.body.appendChild($scope.script);
+									//moveMap();
         } else {
             console.log("sdk and modal map exist");
             moveMap();
@@ -613,8 +616,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         });
 
     };
-
-
+		
     $scope.isOverRecordLimit = function() {
         //console.log(JSON.stringify($scope.userFindings));
         var testTime = new Date(Date.now() - (24 * 60 * 60 * 1000)); // 24 hours ago
@@ -640,10 +642,12 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 })
 
 
-/* ------------------------------------------------ */
-/* ------------ Record Logs Controller ------------ */
-/* ------------------------------------------------ */
-.controller('RecordLogsCtrl', function($scope, $ionicModal, $cordovaCamera, $cordovaImagePicker, $filter, $ionicLoading, $cordovaGeolocation, $ionicPopup, GlobalService, backandService) {
+
+// ------------------------------------------------- >
+// ------------ Record Logs Controller ------------ >
+// ----------------------------------------------- >
+.controller('RecordLogsCtrl', function($scope, $ionicModal, $cordovaCamera, $cordovaImagePicker,
+ $filter, $ionicLoading, $cordovaGeolocation, $ionicPopup, GlobalService, backandService) {
 
     if (!$scope.loggedIn) {
         $scope.requireLogin('Please login to view your records');
@@ -857,60 +861,60 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
 })
 
-/* ----------------------------------------------------------- */
-/* --------------------- Map Controller ---------------------- */
-/* ----------------------------------------------------------- */
 
-//Note : removed $state from dependencies (dunno what it did!)
-.controller('MapCtrl', function($scope, $cordovaGeolocation, $ionicModal, $window, $ionicPopup, $ionicLoading, $rootScope, $cordovaNetwork, $ionicSideMenuDelegate, GlobalService, ConnectivityMonitor, $cordovaCamera, $cordovaImagePicker) {
 
-		// INITIAL STUFF HERE FOR NOW
-		$scope.getAllFindings();
-    $scope.getAllBins();
+// ------------------------------------------------- >
+// ---------------- Map Controller ---------------- >
+// ----------------------------------------------- >
+.controller('MapCtrl', function($scope, $cordovaGeolocation, $ionicModal, $window, $ionicPopup,
+ $ionicLoading, $rootScope, $cordovaNetwork, $ionicSideMenuDelegate, GlobalService, ConnectivityMonitor, $cordovaCamera, $cordovaImagePicker) {
 
-    //Disables swipe to side menu feature on entering page
-    $scope.$on('$ionicView.enter', function() {
-        $ionicSideMenuDelegate.canDragContent(false);
-    });
-    //Re-enables swipe to side menu feature on exit page
-    $scope.$on('$ionicView.leave', function() {
-        $ionicSideMenuDelegate.canDragContent(true);
-    });
-
-    //------------------------->
-    //--- Initial resources --->
-    //------------------------>
-    var apiKey = "AIzaSyD1-OU4tSucidW9oHkB5CCpLqSUT5fcl-E";
-    var map = null;
-    var iconLatLng = null;
-
-    var markerCache = []; // Cache of all markerData. THESE ARE NOT REFERENCES TO MARKER OBJECTS!
-    // It stores the MARKER DATA currently containing: 'lat', 'lng', 'icon.url'
-
-    var binMarkerCache = []; // Cache of all (REFERENCES TO) BIN MARKER OBJECTS (hide/show)
-    // It will probably be necessary to also keep references to poop markers
-    // so we may refactor 'markerCache' to store references instead of data.
-    // This will allow the users to remove delete Markers for instance.
-
-    $scope.userMarker; // Used to reference current location Marker and update to new location
-
-    var manMarker = null; // Reference to the 'man Marker' (finds nearestBin to the Marker location)
-
-    var autoUpdateOption = true;
-
-    var connLost = false;
-
-		var appInBackground = false;
+    // -------------------------- >
+    // --- Initial resources --- >
+    // ------------------------ >
 		
-    var nearestBinMarker; // Reference to the nearest bin marker (original) that we hide and
-    // replace with the GIF marker indicating the nearest bin
+    var apiKey = "AIzaSyD1-OU4tSucidW9oHkB5CCpLqSUT5fcl-E";			// GMap API key
+    var map = null;																							// Map element
 
-    var tempBinMarker; // Reference to a temp Marker (gif) that indicates where the nearest bin is
+    var iconLatLng = null;																			// Marker drop placement lat/lng (I think)
 
+		// Marker storage
+    var markerDataCache = []; 					// Cache of all Markers that stores the data of each marker (lat/lng/icon/id) 
+		var binMarkerCache = []; 						// Cache of all BIN MARKER OBJECTS (holds all references)
 		
+		var poopDataCache = [];							// Cache storing poop marker data
+		var binDataCache = [];							// Cache storing bin marker data
+		
+		var activePoopDataCache = [];
+		var activeBinDataCache = [];
+		
+		var poopObjCache = [];							// Cache storing refs to poop marker objects
+		var binObjCache = [];								// Cache storing refs to bin marker objects
+		
+		// Special Marker object references
+    $scope.userMarker; 									// Ref to current location Marker
+    var manMarker = null; 							// Ref to the 'Man Marker' (finds nearestBin to the Marker location)
+		var nearestBinMarker; 							// Ref to the nearest bin marker (original) that we hide temporarily
+    var tempBinMarker; 									// Ref to a temp Marker (gif) that indicates the nearest bin marker
+
+		// Map options
+    var autoUpdate = true;							// Bool - if set true then the user location will automatically update itself
+    
+		// System details
+		var connLost = false;								//True when user has no connection to internet
+		var appInBackground = false;				//True when app is minimized
+		
+		// Marker counters
 		var binMarkerCount = 0;
 		var poopMarkerCount = 0;
 		
+		// Downloaded marker area (when leaving this area a new DB call is needed)
+		var loadedMapArea = {
+			centerLat: "",
+			centerLng: "",
+			captureLatDist: "",
+			captureLngDist: "",
+		};
 		
     // Icon resources
     var poop_icon = {
@@ -950,14 +954,31 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         scaledSize: ''
     };
 
+		
+		// ----------------------------- >
+    // --- Initializing phase 1 --- >
+    // --------------------------- >
+		
+		$scope.getAllFindings();
+    $scope.getAllBins();
+		
+    //Disables swipe to side menu feature on entering page
+    $scope.$on('$ionicView.enter', function() {
+        $ionicSideMenuDelegate.canDragContent(false);
+    });
+    //Re-enables swipe to side menu feature on exit page
+    $scope.$on('$ionicView.leave', function() {
+        $ionicSideMenuDelegate.canDragContent(true);
+    });
 
+		
     // Fixes the error where opening a modal would cause the map to 'break'
-    // Auto if the page has been visited before it will resume autoUpdate()
+    // Auto if the page has been visited before it will resume Update()
     $scope.$on('$ionicView.afterEnter', function() {
         ionic.trigger('resize');
-        if (autoUpdateOption == false) {
-            autoUpdateOption = true;
-            autoUpdate();
+        if (autoUpdate == false) {
+            autoUpdate = true;
+            Update();
         }
         if (connLost == true && ConnectivityMonitor.isOnline()) {
             connLost = false;
@@ -966,7 +987,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         }
     });
 
-    // Resets button animation classes and stops autoUpdate
+    // Resets button animation classes and stops Update
     $scope.$on('$ionicView.afterLeave', function() {
         document.getElementById("panelOpenHolder").style.visibility = "visible";
         document.getElementById("panelOpenHolder").className = "animated bounceInRight";
@@ -986,19 +1007,19 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         document.getElementById("manDraggable").style.visibility = "hidden";
         document.getElementById("manDraggable").className = "";
 
-        autoUpdateOption = false;
+        autoUpdate = false;
     });
 
-    //------------------------->
-    //--- Initializing phase--->
-    //------------------------>
+		
+    // ----------------------------- >
+    // --- Initializing phase 2 --- >
+    // --------------------------- >
 
     if (ConnectivityMonitor.isOnline()) {
         console.warn("online");
     } else {
         console.warn("offline");
     }
-
 
     if (typeof google == "undefined" || typeof google.maps == "undefined") {
 
@@ -1033,6 +1054,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
         $cordovaGeolocation.getCurrentPosition(options).then(function(position) {
 
+						// Resizing Google Map Marker icons
             poop_icon.scaledSize = new google.maps.Size(20, 20);
             bin_icon.scaledSize = new google.maps.Size(35, 35);
             circle_icon.scaledSize = new google.maps.Size(50, 50);
@@ -1060,8 +1082,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             // Wait until the map is loaded and add Marker to current location
             google.maps.event.addListenerOnce($scope.map, 'idle', function() {
 							
-                //Get poop and bin markers from database
-                GlobalService.clear_allMarkers();					//To refresh markers incase some had been removed/hidden
+								clearAllMarkers();
                 getPoopMarkers();
                 getBinMarkers();
 
@@ -1079,16 +1100,16 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 								
                 //Reload markers every time the map moves
                 google.maps.event.addListener($scope.map, 'dragend', function() {
-                    loadMarkers();
+                    checkForNewMarkers();
                 });
 
                 //Reload markers every time the zoom changes
                 google.maps.event.addListener($scope.map, 'zoom_changed', function() {
-                    loadMarkers();
+                    checkForNewMarkers();
                 });
 
                 enableMap();
-                autoUpdate();
+                Update();
 
             });
 
@@ -1097,82 +1118,14 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             noLocationMap();
         });
     }
-    //------------------------------->
+   
+		//------------------------------->
     //---- Map related Functions ---->
     //------------------------------>
 
-    function getPoopMarkers() {
-        var poopLats = [];
-        var poopLngs = [];
-        console.log("Number of findings > " + $scope.findings.length);
-        if ($scope.findings.length > 0) {
-            for (var i = 0; i < $scope.findings.length; i++) {
-                poopLats.push(Number($scope.findings[i].Lat));
-                poopLngs.push(Number($scope.findings[i].Long));
-            }
-            for (i = 0; i < poopLats.length; i++) {
-                var myLatLng = new google.maps.LatLng({
-                    lat: poopLats[i],
-                    lng: poopLngs[i]
-                });
-                var marker = new google.maps.Marker({
-                    position: myLatLng,
-                    icon: poop_icon
-                });
-
-                var markerData = {
-                    lat: marker.getPosition().lat(),
-                    lng: marker.getPosition().lng(),
-                    icon: marker.getIcon().url,
-                    id: $scope.findings[i].id
-                };
-                GlobalService.push_poopMarkers(markerData);
-
-
-            }
-
-            //console.log("poop > " + poopLats + poopLngs);
-        }
-        //loadMarkers();
-    }
-
-
-    function getBinMarkers() {
-        var binLats = [];
-        var binLngs = [];
-        console.log("Number of bins > " + $scope.bins.length);
-        if ($scope.bins.length > 0) {
-            for (var i = 0; i < $scope.bins.length; i++) {
-                binLats.push(Number($scope.bins[i].Lat));
-                binLngs.push(Number($scope.bins[i].Long));
-            }
-            for (i = 0; i < binLats.length; i++) {
-                var myLatLng = new google.maps.LatLng({
-                    lat: binLats[i],
-                    lng: binLngs[i]
-                });
-                var marker = new google.maps.Marker({
-                    position: myLatLng,
-                    icon: bin_icon
-                });
-                var markerData = {
-                    lat: marker.getPosition().lat(),
-                    lng: marker.getPosition().lng(),
-                    icon: marker.getIcon().url,
-                    id: $scope.bins[i].id
-                };
-                GlobalService.push_binMarkers(markerData);
-            }
-
-            //console.log("bins > " + binLats + binLngs);
-        }
-        //loadMarkers();
-    }
-
-
-    // Auto Updates lngLat and user location
-    function autoUpdate() {
-        if (autoUpdateOption && !appInBackground) {
+    // Update user location Marker
+    function Update() {
+				if (autoUpdate && !appInBackground) {
             var options = {
                 timeout: 10000,
                 enableHighAccuracy: true
@@ -1193,8 +1146,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
             });
 
-            // Call the autoUpdate() function every 1 seconds
-            setTimeout(autoUpdate, 1000);
+            // Call the Update() function every 1 seconds
+            setTimeout(Update, 1000);
         }
     }
 
@@ -1258,20 +1211,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
     }
 
-    function distancecheck(currentlat, currentlng, nextlat, nextlng) {
-        var radlat1 = Math.PI * currentlat / 180;
-        var radlat2 = Math.PI * nextlat / 180;
-        var theta = currentlng - nextlng;
-        var radtheta = Math.PI * theta / 180;
-        var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-        dist = Math.acos(dist);
-        dist = dist * 180 / Math.PI;
-        dist = dist * 60 * 1.1515;
-        dist = dist * 1.609344;
-        return dist;
-    }
-
-
     //Adds the poop Marker to the map (after record has been created)
     $scope.addPoopMarker = function() {
         console.log("here");
@@ -1285,16 +1224,19 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             icon: poop_icon,
             id: $scope.id
         });
+				
         var markerData = {
             lat: marker.getPosition().lat(),
             lng: marker.getPosition().lng(),
-            icon: marker.getIcon().url
+            type: getMarkerType(marker),
+						id: marker.id				
         };
-        GlobalService.push_poopMarkers(markerData);
-
-        // Adds the marker to markerCache (so it won't be re-added)
-        addMarkerToCache(marker);
-
+        
+				//GlobalService.push_poopMarkers(markerData);
+				poopDataCache.push(markerData);						 // Adds the marker to Cache (so it won't be re-added)
+				poopObjCache.push(marker);
+				
+				
         google.maps.event.addListener(marker, 'click', function() {
             console.log("clicked " + this.id);
             $ionicLoading.show({
@@ -1323,7 +1265,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         var markerData = {
             lat: marker.getPosition().lat(),
             lng: marker.getPosition().lng(),
-            icon: marker.getIcon().url
+            type: getMarkerType(marker),
+						id: marker.id			
         };
 
         $scope.input.Lat = markerData.lat;
@@ -1334,13 +1277,15 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         console.log(JSON.stringify($scope.input));
         //$scope.addBin();
 
-        GlobalService.push_binMarkers(markerData);
-
+        //GlobalService.push_binMarkers(markerData);
+				binDataCache.push(markerData);
+				binObjCache.push(marker);
+				
         // Adds the marker to binMarkerCache so we have a reference to it
         // to deal with the Nearest bin marker case
-        binMarkerCache.push(marker);
+        //binMarkerCache.push(marker);
         // Adds the marker to markerCache (so it won't be re-added)
-        addMarkerToCache(marker);
+        //addMarkerToCache(marker);
 
         google.maps.event.addListener(marker, 'click', function() {
             console.log("clicked " + this.id);
@@ -1433,6 +1378,36 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         }
     }
 
+		 // Connection checker
+    function addConnectivityListeners() {
+
+        if (ionic.Platform.isWebView()) {
+
+            // Check if the map is already loaded when the user comes online,
+            //if not, load it
+
+            $rootScope.$on('$cordovaNetwork:online', function(event, networkState) {
+                checkLoaded();
+            });
+
+            // Disable the map when the user goes offline
+            $rootScope.$on('$cordovaNetwork:offline', function(event, networkState) {
+                disableMap();
+            });
+
+        } else {
+
+            //Same as above but for when we are not running on a device
+            window.addEventListener("online", function(e) {
+                checkLoaded();
+            }, false);
+
+            window.addEventListener("offline", function(e) {
+                disableMap();
+            }, false);
+        }
+    }
+		
     //---------------------------->
     //----- Marker functions ----->
     //--------------------------->
@@ -1464,7 +1439,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         };
 
         var boundingRadius = getBoundingRadius(centerNorm, boundsNorm);
-
+				
         //Use these parameters to grab only nearby markers (onscreen)
         var params = {
             "centre": centerNorm,
@@ -1473,31 +1448,31 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             "boundingRadius": boundingRadius
         };
 
+				//Update 'loadedMapArea'
+				loadedMapArea.centerLat = center.lat();
+				loadedMapArea.centerLng = center.lng();
+				loadedMapArea.captureLatDist = (bounds.getNorthEast ().lat() - center.lat())*8; //Database call will retrieve *10 instead
+				loadedMapArea.captureLngDist = (bounds.getNorthEast ().lng() - center.lng())*8;
+				
         //Get all of the markers from our array of Markers
-        var markers = GlobalService.get_newMarkers(params, "poop");
-        var bMarkers = GlobalService.get_newMarkers(params, "bin");
-        for (var i = 0; i < bMarkers.length; i++) {
-            markers.push(bMarkers[i]);
+        var markers = getMarkers("poop");
+				var binMarkers = getMarkers("bin");
+			
+				for (var i = 0; i < binMarkers.length; i++) {
+            markers.push(binMarkers[i]);
         }
-
-				console.log("bMarkers : " + bMarkers.length);
 				
         for (var i = 0; i < markers.length; i++) {
-            if (!markerExists(markers[i].lat, markers[i].lng, markers[i].icon)) {
+            if (!markerExists(markers[i].type, markers[i].id)) {
 								
-								if (markers[i].icon == poop_icon.url){
-									poopMarkerCount++;
-									console.log ("Poop > " + poopMarkerCount);
-								} else if (markers[i].icon == bin_icon.url){
-									binMarkerCount++;
-									console.log ("Bin > " + binMarkerCount);
-								}
-								
-								
-                if (markers[i].icon == poop_icon.url) {
+                if (markers[i].type == 0) {
                     currentIcon = poop_icon;
-                } else if (markers[i].icon == bin_icon.url) {
+										poopMarkerCount++;
+										//console.log ("Poop > " + poopMarkerCount);
+                } else if (markers[i].type == 1) {
                     currentIcon = bin_icon;
+										binMarkerCount++;
+										//console.log ("Bin > " + binMarkerCount);
                 }
 
                 var latLng = new google.maps.LatLng(markers[i].lat, markers[i].lng);
@@ -1550,24 +1525,39 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                 }
 
 
-                // Adds the marker to binMarkerCache so we have a reference to it
-                // to deal with the Nearest bin marker (hide/show)
-                if (marker.getIcon().url == bin_icon.url) {
-                    binMarkerCache.push(marker);
+                // Adds the marker to the relevent Obj Cache to store the reference the the GMaps Marker Object
+								if (marker.getIcon().url == poop_icon.url){
+										poopObjCache.push(marker);
+								}else if (marker.getIcon().url == bin_icon.url) {
+                    binObjCache.push(marker);
                 }
             }
         }
     }
 
+		// Checks if the map view moves a new area requiring new data to be downloaded from the database
+		function checkForNewMarkers() {
+				var center = $scope.map.getCenter();
+				
+				if ((center.lat() >= (loadedMapArea.centerLat + loadedMapArea.CaptureLatDist)) 
+					|| (center.lat() <= (loadedMapArea.centerLat - loadedMapArea.CaptureLatDist))
+					|| (center.lng() >= (loadedMapArea.centerLng + loadedMapArea.CaptureLngDist))
+					|| (center.lng() <= (loadedMapArea.centerLng - loadedMapArea.CaptureLngDist))
+				){
+					loadMarkers();
+				}
+				
+		}
+		
     // Find the nearest bin and add a Marker to indicate it (replacing the previous marker temporarily)
     // TWO DIFFERENT CASES:
     // Case 1 - Called via the bottom left button to search for the nearest bin to the user location
     // Case 2 - Called via placing the man Marker to search for the nearest bin to the placed Marker
-
+		// takes 'loc' as a parameter which is a Marker Object
     $scope.findNearestBin = function(loc) {
 
         // Hides the man Marker if function called for Case 1
-        if (loc.getIcon().url == $scope.userMarker.getIcon().url) {
+        if (loc.getIcon().url == circle_icon) {
             if (manMarker != null) {
                 manMarker.setVisible(false);
             }
@@ -1586,19 +1576,16 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             lng: loc.getPosition().lng()
         };
 
-        // Receive the nearest bin Marker's DATA from Database.
-        var nearestBin = GlobalService.get_NearestBin(center);
+        // Returns the nearest Bin Marker Data that has already been loaded
+        var nearestBin = getNearestBin(center);
 
-        // Find the reference to the nearest Bin Marker if already loaded (from binMarkerCache),
+        // Find the reference to the nearest Bin Marker if already loaded (from binObjCache),
         // hide it temporarily and replace with the GIF indicator
         // Note: There is a chance that the nearest Bin Marker has not been loaded. In this case
         //       there is nothing to hide and it will be hidden when added if appropriate.
-        for (var i = 0; i < binMarkerCache.length; i++) {
-            if ((binMarkerCache[i].getPosition().lat() == nearestBin.lat) &&
-            (binMarkerCache[i].getPosition().lng() == nearestBin.lng) &&
-            (binMarkerCache[i].getIcon().url == nearestBin.icon)) {
-
-                nearestBinMarker = binMarkerCache[i];
+        for (var i = 0; i < binObjCache.length; i++) {
+            if (binObjCache[i].id == nearestBin.id) {
+                nearestBinMarker = binObjCache[i];
                 nearestBinMarker.setVisible(false);
                 break;
             }
@@ -1626,33 +1613,182 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         } else {
             $scope.map.panTo(binLatLng);
         }
-
+				
+				// Stores references to nearest bin indicatior marker 
         tempBinMarker = marker;
     }
 
+		// Return closest bin Marker
+		function getNearestBin(latLng){
+			
+				var markerCount = 0;
+				var markerLimit = 1000;
+				
+				var nearestBin = '';		//This will store the marker data of the nearest bin to the desired location		
+			
+        var nearestDist = 100; 	//Currently set to check 100 miles for bins around the area
+
+        for (i = 0; i < binDataCache.length; i++) {
+          var pos1 = {
+            lat: binDataCache[i].lat,
+            lng: binDataCache[i].lng
+          }
+
+          var pos2 = latLng;
+
+          var dist = getDistanceBetweenPoints(pos1, pos2, 'miles');
+
+          if (markerCount < markerLimit) {
+            if (dist < nearestDist) {
+              nearestBin = binDataCache[i];
+              nearestDist = dist;
+            }
+          }
+        }
+
+        return nearestBin;
+		}
+		
     // Adds new Marker to markerCache (so it won't be re-added)
     function addMarkerToCache(marker) {
         var markerData = {
             lat: marker.getPosition().lat(),
             lng: marker.getPosition().lng(),
-            icon: marker.getIcon().url,
+            type: getMarkerType(marker),
+						id: marker.id,
         };
         markerCache.push(markerData);
     }
-
+		
     // Checks if the Marker exists on the Map already (via our Cache)
-    function markerExists(lat, lng, icon) {
+    function markerExists(type, id) {
         var exists = false;
-        var cache = markerCache;
+        var cache = poopDataCache;
         for (var i = 0; i < cache.length; i++) {
-            if (cache[i].lat === lat && cache[i].lng === lng &&
-            cache[i].icon === icon) {
+            if (cache[i].type == type && cache[i].id === id){
                 exists = true;
             }
         }
+				if (exists != true){
+						cache = binDataCache;
+						for (var i = 0; i < cache.length; i++) {
+								if (cache[i].type == type && cache[i].id === id){
+										exists = true;
+								}
+						}
+				}
         return exists;
     }
 
+
+		// Loads entire DB's Poop Marker Data into marker data cache
+    function getPoopMarkers() {
+        var poopLats = [];
+        var poopLngs = [];
+				activePoopDataCache = [];
+			
+
+        console.log("Number of findings > " + $scope.findings.length);
+        if ($scope.findings.length > 0) {
+            for (var i = 0; i < $scope.findings.length; i++) {
+                poopLats.push(Number($scope.findings[i].Lat));
+                poopLngs.push(Number($scope.findings[i].Long));
+            }
+            for (i = 0; i < poopLats.length; i++) {			// Do this in one step in future
+                var myLatLng = new google.maps.LatLng({
+                    lat: poopLats[i],
+                    lng: poopLngs[i]
+                });
+                var marker = new google.maps.Marker({
+                    position: myLatLng,
+                    icon: poop_icon
+                });
+                var markerData = {
+                    lat: marker.getPosition().lat(),
+                    lng: marker.getPosition().lng(),
+                    type: getMarkerType(marker),
+                    id: $scope.findings[i].id
+                };
+                
+								poopDataCache.push(markerData);
+								activePoopDataCache.push(markerData);
+            }
+        }
+    }
+
+		// Loads entire DB's Bin Marker Data into marker data cache
+    function getBinMarkers() {
+        var binLats = [];
+        var binLngs = [];
+				activeBinDataCache = [];
+				
+        console.log("Number of bins > " + $scope.bins.length);
+        if ($scope.bins.length > 0) {
+            for (var i = 0; i < $scope.bins.length; i++) {
+                binLats.push(Number($scope.bins[i].Lat));
+                binLngs.push(Number($scope.bins[i].Long));
+            }
+            for (i = 0; i < binLats.length; i++) {
+                var myLatLng = new google.maps.LatLng({
+                    lat: binLats[i],
+                    lng: binLngs[i]
+                });
+                var marker = new google.maps.Marker({
+                    position: myLatLng,
+                    icon: bin_icon
+                });
+                var markerData = {
+                    lat: marker.getPosition().lat(),
+                    lng: marker.getPosition().lng(),
+                    type: getMarkerType(marker),
+                    id: $scope.bins[i].id
+                };
+								
+								binDataCache.push(markerData);
+								activeBinDataCache.push(markerData);
+            }
+        }
+    }
+
+		 // Returns Markers within the wanted area
+		function getMarkers(markerType) {
+			
+				var markerCount = 0;
+				var markerLimit = 1000;
+				var markerArray = [];
+				var nearbyMarkers = [];
+				
+        if (markerType == "poop") {
+          markerArray = activePoopDataCache;
+        } else if (markerType == "bin") {
+          markerArray = activeBinDataCache;
+        }
+
+        for (i = 0; i < markerArray.length; i++) {
+
+          if (markerCount < markerLimit) {
+            if (!markerExists(markerArray[i].type, markerArray[i].id)) {
+							nearbyMarkers.push(markerArray[i]);
+							markerCount++;
+            }
+          }
+        }
+				
+        return nearbyMarkers;
+      }
+		
+		// Clears our Marker caches
+		function clearAllMarkers() {
+			  poopDataCache.splice(0, poopDataCache.length);
+        binDataCache.splice(0, binDataCache.length);
+				poopObjCache.splice(0, poopDataCache.length);
+        binObjCache.splice(0, binDataCache.length);
+		}
+		
+		//--------------------------->
+    //----- HELPER functions ----->
+    //-------------------------->
+		
     // Gets bounding radius
     function getBoundingRadius(center, bounds) {
         return getDistanceBetweenPoints(center, bounds.northeast, 'km');	// GETS BOUNDING RADIUS IN KM
@@ -1668,9 +1804,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         };
 
         var R = earthRadius[units || 'miles'];
-				
-				console.log ("abc : " + R);
-				
+			
         var lat1 = pos1.lat;
         var lon1 = pos1.lng;
         var lat2 = pos2.lat;
@@ -1680,19 +1814,47 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         var dLon = toRad((lon2 - lon1));
         var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
             Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
+						Math.sin(dLon / 2) *
+						Math.sin(dLon / 2);
         var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         var d = R * c;
 
         return d;
     }
 
+		
+		// ( I think this does the same as the above function Sonny )
+		function distancecheck(currentlat, currentlng, nextlat, nextlng) {
+        var radlat1 = Math.PI * currentlat / 180;
+        var radlat2 = Math.PI * nextlat / 180;
+        var theta = currentlng - nextlng;
+        var radtheta = Math.PI * theta / 180;
+        var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+        dist = Math.acos(dist);
+        dist = dist * 180 / Math.PI;
+        dist = dist * 60 * 1.1515;
+        dist = dist * 1.609344;
+        return dist;
+    }
+		
     // Converts degrees to Radians
     function toRad(x) {
         return x * Math.PI / 180;
     }
 
+		// Get Type of Marker - 0 for poop , 1 for bin
+		function getMarkerType (marker){
+			var type = "";
+			
+			if (marker.getIcon().url == poop_icon){
+				type = 0;
+			}else if (marker.getIcon().url == bin_icon){
+				type = 1;
+			}
+			
+			return type;
+		}
+		
     //--------------------------->
     //----- Other functions ----->
     //-------------------------->
@@ -1773,36 +1935,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
     }
 
-    // Connection checker
-    function addConnectivityListeners() {
-
-        if (ionic.Platform.isWebView()) {
-
-            // Check if the map is already loaded when the user comes online,
-            //if not, load it
-
-            $rootScope.$on('$cordovaNetwork:online', function(event, networkState) {
-                checkLoaded();
-            });
-
-            // Disable the map when the user goes offline
-            $rootScope.$on('$cordovaNetwork:offline', function(event, networkState) {
-                disableMap();
-            });
-
-        } else {
-
-            //Same as above but for when we are not running on a device
-            window.addEventListener("online", function(e) {
-                checkLoaded();
-            }, false);
-
-            window.addEventListener("offline", function(e) {
-                disableMap();
-            }, false);
-        }
-    }
-
+   
     //------------------------------>
     //---- New Record Functions ---->
     //------------------------------>
@@ -1816,7 +1949,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         lat: "",
         long: ""
     }
-    $scope.createEnabled = false;
+   
+		$scope.createEnabled = false;
 
     // Create and load the Modal
     $ionicModal.fromTemplateUrl('templates/modal/newMapRecord-modal.html', function(modal) {
@@ -2079,6 +2213,10 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 				}
 		};
 		
+		
+		//----------------------------------->
+		//---- APP INACTIVITY FUNCTIONS ---->
+		//--------------------------------->
 		
 		// Wait for device API libraries to load
     //

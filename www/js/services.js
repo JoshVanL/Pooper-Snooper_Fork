@@ -33,20 +33,18 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
 
     getEveryFinding = function(params) {
 				var timeToDecay = new Date(Date.now() - 1.814e+9); //3 weeks
-				var maxLat = params.centre.lat() + (params.boundingRadius/110.574);
-				var maxLng = params.centre.lng() + params.boundingRadius/(111.320 * Math.cos((params.boundingRadius/110.574) * (Math.PI / 180)));
-				var minLat = params.centre.lat() - (params.boundingRadius/110.574);
-				var minLng = params.centre.lng() - params.boundingRadius/(111.320 * Math.cos((params.boundingRadius/110.574) * (Math.PI / 180)));
-				
-				
-        return $http.get(Backand.getApiUrl() + baseUrl + dogFindingsName + 
-				'?pageSize=200&filter=[{"fieldName":"DateTime","operator":"greaterThan","value":"' + 
-				timeToDecay.toJSON() + '"}, {"fieldName":"Lat","operator":"greaterThan","value":"' + minLat + '"},
-				{"fieldName":"Lat","operator":"lessThan","value":"' + maxLat + '"},
-				{"fieldName":"Long","operator":"greaterThan","value":"' + minLng + '"},
-				{"fieldName":"Long","operator":"lessThan","value":"' + maxLng + '"}]');]');
+
+        return 0;
+				//Requires the correct code regarding query
     };
 
+		getNearbyFindings = function(params) {
+				var timeToDecay = new Date(Date.now() - 1.814e+9); //3 weeks
+
+        return 0;
+				//Requires the correct code regarding the DB query with distance as a parameter
+    };
+		
     getUserFindings = function(id) {
         return $http.get(Backand.getApiUrl() + baseUrl + dogFindingsName + '?pageSize=200&filter=[{"fieldName":"user","operator":"in","value":"' + id + '"}]');
     };
@@ -146,6 +144,12 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
 				{"fieldName":"Long","operator":"lessThan","value":"' + maxLng + '"}]');]');
     };
 
+		getNearbyBins = function(Params) {
+			
+			return 0;
+			//Requires the correct code regarding the DB query with distance as a parameter
+		}
+		
     addBin = function(bin) {
         return $http.post(getBinUrl(), bin);
     }
