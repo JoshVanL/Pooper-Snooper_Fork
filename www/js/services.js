@@ -32,6 +32,7 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
         return $http.get(getFindingsUrl());
     };
 
+		/*
     getEveryFinding = function(lat, lng) {
         console.log("Here");
         var time = new Date();
@@ -54,14 +55,15 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
             }
         });
     };
-
-		getNearbyFindings = function(lat, lng, dist) {
+		*/
+		
+		getEveryFinding = function(lat, lng, dist) {
 			
 			var time = new Date();
 			str = time.toJSON();
 			str = str.substring(0, str.length - 1);
 			var timeToDecay = new Date(Date.now() - 1.814e+9); //3 weeks
-			console.log(JSON.stringify(time));
+			//console.log(JSON.stringify(time));
 			
 			return $http({
 					method: 'GET',
@@ -163,7 +165,8 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
     getBins = function() {
         return $http.get(Backand.getApiUrl() + baseUrl + binLocationsName + '?pageSize=200&filter=[{"fieldName":"Votes","operator":"greaterThan","value":"-5"}]');
     };
-
+	
+		/*
     getEveryBin = function(lat, lng) {
         return $http({
             method: 'GET',
@@ -181,8 +184,9 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
             }
         });
     };
-
-		getNearbyBins = function(lat, lng, dist) {
+		*/
+		
+		getEveryBin = function(lat, lng, dist) {
 			return $http({
 					method: 'GET',
 					url: Backand.getApiUrl() + '/1/objects/binLocations',
