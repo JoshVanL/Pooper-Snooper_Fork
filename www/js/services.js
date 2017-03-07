@@ -11,6 +11,7 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
     };
 })
 
+
 .service('backandService', function($http, Backand) {
     var baseUrl = '/1/objects/';
     var dogFindingsName = 'dogFindings/';
@@ -31,20 +32,53 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
         return $http.get(getFindingsUrl());
     };
 
-    getEveryFinding = function(params) {
-				var timeToDecay = new Date(Date.now() - 1.814e+9); //3 weeks
-
-        return 0;
-				//Requires the correct code regarding query
+    getEveryFinding = function(lat, lng) {
+        console.log("Here");
+        var time = new Date();
+        str = time.toJSON();
+        str = str.substring(0, str.length - 1);
+        var timeToDecay = new Date(Date.now() - 1.814e+9); //3 weeks
+        console.log(JSON.stringify(time));
+        return $http({
+            method: 'GET',
+            url: Backand.getApiUrl() + '/1/objects/dogFindings',
+            params: {
+                pageSize: 1000,
+                pageNumber: 1,
+                sort: [],
+                filter: {
+                    "q":{ 
+                        "LatLng" : {"$withinKilometers":[[lat,lng],200]}
+                    }
+                }
+            }
+        });
     };
 
-		getNearbyFindings = function(params) {
-				var timeToDecay = new Date(Date.now() - 1.814e+9); //3 weeks
+		getNearbyFindings = function(lat, lng, dist) {
+			
+			var time = new Date();
+			str = time.toJSON();
+			str = str.substring(0, str.length - 1);
+			var timeToDecay = new Date(Date.now() - 1.814e+9); //3 weeks
+			console.log(JSON.stringify(time));
+			
+			return $http({
+					method: 'GET',
+					url: Backand.getApiUrl() + '/1/objects/dogFindings',
+					params: {
+							pageSize: 1000,
+							pageNumber: 1,
+							sort: [],
+							filter: {
+									"q":{ 
+											"LatLng" : { "$withinMiles" : [[lat,lng], dist]} 
+									}
+							}
+					}
+			});
+		};
 
-        return 0;
-				//Requires the correct code regarding the DB query with distance as a parameter
-    };
-		
     getUserFindings = function(id) {
         return $http.get(Backand.getApiUrl() + baseUrl + dogFindingsName + '?pageSize=200&filter=[{"fieldName":"user","operator":"in","value":"' + id + '"}]');
     };
@@ -91,7 +125,7 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
         return $http({
             method: 'PUT',
             url: Backand.getApiUrl() + baseUrl + dogFindingsName + id,
-            data: data, 
+            data: data,
             params: {
                 returnObject: returnObject
             }
@@ -127,28 +161,44 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
     }
 
     getBins = function() {
-        return $http.get(getBinUrl());
+        return $http.get(Backand.getApiUrl() + baseUrl + binLocationsName + '?pageSize=200&filter=[{"fieldName":"Votes","operator":"greaterThan","value":"-5"}]');
     };
 
-    getEveryBin = function(params) {
-				var maxLat = params.centre.lat() + (params.boundingRadius/110.574);
-				var maxLng = params.centre.lng() + params.boundingRadius/(111.320 * Math.cos((params.boundingRadius/110.574) * (Math.PI / 180)));
-				var minLat = params.centre.lat() - (params.boundingRadius/110.574);
-				var minLng = params.centre.lng() - params.boundingRadius/(111.320 * Math.cos((params.boundingRadius/110.574) * (Math.PI / 180)));
-			
-        return $http.get(Backand.getApiUrl() + baseUrl + binLocationsName + 
-				'?pageSize=200&filter=[{"fieldName":"DateTime","operator":"greaterThan","value":"' + 
-				timeToDecay.toJSON() + '"}, {"fieldName":"Lat","operator":"greaterThan","value":"' + minLat + '"},
-				{"fieldName":"Lat","operator":"lessThan","value":"' + maxLat + '"},
-				{"fieldName":"Long","operator":"greaterThan","value":"' + minLng + '"},
-				{"fieldName":"Long","operator":"lessThan","value":"' + maxLng + '"}]');]');
+    getEveryBin = function(lat, lng) {
+        return $http({
+            method: 'GET',
+            url: Backand.getApiUrl() + '/1/objects/binLocations',
+            params: {
+                pageSize: 1000,
+                pageNumber: 1,
+                sort: [],
+                filter: {
+                    "q": {
+                        "LatLng" : {"$withinKilometers":[[lat,lng],200]}
+                    }
+                }
+
+            }
+        });
     };
 
-		getNearbyBins = function(Params) {
-			
-			return 0;
-			//Requires the correct code regarding the DB query with distance as a parameter
-		}
+		getNearbyBins = function(lat, lng, dist) {
+			return $http({
+					method: 'GET',
+					url: Backand.getApiUrl() + '/1/objects/binLocations',
+					params: {
+							pageSize: 1000,
+							pageNumber: 1,
+							sort: [],
+							filter: {
+									"q": {
+											"LatLng" : { "$withinMiles" : [[lat,lng], dist]} 
+									}
+							}
+
+					}
+			});
+		};
 		
     addBin = function(bin) {
         return $http.post(getBinUrl(), bin);
@@ -197,7 +247,7 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
         return Backand.socialSignIn(provider);
     };
 
-    service.socialsignUp = function(provider) {
+    service.socialSignUp = function(provider) {
         console.log(JSON.stringify(provider));
         return Backand.socialSignUp(provider);
 

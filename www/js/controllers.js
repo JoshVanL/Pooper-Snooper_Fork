@@ -959,9 +959,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     // --- Initializing phase 1 --- >
     // --------------------------- >
 		
-		$scope.getAllFindings();
-    $scope.getAllBins();
-		
     //Disables swipe to side menu feature on entering page
     $scope.$on('$ionicView.enter', function() {
         $ionicSideMenuDelegate.canDragContent(false);
@@ -1081,11 +1078,26 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
             // Wait until the map is loaded and add Marker to current location
             google.maps.event.addListenerOnce($scope.map, 'idle', function() {
-							
+						
+								var center = $scope.map.getCenter();
+								var bounds = $scope.map.getBounds();
+								var centerLoc = {
+										lat: center.lat(),
+										lng: center.lng()
+								};
+								var edgeLoc = {
+									lat: bounds.getNorthEast().lat(),
+									lng: bounds.getNorthEast().lng()
+								};
+								var grabDist = getDistanceBetweenPoints(centerLoc, edgeLoc, 'miles');
+								
 								clearAllMarkers();
-                getPoopMarkers();
-                getBinMarkers();
-
+								
+                //Initially retreives marker data from Backand
+								$scope.getNearbyFindings(grabDist*10);
+								$scope.getNearbyBins(grabDist*10);
+								
+								
                 // INITIAL USER LOCATION Marker
                 var marker = new google.maps.Marker({
                     map: $scope.map,
@@ -1105,7 +1117,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
                 //Reload markers every time the zoom changes
                 google.maps.event.addListener($scope.map, 'zoom_changed', function() {
-                    checkForNewMarkers();
+                    loadMarkers();
                 });
 
                 enableMap();
@@ -1419,14 +1431,12 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
         var center = $scope.map.getCenter();
         var bounds = $scope.map.getBounds();
-        var zoom = $scope.map.getZoom();
 
         //Convert objects returned by Google to be more readable
         var centerNorm = {
             lat: center.lat(),
             lng: center.lng()
         };
-
         var boundsNorm = {
             northeast: {
                 lat: bounds.getNorthEast().lat(),
@@ -1438,16 +1448,13 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             }
         };
 
+				// The distance from the center of the map to the edge in miles
         var boundingRadius = getBoundingRadius(centerNorm, boundsNorm);
 				
-        //Use these parameters to grab only nearby markers (onscreen)
-        var params = {
-            "centre": centerNorm,
-            "bounds": boundsNorm,
-            "zoom": zoom,
-            "boundingRadius": boundingRadius
-        };
-
+				//Retreives marker data from Backand
+				$scope.getNearbyFindings(boundingRadius*10);
+				$scope.getNearbyBins(boundingRadius*10);
+				
 				//Update 'loadedMapArea'
 				loadedMapArea.centerLat = center.lat();
 				loadedMapArea.centerLng = center.lng();
@@ -1681,7 +1688,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     }
 
 
-		// Loads entire DB's Poop Marker Data into marker data cache
+		// Stores Poop Marker Data into marker data cache
     function getPoopMarkers() {
         var poopLats = [];
         var poopLngs = [];
@@ -1694,8 +1701,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                 poopLats.push(Number($scope.findings[i].Lat));
                 poopLngs.push(Number($scope.findings[i].Long));
             }
-            for (i = 0; i < poopLats.length; i++) {			// Do this in one step in future
-                var myLatLng = new google.maps.LatLng({
+            for (i = 0; i < poopLats.length; i++) {			
+								var myLatLng = new google.maps.LatLng({
                     lat: poopLats[i],
                     lng: poopLngs[i]
                 });
@@ -1710,13 +1717,15 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                     id: $scope.findings[i].id
                 };
                 
-								poopDataCache.push(markerData);
-								activePoopDataCache.push(markerData);
+								if (!markerExists(markerData.type,markerData.id){
+									poopDataCache.push(markerData);
+									activePoopDataCache.push(markerData);
+								}
             }
         }
     }
 
-		// Loads entire DB's Bin Marker Data into marker data cache
+		// Stores Bin Marker Data into marker data cache
     function getBinMarkers() {
         var binLats = [];
         var binLngs = [];
@@ -1744,8 +1753,10 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                     id: $scope.bins[i].id
                 };
 								
-								binDataCache.push(markerData);
-								activeBinDataCache.push(markerData);
+								if (!markerExists(markerData.type,markerData.id){
+									poopDataCache.push(markerData);
+									activePoopDataCache.push(markerData);
+								}
             }
         }
     }
@@ -1785,13 +1796,42 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         binObjCache.splice(0, binDataCache.length);
 		}
 		
+		// Retreives poop data from Backand
+		$scope.getNearbyFindings = function(dist){
+        $scope.findings = [];
+				var center = $scope.map.getCenter();
+        backandService.getNearbyFindings(center.lat(),center.lng(),dist)
+        .then(function(result) {
+            $scope.findings = result.data.data;
+            getPoopMarkers();
+        }, function(error) {
+            console.log("err");
+            console.log(JSON.stringify(error));
+        });
+    }
+
+		// Retreives bin data from Backand
+    $scope.getNearbyBins = function(dist) {
+				$scope.bins = [];
+				var center = $scope.map.getCenter();
+        backandService.getNearbyBins(center.lat(),center.lng(),dist)
+        .then(function(result) {
+            $scope.bins = result.data.data;
+            getBinMarkers();
+				}, function(error) {
+            console.log("err");
+            console.log(JSON.stringify(error));
+        });
+    }
+
+		
 		//--------------------------->
     //----- HELPER functions ----->
     //-------------------------->
 		
     // Gets bounding radius
     function getBoundingRadius(center, bounds) {
-        return getDistanceBetweenPoints(center, bounds.northeast, 'km');	// GETS BOUNDING RADIUS IN KM
+        return getDistanceBetweenPoints(center, bounds.northeast, 'miles');
     }
 
     // Calculates the distance between two points
