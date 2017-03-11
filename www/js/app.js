@@ -280,4 +280,4 @@ angular.module('PooperSnooper', ['ionic', 'backand', 'PooperSnooper.controllers'
 
       }
     }
-  })
+  });
