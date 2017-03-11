@@ -704,17 +704,18 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     // Called when the form is submitted
     $scope.createRecord = function() {
         //insert record in database
-        $scope.input.Lat = $scope.record.lat;
-        $scope.input.Long = $scope.record.long;
+				$scope.input.LatLng = [$scope.record.lat, $scope.record.long];
         $scope.input.DateTime = $scope.record.dateTime;
         $scope.input.ImageURI = $scope.record.imageURI;
         $scope.input.Username = $scope.userData.Username;
+				
         $scope.input.Cleaned = false;
         $scope.input.Cleanedby = null;
         $scope.input.user = $scope.userData.userId;
         console.log(JSON.stringify($scope.input));
         $scope.addFinding();
-        $scope.userFindings.push($scope.input);
+				
+        //$scope.userFindings.push($scope.input);
 
         $scope.recordModal.hide();
         $scope.doRefresh();
@@ -1147,14 +1148,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     // Update user location Marker
     function Update() {
 				
-				//console.log("findings length > " + $scope.findings.length);
-				//getPoopMarkers();
-				//console.log("bins length > " + $scope.bins.length);
-				//console.log ("Total poops > " + poopDataCache.length);
-				//console.log ("Total bins > " + binDataCache.length);
-				//console.log ("Total poops Obj > " + poopObjCache.length);
-				//console.log ("Total bins Obj > " + binObjCache.length);
-				
 				if (autoUpdate && !appInBackground) {
             var options = {
                 timeout: 10000,
@@ -1465,8 +1458,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 				loadedMapArea.Dist = boundingRadius * 2; 
 				
 				//Retreives marker data from Backand
-				$scope.getNearbyFindings(centerNorm.lat,centerNorm.lng,boundingRadius*3);
-				$scope.getNearbyBins(centerNorm.lat,centerNorm.lng,boundingRadius*3);	
+				$scope.getNearbyFindings(centerNorm.lat,centerNorm.lng,boundingRadius*5);
+				$scope.getNearbyBins(centerNorm.lat,centerNorm.lng,boundingRadius*5);	
     }
 
 		// Adds Markers to Google maps after both poop and bin data has been fully loaded
@@ -1548,7 +1541,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 						
 						addMarkersCondition = 0;
 						
-						//console.log ("Poop Obj Cache size > " + poopObjCache.length);
+						//console.log ("Total Poops Markers > " + poopObjCache.length);
+						//console.log ("Total Bin Markers > " + binObjCache.length);
 				}
 				
 		}
@@ -2082,7 +2076,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             currentlat = position.coords.latitude;
             currentlng = position.coords.longitude;
             var dist = distancecheck(currentlat, currentlng, $scope.record.lat, $scope.record.long);
-            if (dist <= 0.1 && dist >= 0) {
+            if (dist <= 0.5 && dist >= 0) {
                 $scope.recordModal.phrase = phrase;
                 $scope.recordModal.type = type; //finding = 0, bin = 1
                 console.log($scope.recordModal.type);
@@ -2176,8 +2170,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     // Create record item
     $scope.createRecord = function(record) {
         //insert record in database
-        $scope.input.Lat = $scope.record.lat;
-        $scope.input.Long = $scope.record.long;
+				$scope.input.LatLng = [$scope.record.lat, $scope.record.long];
         $scope.input.DateTime = $scope.record.dateTime;
         $scope.input.ImageURI = $scope.record.imageURI;
         $scope.input.Username = $scope.userData.username;
