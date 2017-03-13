@@ -74,8 +74,9 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     }
 
     function moveMap() {
-        var lat = ($scope.selectedRec.LatLng.lat());
-        var long =($scope.selectedRec.LatLng.lng());
+        var lat = ($scope.selectedRec.LatLng[0]);
+        var long =($scope.selectedRec.LatLng[1]);
+        console.log(lat, long);
         var latLng = new google.maps.LatLng(lat, long);
         var poop_icon = {
             url: "img/Assets/poop_small.png",
@@ -100,8 +101,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             console.log("google maps sdk loaded, need modal map.");
             //This function will be called once the SDK has been loaded
             //window.moveMap = function() {
-                var lat = ($scope.selectedRec.Lat);
-                var long =($scope.selectedRec.Long);
+                var lat = ($scope.selectedRec.LatLng[0]);
+                var long =($scope.selectedRec.LatLng[1]);
                 var latLng = new google.maps.LatLng(lat, long);
                 var mapOptions = {
                     center: latLng,
@@ -143,7 +144,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             $scope.ownRecord = 0;
             if (result.data.user == $scope.userData.userId) $scope.ownRecord = 1;
             console.log(JSON.stringify($scope.selectedRec));
-            //getGoogleMaps();
+            if($scope.showMap) getGoogleMaps();
             viewModal.show();
             $ionicLoading.hide();
         });
@@ -775,6 +776,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
     $scope.selectRecord = function(id) {
         console.log("Record Selected > " + id);
+        $scope.showMap = 1;
         $scope.selectFinding(id, $scope.viewRecordModal);
     };
 
@@ -1369,6 +1371,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                 template: '<p>Loading Finding</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
             });
             $scope.selectedMarker = marker;
+            $scope.showMap = 0;
             $scope.selectFinding(this.id, $scope.viewRecordModal);
         });
 
@@ -1592,6 +1595,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                         $ionicLoading.show({
                             template: '<p>Loading Finding</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
                         });
+                        $scope.showMap = 0;
                         $scope.selectFinding(this.id, $scope.viewRecordModal);
                     });
                 } else {

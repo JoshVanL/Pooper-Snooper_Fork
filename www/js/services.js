@@ -33,7 +33,6 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
     };
 
     getEveryFinding = function(lat, lng) {
-        console.log("Here");
         var time = new Date();
         str = time.toJSON();
         str = str.substring(0, str.length - 1);
@@ -48,7 +47,7 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
                 sort: [],
                 filter: {
                     "q":{ 
-                        "LatLng" : {"$withinKilometers":[[lat,lng],200]}
+                        "LatLng" : {"$withinKilometers":[[lat,lng],200]},
                     }
                 }
             }
