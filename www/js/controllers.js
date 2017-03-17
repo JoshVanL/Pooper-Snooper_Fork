@@ -504,21 +504,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
     }
 	
-	$scope.signInOrUp = function(provider){
-		$scope.doSocSignUp(provider);
-	};
-	
-    $scope.doSocSignUp = function(provider) { 
-        var response = LoginService.socialSignUp(provider)
-//		LoginService.signup($scope.signUpData.firstName, $scope.signUpData.lastName, $scope.signUpData.email, $scope.signUpData.password, $scope.signUpData.again)
-         .then(onValidLogin, $scope.socialSignIn(provider));
-		var data = Backand.getUserDetails()
-		console.log("  ");
-		console.log('RESPONSE is' + JSON.stringify(response));
-		console.log('USERDETAILS' + JSON.stringify(data));
-		console.log('  ');
-    };
-	
 	$scope.socialSignIn = function(provider) {
         LoginService.socialSignIn(provider)
         .then(onValidLogin, onErrorInLogin);
@@ -529,7 +514,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         $scope.userData.username = response.data || $scope.userData.username;
 //		console.log( "User Data is " + JSON.stringify($scope.userData));
         var loginPopup = $ionicPopup.alert({
-            title: 'Logged in'
+            title: 'Hi, ' + $scope.userData.fullName + ' :)'
         })
         loginPopup.then(function(res) {
             $scope.closeLogin();
@@ -539,16 +524,13 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     onErrorInLogin = function(rejection) {
         console.log("rejection");
         console.log(JSON.stringify(rejection));
-		if (rejection.data == "The user already signed up to poopersnooper (signing in with facebook)"){
-			console.log("EQUAL");
-		}
     }
 
     function onLogin(username) {
         var data = Backand.getUserDetails();
         $scope.userData = data.$$state.value;
-//        console.log("userdata is: ");
-//        console.log(JSON.stringify($scope.userData));
+//        console.log("!!!!userdata is: ");
+//        console.log("!!!! " + JSON.stringify($scope.userData));
         $scope.loggedIn = 1;
         $scope.getUserFindings($scope.userData.userId);
         $scope.getUserBins($scope.userData.userId);
@@ -611,7 +593,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                 });
                 closePopUpAuto(alertPopup);
             })
-            console.log("username before signning out " + $scope.userData.username);
             $state.reload();
             $scope.userData.username = '';
         } else {
