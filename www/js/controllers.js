@@ -911,7 +911,11 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 		var binMarkerCount = 0;
 		var poopMarkerCount = 0;
 		
-		var addMarkersCondition = 0;
+		var addMarkersCondition = 0;				// Special condition used to 'wait' for Database functions to complete
+		
+		// Direction Service tools
+		var directionsService = "";
+		var directionsDisplay = "";
 		
 		// Downloaded marker area (when leaving this area a new DB call is needed)
 		var loadedMapArea = {
@@ -1053,6 +1057,12 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             enableHighAccuracy: true
         };
 
+				// Direction service tools
+				directionsService = new google.maps.DirectionsService;
+				directionsDisplay = new google.maps.DirectionsRenderer({
+					suppressMarkers: true
+				});
+				
         $cordovaGeolocation.getCurrentPosition(options).then(function(position) {
 
 						// Resizing Google Map Marker icons
@@ -1083,26 +1093,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             // Wait until the map is loaded and add Marker to current location
             google.maps.event.addListenerOnce($scope.map, 'idle', function() {
 						
-						/*
-								var center = $scope.map.getCenter();
-								var bounds = $scope.map.getBounds();
-								var centerLoc = {
-										lat: center.lat(),
-										lng: center.lng()
-								};
-								var edgeLoc = {
-									lat: bounds.getNorthEast().lat(),
-									lng: bounds.getNorthEast().lng()
-								};
-								var grabDist = getDistanceBetweenPoints(centerLoc, edgeLoc, 'miles');
-								
-								clearAllMarkers();
-								
-                //Initially retreives marker data from Backand
-								$scope.getNearbyFindings(centerLoc.lat,centerLoc.lng,grabDist*10);
-								$scope.getNearbyBins(centerLoc.lat,centerLoc.lng,grabDist*10);
-								*/
-								
                 // INITIAL USER LOCATION Marker
                 var marker = new google.maps.Marker({
                     map: $scope.map,
@@ -1113,10 +1103,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 										id: 99999999
                 });
                 $scope.userMarker = marker;
-								
-								//console.log("User Marker Icon > " + $scope.userMarker.icon.url);
-								//console.log("User Marker ID > " + $scope.userMarker.id);
-								
+				
 								loadMarkers();
 								
                 //Reload markers every time the map moves
@@ -1570,11 +1557,11 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     // TWO DIFFERENT CASES:
     // Case 1 - Called via the bottom left button to search for the nearest bin to the user location
     // Case 2 - Called via placing the man Marker to search for the nearest bin to the placed Marker
-		// takes 'loc' as a parameter which is a Marker Object
-    $scope.findNearestBin = function(loc) {
-
+		// takes 'myPos' as a parameter which is a Marker Object
+    $scope.findNearestBin = function(myPos) {
+		
         // Hides the man Marker if function called for Case 1
-        if (loc.getIcon().url == circle_icon.url) {
+        if (myPos.getIcon().url == circle_icon.url) {
             if (manMarker != null) {
                 manMarker.setVisible(false);
             }
@@ -1589,8 +1576,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
         //Convert objects returned by Google to be more readable
         var center = {
-            lat: loc.getPosition().lat(),
-            lng: loc.getPosition().lng()
+            lat: myPos.getPosition().lat(),
+            lng: myPos.getPosition().lng()
         };
 
         // Returns the nearest Bin Marker Data that has already been loaded
@@ -1618,11 +1605,14 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             zIndex: 1,
             optimized: false
         });
-
+				
+				// Draws the route from the desired location to the nearest bin marker
+				calcRoute (myPos.getPosition(), binLatLng);
+				
         // Pan to the location of the Nearest Bin - Case 1
         // Pan to the placed marker	- Case 2
         if (manMarker != null) {
-            if (loc.getIcon().url == manMarker.getIcon().url) {
+            if (myPos.getIcon().url == manMarker.getIcon().url) {
                 $scope.map.panTo(manMarker.getPosition());
             } else {
                 $scope.map.panTo(binLatLng);
@@ -2017,7 +2007,23 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
     }
 
-   
+		// Display Route
+		function calcRoute(start,end) {
+			var request = {
+				origin: start,
+				destination: end,
+				travelMode: google.maps.TravelMode.WALKING
+			};
+			directionsService.route(request, function(response, status) {
+				if (status == google.maps.DirectionsStatus.OK) {
+					directionsDisplay.setDirections(response);
+					directionsDisplay.setMap($scope.map);
+				} else {
+					alert("Directions Request from " + start.toUrlValue(6) + " to " + end.toUrlValue(6) + " failed: " + status);
+				}
+			});
+		}
+	 
     //------------------------------>
     //---- New Record Functions ---->
     //------------------------------>
