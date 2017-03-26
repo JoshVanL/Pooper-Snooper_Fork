@@ -19,6 +19,12 @@
 				<i class="icon ion-search"></i>
 		</button>
 		
+		<div id="cancelButtonHolder" class="animated bounceInLeft"></div>
+		<button id="cancelButton" class="button button-icon animated bounceInLeft" 
+		 ng-mouseup="cancelNearestBin()">
+				<i class="icon ion-ios-undo"></i>
+		</button>
+		
 		<div id="map" droppable data-tap-disabled="true" click="handleIconPress()"></div>
 	
 		<div id="panelOpenHolder" class="animated bounceInRight"></div>

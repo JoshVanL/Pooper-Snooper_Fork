@@ -86,8 +86,8 @@ angular.module('PooperSnooper', ['ionic', 'backand', 'PooperSnooper.controllers'
 
 
 
-    // $urlRouterProvider.otherwise('/app/map');
-    $urlRouterProvider.otherwise('/app/welcome');
+    $urlRouterProvider.otherwise('/app/map');
+    //$urlRouterProvider.otherwise('/app/welcome');
     $httpProvider.interceptors.push('APIInterceptor');
   })
 

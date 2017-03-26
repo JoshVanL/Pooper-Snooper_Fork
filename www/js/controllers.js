@@ -917,6 +917,9 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 		var directionsService = "";
 		var directionsDisplay = "";
 		
+		// Geocoder
+		var geocoder = "";
+		
 		// Downloaded marker area (when leaving this area a new DB call is needed)
 		var loadedMapArea = {
 			centerLat: "",
@@ -1062,6 +1065,9 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 				directionsDisplay = new google.maps.DirectionsRenderer({
 					suppressMarkers: true
 				});
+				
+				// Geocoder
+				geocoder = new google.maps.Geocoder;
 				
         $cordovaGeolocation.getCurrentPosition(options).then(function(position) {
 
@@ -1581,7 +1587,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         };
 
         // Returns the nearest Bin Marker Data that has already been loaded
-        var nearestBin = getNearestBin(center);
+        var nearestBin = retNearestBin(center);
 
         // Find the reference to the nearest Bin Marker if already loaded (from binObjCache),
         // hide it temporarily and replace with the GIF indicator
@@ -1609,6 +1615,9 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 				// Draws the route from the desired location to the nearest bin marker
 				calcRoute (myPos.getPosition(), binLatLng);
 				
+				// Prints address of the latLng of bin marker to console
+				reverseGeocode(binLatLng);
+				
         // Pan to the location of the Nearest Bin - Case 1
         // Pan to the placed marker	- Case 2
         if (manMarker != null) {
@@ -1626,7 +1635,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     }
 
 		// Return closest bin Marker
-		function getNearestBin(latLng){
+		function retNearestBin(latLng){
 			
 				var markerCount = 0;
 				var markerLimit = 1000;
@@ -1656,6 +1665,25 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         return nearestBin;
 		}
 		
+		// Deactives nearest Bin Indicator and directions
+		$scope.cancelNearestBin = function() {
+			
+			// Hides the man Marker if function called for Case 1
+			if (manMarker != null) {
+					manMarker.setVisible(false);
+			}
+	
+			// Replaces the indicator GIF with the original marker
+			if (tempBinMarker != null) {
+					tempBinMarker.setMap(null);
+			}
+			if (nearestBinMarker != null) {
+					nearestBinMarker.setVisible(true);
+			}
+			
+			directionsDisplay.setMap(null);
+			
+		}
 		
     // Adds new Marker to data Cache
     function addMarkerToCache(marker) {
@@ -1927,6 +1955,39 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 			return type;
 		}
 		
+		// Display Route
+		function calcRoute(start,end) {
+			var request = {
+				origin: start,
+				destination: end,
+				travelMode: google.maps.TravelMode.WALKING
+			};
+			directionsService.route(request, function(response, status) {
+				if (status == google.maps.DirectionsStatus.OK) {
+					directionsDisplay.setDirections(response);
+					directionsDisplay.setMap($scope.map);
+				} else {
+					alert("Directions Request from " + start.toUrlValue(6) + " to " + end.toUrlValue(6) + " failed: " + status);
+				}
+			});
+		}
+		
+		
+		// Reverse geocode function - returns a location name from latlng input
+		function reverseGeocode(latlng) {
+        geocoder.geocode({'location': latlng}, function(results, status) {
+          if (status === 'OK') {
+            if (results[1]) {
+              console.log("Address: " + results[1].formatted_address);
+            } else {
+              window.alert('No results found');
+            }
+          } else {
+            window.alert('Geocoder failed due to: ' + status);
+          }
+        });
+      }
+		
     //--------------------------->
     //----- Other functions ----->
     //-------------------------->
@@ -2007,23 +2068,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
     }
 
-		// Display Route
-		function calcRoute(start,end) {
-			var request = {
-				origin: start,
-				destination: end,
-				travelMode: google.maps.TravelMode.WALKING
-			};
-			directionsService.route(request, function(response, status) {
-				if (status == google.maps.DirectionsStatus.OK) {
-					directionsDisplay.setDirections(response);
-					directionsDisplay.setMap($scope.map);
-				} else {
-					alert("Directions Request from " + start.toUrlValue(6) + " to " + end.toUrlValue(6) + " failed: " + status);
-				}
-			});
-		}
-	 
     //------------------------------>
     //---- New Record Functions ---->
     //------------------------------>
