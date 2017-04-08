@@ -1345,15 +1345,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             icon: marker.getIcon().url
         };
 
-        $scope.input.LatLng = [markerData.lat, markerData.lng];
-        $scope.input.DateTime = new Date();
-        $scope.input.user = $scope.userData.userId;
-        $scope.input.Username = $scope.userData.username;
-        console.log(JSON.stringify($scope.input));
-
         GlobalService.push_poopMarkers(markerData);
 
-        poopMarkerCache.push(marker);
         // Adds the marker to markerCache (so it won't be re-added)
         addMarkerToCache(marker);
 
@@ -2042,16 +2035,14 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             $scope.input.Cleaned = false;
             $scope.input.Cleanedby = null;
             $scope.addFinding().then(function() {
-                $scope.addBin().then(function() {
-                    var validateQuery = $ionicPopup.alert({
-                        title: 'Finding Added',
-                        template: 'Your finding has been added to the map!'
-                    });
-                    validateQuery.then(function(res) {
-                        $scope.recordModal.hide();
-                        $scope.addPoopMarker();
-                        $scope.closePopover();
-                    });
+                var validateQuery = $ionicPopup.alert({
+                    title: 'Finding Added',
+                    template: 'Your finding has been added to the map!'
+                });
+                validateQuery.then(function(res) {
+                    $scope.recordModal.hide();
+                    $scope.addPoopMarker();
+                    $scope.closePopover();
                 });
             });
         }
