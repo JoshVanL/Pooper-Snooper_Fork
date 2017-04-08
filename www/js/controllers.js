@@ -227,10 +227,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         backandService.updateFinding(id, data)
         .then(function(result) {
             console.log(JSON.stringify(result));
-            var createdFindingPopup = $ionicPopup.alert({
-                title: 'Record Cleaned Up!',
-                template: 'The finding has been marked as cleaned up by you!'
-            });
         });
     }
 
@@ -776,7 +772,13 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                         Cleanedby: $scope.userData.username
                     };
                     $scope.updateFinding($scope.selectedRec.id, updateData);
-                    $scope.viewRecordModal.hide();
+                    var createdFindingPopup = $ionicPopup.alert({
+                        title: 'Record Cleaned Up!',
+                        template: 'The finding has been marked as cleaned up by you!'
+                    });
+                    createdFindingPopup.then(function(res) {
+                        $scope.viewRecordModal.hide();
+                    });
                 }
             });
         }
