@@ -650,10 +650,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 .controller('RecordLogsCtrl', function($scope, $ionicModal, $cordovaCamera, $cordovaImagePicker, $filter, $ionicLoading, $cordovaGeolocation, $ionicPopup, GlobalService, backandService) {
 
 
-    if (!$scope.loggedIn) {
-        $scope.requireLogin('Please login to view your records');
-    }
-
     // Blank form used reset fields
     $scope.record = {
         ImageURI: "",
