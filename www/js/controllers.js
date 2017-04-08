@@ -206,10 +206,10 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                 $scope.input = {};
                 $scope.id = result.data.__metadata.id;
                 console.log($scope.id);
-                var createdFindingPopup = $ionicPopup.alert({
-                    title: 'Record Created',
-                    template: 'Your finding has been added!'
-                });
+                //var createdFindingPopup = $ionicPopup.alert({
+                //    title: 'Record Created',
+                //    template: 'Your finding has been added!'
+                //});
                 resolve();
             });
         });
@@ -2016,20 +2016,36 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             //bin
             $scope.input.Votes = 1;
             $scope.addBin().then(function() {
-                $scope.addBinMarker();
+                var validateQuery = $ionicPopup.alert({
+                    title: 'Bin Added',
+                    template: 'Your bin has been added to the map!'
+                });
+                validateQuery.then(function(res) {
+                    $scope.recordModal.hide();
+                    $scope.addBinMarker();
+                    $scope.closePopover();
+                });
             });
         } else {
             //poop
             $scope.input.Cleaned = false;
             $scope.input.Cleanedby = null;
             $scope.addFinding().then(function() {
-                $scope.addPoopMarker();
+                $scope.addBin().then(function() {
+                    var validateQuery = $ionicPopup.alert({
+                        title: 'Finding Added',
+                        template: 'Your finding has been added to the map!'
+                    });
+                    validateQuery.then(function(res) {
+                        $scope.recordModal.hide();
+                        $scope.addPoopMarker();
+                        $scope.closePopover();
+                    });
+                });
             });
         }
         console.log(JSON.stringify($scope.input));
         //$scope.userFindings.push($scope.input);
-        $scope.recordModal.hide();
-
     };
 
     //---------------------------->
