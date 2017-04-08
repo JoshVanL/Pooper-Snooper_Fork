@@ -699,7 +699,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     };
 
 
-    //$scope.doRefresh();
+    $scope.doRefresh();
 
     // Called when the form is submitted
     $scope.createRecord = function() {
