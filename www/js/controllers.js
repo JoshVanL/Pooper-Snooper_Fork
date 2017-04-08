@@ -2028,7 +2028,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         console.log(JSON.stringify($scope.input));
         //$scope.userFindings.push($scope.input);
         $scope.recordModal.hide();
-        clearRecord();
 
     };
 
