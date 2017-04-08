@@ -14,11 +14,11 @@
 	<ion-list>
 		<ion-item ng-repeat="finding in userFindings" ng-click="selectRecord(finding.id)">
         <img ng-show="record.imageURI === undefined" ng-src="img/Assets/poop_small.png" class="left" style = "width:16px;height:16px">
-        {{finding.DateTime}}
+           {{finding.date}}              {{finding.time}}
  		</ion-item>
 		<ion-item ng-repeat = "location in userBins" ng-click = "selectBin(location.id, viewRecordModal)">
           <i class="icon ion-trash-b"></i>
-         {{location.id}} {{location.DateTime}}
+           {{location.date}}              {{location.time}}
 		</ion-item>
 	</ion-list>
 

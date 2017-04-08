@@ -37,6 +37,9 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         backandService.getUserFindings(id)
         .then(function(result) {
             $scope.userFindings = result.data.data;
+            $scope.userFindings[0].date = JSON.stringify($scope.userFindings[0].DateTime).substring(1, 11);
+            $scope.userFindings[0].time = JSON.stringify($scope.userFindings[0].DateTime).substring(12, 17);
+            console.log($scope.userFindings[0].date);
 
         });
     }
@@ -45,6 +48,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         backandService.getUserBins(id)
         .then(function(result) {
             $scope.userBins = result.data.data;
+            $scope.userBins[0].date = JSON.stringify($scope.userBins[0].DateTime).substring(1, 11);
+            $scope.userBins[0].time = JSON.stringify($scope.userBins[0].DateTime).substring(12, 17);
         });
     }
 
@@ -2012,12 +2017,10 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         $scope.input.ImageURI = $scope.record.imageURI;
         $scope.input.Username = $scope.userData.username;
         $scope.input.user = $scope.userData.userId;
-        console.log("here");
         if($scope.recordModal.type){
             //bin
             $scope.input.Votes = 1;
             $scope.addBin().then(function() {
-                console.log("here2");
                 var validateQuery = $ionicPopup.alert({
                     title: 'Bin Added',
                     template: 'Your bin has been added to the map!'
