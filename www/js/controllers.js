@@ -2012,10 +2012,12 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         $scope.input.ImageURI = $scope.record.imageURI;
         $scope.input.Username = $scope.userData.username;
         $scope.input.user = $scope.userData.userId;
+        console.log("here");
         if($scope.recordModal.type){
             //bin
             $scope.input.Votes = 1;
             $scope.addBin().then(function() {
+                console.log("here2");
                 var validateQuery = $ionicPopup.alert({
                     title: 'Bin Added',
                     template: 'Your bin has been added to the map!'
