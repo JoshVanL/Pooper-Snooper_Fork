@@ -206,6 +206,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                 $scope.input = {};
                 $scope.id = result.data.__metadata.id;
                 console.log($scope.id);
+                $scope.input = {};
                 //var createdFindingPopup = $ionicPopup.alert({
                 //    title: 'Record Created',
                 //    template: 'Your finding has been added!'
@@ -803,7 +804,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
                 deleteFindingPopup.then(function(res) {
                     $scope.closeViewRecord();
-                    $scope.doRefresh();
+                    //$scope.doRefresh();
                 });
               } else {
                 console.log("Record to delete > " + $scope.selectedRec.id);
@@ -815,7 +816,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
                 deleteBin.then(function(res) {
                     $scope.closeViewRecord();
-                    $scope.doRefresh();
+                    //$scope.doRefresh();
                 });
               }
             }
@@ -1343,8 +1344,16 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             lng: marker.getPosition().lng(),
             icon: marker.getIcon().url
         };
+
+        $scope.input.LatLng = [markerData.lat, markerData.lng];
+        $scope.input.DateTime = new Date();
+        $scope.input.user = $scope.userData.userId;
+        $scope.input.Username = $scope.userData.username;
+        console.log(JSON.stringify($scope.input));
+
         GlobalService.push_poopMarkers(markerData);
 
+        poopMarkerCache.push(marker);
         // Adds the marker to markerCache (so it won't be re-added)
         addMarkerToCache(marker);
 
@@ -1354,7 +1363,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                 template: '<p>Loading Finding</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
             });
             $scope.selectedMarker = marker;
-            $scope.showMap = 0;
             $scope.selectFinding(this.id, $scope.viewRecordModal);
         });
 
@@ -1965,7 +1973,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
                 deleteFindingPopup.then(function(res) {
                     $scope.closeViewRecord();
-                    $scope.doRefresh();
+                    //$scope.doRefresh();
                 });
               } else {
                 console.log("Record to delete > " + $scope.selectedRec.id);
@@ -1977,10 +1985,11 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
                 deleteBin.then(function(res) {
                     $scope.closeViewRecord();
-                    $scope.doRefresh();
+                    //$scope.doRefresh();
                 });
               }
             }
+            $scope.selectedMarker.setMap(map);
         });
     };
 
