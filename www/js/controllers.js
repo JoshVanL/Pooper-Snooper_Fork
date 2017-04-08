@@ -767,7 +767,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         } else {
             var confirmPopupClean = $ionicPopup.confirm({
                 title: 'You cleaned up the finding?',
-                template: 'This record will be marked as cleaned up by you and removed from map'
+                template: 'This record will be marked as cleaned up by you and marked so on the map'
             });
             confirmPopupClean.then(function(res) {
                 if (res) {
@@ -1988,7 +1988,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         } else {
             var confirmPopupClean = $ionicPopup.confirm({
                 title: 'You cleaned up the finding?',
-                template: 'This record will be marked as cleaned up by you and removed from map'
+                template: 'This record will be marked as cleaned up by you and marked so on the map'
             });
             confirmPopupClean.then(function(res) {
                 if (res) {
@@ -1996,6 +1996,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                         Cleaned: true,
                         Cleanedby: $scope.userData.username
                     };
+                    console.log(JSON.stringify(updateData));
                     $scope.updateFinding($scope.selectedRec.id, updateData);
                     $scope.closeViewRecord();
                 }
