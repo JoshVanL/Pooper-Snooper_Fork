@@ -1355,7 +1355,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             $ionicLoading.show({
                 template: '<p>Loading Finding</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
             });
-            $scope.selectedMarker = marker;
+            $scope.selectedMarker = this;
             $scope.selectFinding(this.id, $scope.viewRecordModal);
         });
 
@@ -1400,7 +1400,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             $ionicLoading.show({
                 template: '<p>Loading Bin</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
             });
-            $scope.selectedMarker = marker;
+            $scope.selectedMarker = this;
             $scope.selectBin(this.id, $scope.viewRecordModal);
         });
 
@@ -1981,8 +1981,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                     //$scope.doRefresh();
                 });
               }
+              $scope.selectedMarker.setMap(null);
             }
-            $scope.selectedMarker.setMap(map);
         });
     };
 
