@@ -151,6 +151,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             $scope.selectedRec = result.data;
             $scope.selectedRec.type = 0; //finding
             $scope.ownRecord = 0;
+            $scope.selectedRec.date = JSON.stringify($scope.selectedRec.DateTime).substring(1, 11);
+            $scope.selectedRec.time = JSON.stringify($scope.selectedRec.DateTime).substring(12, 17);
             if (result.data.user == $scope.userData.userId) $scope.ownRecord = 1;
             console.log(JSON.stringify($scope.selectedRec));
             if($scope.showMap) getGoogleMaps();
@@ -188,6 +190,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             $scope.selectedRec = result.data;
             $scope.selectedRec.type = 1; //bin
             $scope.ownRecord = 0;
+            $scope.selectedRec.date = JSON.stringify($scope.selectedRec.DateTime).substring(1, 11);
+            $scope.selectedRec.time = JSON.stringify($scope.selectedRec.DateTime).substring(12, 17);
             $scope.selectedRec.canValidate = $scope.selectedRec.canReport = 0;
             if($scope.loggedIn) {
                 $scope.checkAbleToVote(id).then(function(res) {
