@@ -1,6 +1,6 @@
 angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
-.controller('AppCtrl', function($scope, $state, Backand, $ionicModal, ConnectivityMonitor, $timeout, $ionicPopup, $q, backandService, $ionicLoading, LoginService, AuthService) {
+.controller('AppCtrl', function($scope, $state, Backand, $ionicModal, ConnectivityMonitor, $timeout, $ionicPopup, $q, backandService, $ionicLoading, LoginService, AuthService, $cordovaSocialSharing) {
 
     // With the new view caching in Ionic, Controllers are only called
     // when they are recreated or on app start, instead of every page change.
@@ -647,6 +647,14 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         }
         return false;
     };
+
+    //	change the link to the app link
+    $scope.shareRecord = function() {
+        var phrase = "Look at this poop! ";
+        if ($scope.selectedRec.type) phrase = "Check out this bin! ";
+        $cordovaSocialSharing.share(phrase, phrase, $scope.selectedRec.ImageURI, "http://www.natural-apptitude.co.uk");
+    }
+
 
     //$scope.getAllFindings();
     //$scope.getAllBins();
