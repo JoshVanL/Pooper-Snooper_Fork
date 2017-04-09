@@ -1171,6 +1171,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                     lat: poopLatLng[i][0],
                     lng: poopLatLng[i][1]
                 });
+                var poop = poop_icon;
+                if ($scope.findings[i].Cleaned) poop = { url : "img/Assets/poop_small_clean.png"};
                 marker = new google.maps.Marker({
                     position: myLatLng,
                     icon: poop_icon

@@ -55,8 +55,7 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
         //        }
         //    }
         //});
-        
-        var str = "?fields=['id','LatLng','DateTime']&pageSize=1000&pageNumber=1"
+        var str = "?fields=['id','LatLng','DateTime','Cleaned']&pageSize=1000&pageNumber=1&'filter':{'q':{'LatLng':{'$withinKilometers':[["+lat+","+lng+"],200]}}}"
         return $http.get(Backand.getApiUrl() + baseUrl + dogFindingsName + str );
     };
 
@@ -166,7 +165,7 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
 
         //    }
         //});
-        var str = "?fields=['id','LatLng','DateTime']&pageSize=1000&pageNumber=1&filter=[{'fieldName':'Votes','operator':'greaterThan','value':'-5'}]"
+        var str = "?fields=['id','LatLng','DateTime']&pageSize=1000&pageNumber=1&filter=[{'fieldName':'Votes','operator':'greaterThan','value':'-5'}]&'filter':{'q':{'LatLng':{'$withinKilometers':[["+lat+","+lng+"],200]}}}"
         return $http.get(Backand.getApiUrl() + baseUrl + binLocationsName + str );
     };
 
