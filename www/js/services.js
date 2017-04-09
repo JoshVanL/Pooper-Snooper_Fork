@@ -63,11 +63,13 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
 
 
     getUserFindings = function(id) {
-        return $http.get(Backand.getApiUrl() + baseUrl + dogFindingsName + '?pageSize=200&filter=[{"fieldName":"user","operator":"in","value":"' + id + '"}]');
+        var str = "&fields=['id','LatLng','DateTime']"
+        return $http.get(Backand.getApiUrl() + baseUrl + dogFindingsName + '?pageSize=200&filter=[{"fieldName":"user","operator":"in","value":"' + id + '"}]'+str);
     };
 
     getUserBins = function(id) {
-        return $http.get(Backand.getApiUrl() + baseUrl + binLocationsName + '?pageSize=200&filter=[{"fieldName":"user","operator":"in","value":"' + id + '"}]');
+        var str = "&fields=['id','LatLng','DateTime']"
+        return $http.get(Backand.getApiUrl() + baseUrl + binLocationsName + '?pageSize=200&filter=[{"fieldName":"user","operator":"in","value":"' + id + '"}]'+ str);
     };
 
     selectFinding = function(id) {
@@ -164,7 +166,7 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
 
         //    }
         //});
-        var str = "?fields=['id','LatLng','DateTime']"
+        var str = "?fields=['id','LatLng','DateTime']&pageSize=1000&pageNumber=1"
         return $http.get(Backand.getApiUrl() + baseUrl + binLocationsName + str );
     };
 
