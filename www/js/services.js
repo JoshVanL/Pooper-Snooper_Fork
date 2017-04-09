@@ -38,20 +38,26 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
         str = str.substring(0, str.length - 1);
         var timeToDecay = new Date(Date.now() - 1.814e+9); //3 weeks
         console.log(JSON.stringify(time));
-        return $http({
-            method: 'GET',
-            url: Backand.getApiUrl() + '/1/objects/dogFindings',
-            params: {
-                pageSize: 1000,
-                pageNumber: 1,
-                sort: [],
-                filter: {
-                    "q":{ 
-                        "LatLng" : {"$withinKilometers":[[lat,lng],200]},
-                    }
-                }
-            }
-        });
+        var fields = ['LatLng', 'DateTime'];
+        var str = "['LatLng','DateTime']";
+        //return $http({
+        //    method: 'GET',
+        //    url: Backand.getApiUrl() + '/1/objects/dogFindings',
+        //    params: {
+        //        pageSize: 1000,
+        //        pageNumber: 1,
+        //        sort: [],
+        //        //fields: ['LatLng','DateTime'],
+        //        filter: {
+        //            "q":{ 
+        //                "LatLng" : {"$withinKilometers":[[lat,lng],200]},
+        //            }
+        //        }
+        //    }
+        //});
+        
+        var str = "?fields=['id','LatLng','DateTime']&pageSize=1000&pageNumber=1"
+        return $http.get(Backand.getApiUrl() + baseUrl + dogFindingsName + str );
     };
 
 
@@ -142,21 +148,24 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
     };
 
     getEveryBin = function(lat, lng) {
-        return $http({
-            method: 'GET',
-            url: Backand.getApiUrl() + '/1/objects/binLocations',
-            params: {
-                pageSize: 1000,
-                pageNumber: 1,
-                sort: [],
-                filter: {
-                    "q": {
-                        "LatLng" : {"$withinKilometers":[[lat,lng],200]}
-                    }
-                }
+        //return $http({
+        //    method: 'GET',
+        //    url: Backand.getApiUrl() + '/1/objects/binLocations',
+        //    params: {
+        //        pageSize: 1000,
+        //        pageNumber: 1,
+        //        sort: [],
+        //        //fields: ['LatLng','DateTime'],
+        //        filter: {
+        //            "q": {
+        //                "LatLng" : {"$withinKilometers":[[lat,lng],200]}
+        //            }
+        //        }
 
-            }
-        });
+        //    }
+        //});
+        var str = "?fields=['id','LatLng','DateTime']"
+        return $http.get(Backand.getApiUrl() + baseUrl + binLocationsName + str );
     };
 
     addBin = function(bin) {

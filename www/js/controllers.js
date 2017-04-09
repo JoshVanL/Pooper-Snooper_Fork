@@ -907,10 +907,9 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         var returnObject = {};
         backandService.getEveryFinding(center.lat(), center.lng())
         .then(function(result) {
-            console.log("succ");
             $scope.findings = result.data.data;
             console.log(JSON.stringify(result));
-            console.log(JSON.stringify($scope.findings));
+            //console.log(JSON.stringify($scope.findings));
             getPoopMarkers();
         }, function(error) {
             console.log("err");
@@ -926,6 +925,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             $scope.bins = result.data.data;
             getBinMarkers();
             console.log("Got all Bins");
+            console.log(JSON.stringify(result));
           });
     }
 
