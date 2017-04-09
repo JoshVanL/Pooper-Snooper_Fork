@@ -914,10 +914,10 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
     $scope.takePicture = function() {
         var options = {
-            quality: 80,
+            quality: 70,
             destinationType: Camera.DestinationType.DATA_URL,
             sourceType: Camera.PictureSourceType.CAMERA,
-            allowEdit: true,
+            allowEdit: false,
             encodingType: Camera.EncodingType.JPEG,
             targetWidth: 320,
             targetHeight: 320,
