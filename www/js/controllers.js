@@ -970,6 +970,10 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         url: "img/Assets/dog_bin_small.png",
         //scaledSize: ''
     };
+    var bin_icon_conf = {
+        url: "img/Assets/dog_bin_small_conf.png",
+        //scaledSize: ''
+    };
     var poop_icon_clean = {
         url: "img/Assets/poop_small_clean.png",
         //scaledSize: ''
@@ -1093,6 +1097,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             poop_icon.scaledSize = new google.maps.Size(20, 20);
             poop_icon_clean.scaledSize = new google.maps.Size(20, 20);
             bin_icon.scaledSize = new google.maps.Size(35, 35);
+            bin_icon_conf.scaledSize = new google.maps.Size(35, 35);
             circle_icon.scaledSize = new google.maps.Size(50, 50);
             circle_iconA1.scaledSize = new google.maps.Size(50, 50);
             circle_iconA2.scaledSize = new google.maps.Size(50, 50);
@@ -1214,9 +1219,11 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                     lat: binLatLng[i][0],
                     lng: binLatLng[i][1]
                 });
+                var bin = bin_icon;
+                if ($scope.bins[i].Votes > 3) bin = bin_icon_conf;
                 var marker = new google.maps.Marker({
                     position: myLatLng,
-                    icon: bin_icon
+                    icon: bin
                 });
                 var markerData = {
                     lat: marker.getPosition().lat(),
@@ -1549,6 +1556,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                     currentIcon = poop_icon;
                 } else if (markers[i].icon == poop_icon_clean.url) {
                     currentIcon = poop_icon_clean;
+                } else if (markers[i].icon == bin_icon_conf.url) {
+                    currentIcon = bin_icon_conf;
                 } else if (markers[i].icon == bin_icon.url) {
 
                     currentIcon = bin_icon;
