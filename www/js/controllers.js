@@ -970,6 +970,10 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         url: "img/Assets/dog_bin_small.png",
         //scaledSize: ''
     };
+    var poop_icon_clean = {
+        url: "img/Assets/poop_small_clean.png",
+        //scaledSize: ''
+    };
     var bin_green_icon = {
         url: "img/Assets/dog_bin_small_green.png"
     }
@@ -1172,10 +1176,11 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                     lng: poopLatLng[i][1]
                 });
                 var poop = poop_icon;
-                if ($scope.findings[i].Cleaned) poop = { url : "img/Assets/poop_small_clean.png"};
+                if ($scope.findings[i].Cleaned) poop = poop_icon_clean;
+
                 marker = new google.maps.Marker({
                     position: myLatLng,
-                    icon: poop_icon
+                    icon: poop
                 });
 
                 var markerData = {
@@ -1541,6 +1546,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
                 if (markers[i].icon == poop_icon.url) {
                     currentIcon = poop_icon;
+                } else if (markers[i].icon == poop_icon_clean.url) {
+                    currentIcon = poop_icon_clean;
                 } else if (markers[i].icon == bin_icon.url) {
 
                     currentIcon = bin_icon;
@@ -1576,7 +1583,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                 // Adds the marker to markerCache (so it won't be re-added)
                 addMarkerToCache(marker);
 
-                if (currentIcon == poop_icon) {
+                if (currentIcon == poop_icon || currentIcon == poop_icon_clean) {
                     google.maps.event.addListener(marker, 'click', function() {
                         console.log("clicked " + this.id);
                         $ionicLoading.show({
