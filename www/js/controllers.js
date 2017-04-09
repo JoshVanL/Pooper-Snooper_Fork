@@ -1091,6 +1091,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         $cordovaGeolocation.getCurrentPosition(options).then(function(position) {
 
             poop_icon.scaledSize = new google.maps.Size(20, 20);
+            poop_icon_clean.scaledSize = new google.maps.Size(20, 20);
             bin_icon.scaledSize = new google.maps.Size(35, 35);
             circle_icon.scaledSize = new google.maps.Size(50, 50);
             circle_iconA1.scaledSize = new google.maps.Size(50, 50);
