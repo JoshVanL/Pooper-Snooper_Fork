@@ -638,12 +638,12 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         for (var rec in $scope.userFindings) {
             recDate = new Date($scope.userFindings[rec].DateTime);
             if (recDate > testTime) recentRecs++;
-            if (recentRecs > 2) return true;
+            if (recentRecs > 4) return true;
         }
         for (var rec in $scope.userBins) {
             recDate = new Date($scope.userBins[rec].DateTime);
             if (recDate > testTime) recentRecs++;
-            if (recentRecs > 2) return true;
+            if (recentRecs > 4) return true;
         }
         return false;
     };
@@ -720,11 +720,34 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         $scope.input.Cleaned = false;
         $scope.input.Cleanedby = null;
         $scope.input.user = $scope.userData.userId;
-        console.log(JSON.stringify($scope.input));
-        $scope.addFinding();
         //$scope.userFindings.push($scope.input);
+        if($scope.recordModal.type){
+            //bin
+            $scope.input.Votes = 1;
+            $scope.addBin().then(function() {
+                var validateQuery = $ionicPopup.alert({
+                    title: 'Bin Added',
+                    template: 'Your bin has been added!'
+                });
+                validateQuery.then(function(res) {
+                    $scope.recordModal.hide();
+                });
+            });
+        } else {
+            //poop
+            $scope.input.Cleaned = false;
+            $scope.input.Cleanedby = null;
+            $scope.addFinding().then(function() {
+                var validateQuery = $ionicPopup.alert({
+                    title: 'Finding Added',
+                    template: 'Your finding has been added!'
+                });
+                validateQuery.then(function(res) {
+                    $scope.recordModal.hide();
+                });
+            });
+        }
 
-        $scope.recordModal.hide();
         $scope.doRefresh();
     };
 
@@ -739,7 +762,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         $scope.record.time = ($scope.record.dateTime.getHours() < 10 ? '0' : '') + ($scope.record.dateTime.getHours() + ":" +
             ($scope.record.dateTime.getMinutes() < 10 ? '0' : '') + $scope.record.dateTime.getMinutes());
     };
-
     // Open our new record modal
     $scope.newRecord = function(phrase, type) {
         if ($scope.loggedIn) {
@@ -749,12 +771,36 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                     template: 'Please wait before adding more records'
                 });
             } else {
-                clearRecord();
-                $scope.createEnabled = false;
-                $scope.recordModal.phrase = phrase;
-                $scope.recordModal.type = type; //finding = 0, bin = 1
-                console.log($scope.recordModal.type);
-                $scope.recordModal.show();
+                var selectPopup = $ionicPopup.show({
+                    title: 'Select record type to add!',
+                    scope: $scope,
+                    buttons: [
+                        {
+                            text: '<b>Doggy Finding</b>',
+                            type: 'button icon-left button-energized',
+                            onTap: function(e) {
+                                $scope.recordModal.type = 0;
+                            }
+                        }, 
+                        {
+                            text: '<b>Bin Location</b>',
+                            type: 'button icon-left button-energized',
+                            onTap: function(e) {
+                                $scope.recordModal.type = 1;
+                                phrase = 'Add new bin location';
+                            }
+                        }
+                    ]
+                });
+                selectPopup.then(function(res) {
+                    console.log(JSON.stringify(res));
+                    clearRecord();
+                    $scope.createEnabled = false;
+                    $scope.recordModal.phrase = phrase;
+                    //$scope.recordModal.type = type; //finding = 0, bin = 1
+                    console.log($scope.recordModal.type);
+                    $scope.recordModal.show();
+                });
             }
         } else {
             $scope.requireLogin('You must be logged in to create a record');
@@ -873,8 +919,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             sourceType: Camera.PictureSourceType.CAMERA,
             allowEdit: true,
             encodingType: Camera.EncodingType.JPEG,
-            targetWidth: 200,
-            targetHeight: 200,
+            targetWidth: 320,
+            targetHeight: 320,
             popoverOptions: CameraPopoverOptions,
             correctOrientation: true,
             saveToPhotoAlbum: false
