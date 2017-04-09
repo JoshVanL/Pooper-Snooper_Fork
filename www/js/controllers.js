@@ -37,9 +37,11 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         backandService.getUserFindings(id)
         .then(function(result) {
             $scope.userFindings = result.data.data;
-            $scope.userFindings[0].date = JSON.stringify($scope.userFindings[0].DateTime).substring(1, 11);
-            $scope.userFindings[0].time = JSON.stringify($scope.userFindings[0].DateTime).substring(12, 17);
-            console.log($scope.userFindings[0].date);
+            for(var i=0; i < $scope.userFindings.length; i++) {
+                $scope.userFindings[i].date = JSON.stringify($scope.userFindings[i].DateTime).substring(1, 11);
+                $scope.userFindings[i].time = JSON.stringify($scope.userFindings[i].DateTime).substring(12, 17);
+                console.log($scope.userFindings[0].date);
+            }
 
         });
     }
@@ -48,8 +50,10 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         backandService.getUserBins(id)
         .then(function(result) {
             $scope.userBins = result.data.data;
-            $scope.userBins[0].date = JSON.stringify($scope.userBins[0].DateTime).substring(1, 11);
-            $scope.userBins[0].time = JSON.stringify($scope.userBins[0].DateTime).substring(12, 17);
+            for(var i=0; i < $scope.userBins.length; i++) {
+                $scope.userBins[i].date = JSON.stringify($scope.userBins[i].DateTime).substring(1, 11);
+                $scope.userBins[i].time = JSON.stringify($scope.userBins[i].DateTime).substring(12, 17);
+            }
         });
     }
 
