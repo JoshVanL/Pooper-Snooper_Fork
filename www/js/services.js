@@ -55,7 +55,7 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
         //        }
         //    }
         //});
-        var str = "?fields=['id','LatLng','DateTime','Cleaned']&pageSize=1000&pageNumber=1&'filter':{'q':{'LatLng':{'$withinKilometers':[["+lat+","+lng+"],200]}}}"
+        var str = "?fields=['id','LatLng','DateTime','Cleaned']&pageSize=1001&pageNumber=1&'filter'=[{'q':{'LatLng':{'$withinKilometers':[["+lat+","+lng+"],200]}}},{'fieldName':'DateTime','operator':'greaterThan','value':'"+timeToDecay.toJSON()+"'}]"
         return $http.get(Backand.getApiUrl() + baseUrl + dogFindingsName + str );
     };
 
