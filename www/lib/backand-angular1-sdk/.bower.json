@@ -1,0 +1,53 @@
+{
+  "name": "backand-angular1-sdk",
+  "description": "Backand SDK for Angular 1",
+  "version": "1.9.13",
+  "main": [
+    "dist/backand.provider.js"
+  ],
+  "ignore": [
+    "node_modules",
+    "bower_components",
+    "src",
+    "package.json",
+    ".babelrc",
+    ".gitignore",
+    "gulpfile.js"
+  ],
+  "dependencies": {
+    "angular": "~1.5.3",
+    "backand-vanilla-sdk": "^1.1.10"
+  },
+  "authors": [
+    "Backand"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/backand/angular1-sdk.git"
+  },
+  "homepage": "https://github.com/backand/angular1-sdk#readme",
+  "keywords": [
+    "Backand",
+    "backend",
+    "backend sdk",
+    "backend js",
+    "backend javascript",
+    "angular1-sdk",
+    "backend angular sdk"
+  ],
+  "private": false,
+  "resolutions": {
+    "backand-vanilla-sdk": "^1.1.5"
+  },
+  "_release": "1.9.13",
+  "_resolution": {
+    "type": "version",
+    "tag": "v1.9.13",
+    "commit": "06d91b35a76dfd6b2dbf533459f089a4c821346b"
+  },
+  "_source": "https://github.com/backand/angular1-sdk.git",
+  "_target": "^1.9.13",
+  "_originalSource": "backand-angular1-sdk",
+  "_direct": true
+}

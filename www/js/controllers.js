@@ -22,7 +22,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     loadUserDetails();
 
     function loadUserDetails() {
-        var data = Backand.getUserDetails();
+        var data = Backand.user.getUserDetails();
         if (data.$$state.value) {
             console.log("User already logged in!");
             console.log(JSON.stringify(data));
@@ -517,13 +517,13 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     }
 
 	$scope.socialSignIn = function(provider) {
-        LoginService.socialSignIn(provider)
+        LoginService.socialSignin(provider)
         .then(onValidLogin, onErrorInLogin);
     };
 
     onValidLogin = function(response) {
         onLogin();
-        $scope.userData.username = response.data || $scope.userData.username;
+        $scope.userData = response.data || $scope.userData;
 //		console.log( "User Data is " + JSON.stringify($scope.userData));
         var loginPopup = $ionicPopup.alert({
             title: 'Hi, ' + $scope.userData.fullName + ' :)'
@@ -539,13 +539,13 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     }
 
     function onLogin(username) {
-        var data = Backand.getUserDetails();
+        var data = Backand.user.getUserDetails();
         $scope.userData = data.$$state.value;
 //        console.log("!!!!userdata is: ");
 //        console.log("!!!! " + JSON.stringify($scope.userData));
         $scope.loggedIn = 1;
-        $scope.getUserFindings($scope.userData.userId);
-        $scope.getUserBins($scope.userData.userId);
+        $scope.getUserFindings($scope.userData);
+        $scope.getUserBins($scope.userData);
     }
 
     // Perform the login action when the user submits the login form

@@ -211,9 +211,9 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
         // because we set app token att app.js
     }
 
-    service.socialSignIn = function(provider) {
+    service.socialSignin = function(provider) {
         console.log("inside the service.js for socialSignIn");
-        return Backand.socialSignIn(provider);
+        return Backand.socialSignin(provider);
     };
 
     service.socialSignUp = function(provider) {
@@ -234,6 +234,9 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
     service.signup = function(firstName, lastName, email, password, confirmPassword) {
         return Backand.signup(firstName, lastName, email, password, confirmPassword);
     }
+    service.getUsername = function () {
+        return Backand.user.getUsername();
+    };
 })
 
 .service('AuthService', function($http, Backand) {
@@ -246,7 +249,7 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
     loadUserDetails();
 
     function loadUserDetails() {
-        self.currentUser.name = Backand.getUsername();
+        self.currentUser.name = Backand.user.getUsername();
         if (self.currentUser.name) {
             getCurrentUserInfo()
             .then(function(data) {
