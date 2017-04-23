@@ -321,7 +321,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         backandService.getEveryBin()
         .then(function(result) {
             $scope.bins = result.data.data;
-      
+
         });
     }
 
@@ -393,14 +393,14 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     };
 
     $scope.doSignUp = function() {
-      
+
         $scope.signUpData.errorMessage = '';
         if ($scope.signUpData.password.length >= 6) {
             LoginService.signup($scope.signUpData.firstName, $scope.signUpData.lastName, $scope.signUpData.email, $scope.signUpData.password, $scope.signUpData.again)
             .then(function(response) {
                 //getting invalid grant - username or password is incorrect for some reason
                 // success
-   
+
                 var signedUpPopup = $ionicPopup.alert({
                     title: 'Signed Up!',
                     template: $scope.signUpData.email
@@ -409,7 +409,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                     onLogin($scope.signUpData.email);
                     $scope.signUpModal.hide();
                 });
-            
+
             }, function(reason) {
                 console.log(JSON.stringify(reason));
                 if (reason.data != undefined) {
@@ -513,7 +513,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         });
 
     }
-	
+
 	$scope.socialSignIn = function(provider) {
         LoginService.socialSignIn(provider)
         .then(onValidLogin, onErrorInLogin);
@@ -789,7 +789,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                             onTap: function(e) {
                                 $scope.recordModal.type = 0;
                             }
-                        }, 
+                        },
                         {
                             text: '<b>Bin Location</b>',
                             type: 'button icon-left button-energized',
@@ -867,7 +867,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
                 deleteFindingPopup.then(function(res) {
                     $scope.closeViewRecord();
-                    //$scope.doRefresh();
+                    $scope.doRefresh();
                 });
               } else {
                 console.log("Record to delete > " + $scope.selectedRec.id);
@@ -879,7 +879,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
                 deleteBin.then(function(res) {
                     $scope.closeViewRecord();
-                    //$scope.doRefresh();
+                    $scope.doRefresh();
                 });
               }
             }
@@ -951,7 +951,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
 //Note : removed $state from dependencies (dunno what it did!)
 .controller('MapCtrl', function($scope, $cordovaGeolocation, backandService, $q, $ionicModal, $window, $ionicPopup, $ionicLoading, $rootScope, $cordovaNetwork, $ionicSideMenuDelegate, GlobalService, ConnectivityMonitor, $cordovaCamera, $cordovaImagePicker) {
-
 
     //Disables swipe to side menu feature on entering page
     $scope.$on('$ionicView.enter', function() {
@@ -1081,6 +1080,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             autoUpdateOption = true;
             autoUpdate();
             console.log("ABC");
+            initMap();
         }
         if (connLost == true && ConnectivityMonitor.isOnline()) {
             connLost = false;
@@ -1181,11 +1181,11 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
             $scope.map = new google.maps.Map(document.getElementById("map"),
             mapOptions);
-            
+
             $scope.getAllFindings();
             $scope.getAllBins();
             console.log("here");
-            
+
 
             // Wait until the map is loaded and add Marker to current location
             google.maps.event.addListenerOnce($scope.map, 'idle', function() {
