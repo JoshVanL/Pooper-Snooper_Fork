@@ -153,7 +153,9 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             $scope.ownRecord = 0;
             $scope.selectedRec.date = JSON.stringify($scope.selectedRec.DateTime).substring(1, 11);
             $scope.selectedRec.time = JSON.stringify($scope.selectedRec.DateTime).substring(12, 17);
-            if (result.data.user == $scope.userData.userId) $scope.ownRecord = 1;
+            console.log("Here");
+            if ($scope.loggedIn) if (result.data.user == $scope.userData.userId) $scope.ownRecord = 1;
+            console.log("Here2");
             console.log(JSON.stringify($scope.selectedRec));
             if($scope.showMap) getGoogleMaps();
             viewModal.show();
