@@ -32,31 +32,38 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
         return $http.get(getFindingsUrl());
     };
 
-		/*
-    getEveryFinding = function(lat, lng) {
-        console.log("Here");
+
+    getEveryFinding = function(lat, lng, dist) {
+
         var time = new Date();
         str = time.toJSON();
         str = str.substring(0, str.length - 1);
         var timeToDecay = new Date(Date.now() - 1.814e+9); //3 weeks
         console.log(JSON.stringify(time));
-        return $http({
-            method: 'GET',
-            url: Backand.getApiUrl() + '/1/objects/dogFindings',
-            params: {
-                pageSize: 1000,
-                pageNumber: 1,
-                sort: [],
-                filter: {
-                    "q":{ 
-                        "LatLng" : {"$withinKilometers":[[lat,lng],200]}
-                    }
-                }
-            }
-        });
+
+        var fields = ['LatLng', 'DateTime'];
+        var str = "['LatLng','DateTime']";
+        //return $http({
+        //    method: 'GET',
+        //    url: Backand.getApiUrl() + '/1/objects/dogFindings',
+        //    params: {
+        //        pageSize: 1000,
+        //        pageNumber: 1,
+        //        sort: [],
+        //        //fields: ['LatLng','DateTime'],
+        //        filter: {
+        //            "q":{ 
+        //                "LatLng" : {"$withinKilometers":[[lat,lng],dist]},
+        //            }
+        //        }
+        //    }
+        //});
+        var str = "?fields=['id','LatLng','DateTime','Cleaned']&pageSize=1001&pageNumber=1&'filter'=[{'q':{'LatLng':{'$withinKilometers':[["+lat+","+lng+"],dist]}}},{'fieldName':'DateTime','operator':'greaterThan','value':'"+timeToDecay.toJSON()+"'}]"
+        return $http.get(Backand.getApiUrl() + baseUrl + dogFindingsName + str );
+
     };
-		*/
 		
+		/*
 		getEveryFinding = function(lat, lng, dist) {
 			
 			var time = new Date();
@@ -80,13 +87,17 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
 					}
 			});
 		};
+    */
+
 
     getUserFindings = function(id) {
-        return $http.get(Backand.getApiUrl() + baseUrl + dogFindingsName + '?pageSize=200&filter=[{"fieldName":"user","operator":"in","value":"' + id + '"}]');
+        var str = "&fields=['id','LatLng','DateTime']"
+        return $http.get(Backand.getApiUrl() + baseUrl + dogFindingsName + '?pageSize=200&filter=[{"fieldName":"user","operator":"in","value":"' + id + '"}]'+str);
     };
 
     getUserBins = function(id) {
-        return $http.get(Backand.getApiUrl() + baseUrl + binLocationsName + '?pageSize=200&filter=[{"fieldName":"user","operator":"in","value":"' + id + '"}]');
+        var str = "&fields=['id','LatLng','DateTime']"
+        return $http.get(Backand.getApiUrl() + baseUrl + binLocationsName + '?pageSize=200&filter=[{"fieldName":"user","operator":"in","value":"' + id + '"}]'+ str);
     };
 
     selectFinding = function(id) {
@@ -166,7 +177,7 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
         return $http.get(Backand.getApiUrl() + baseUrl + binLocationsName + '?pageSize=200&filter=[{"fieldName":"Votes","operator":"greaterThan","value":"-5"}]');
     };
 	
-		/*
+		
     getEveryBin = function(lat, lng) {
         return $http({
             method: 'GET',
@@ -180,12 +191,29 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
                         "LatLng" : {"$withinKilometers":[[lat,lng],200]}
                     }
                 }
+    getEveryBin = function(lat, lng, dist) {
+        //return $http({
+        //    method: 'GET',
+        //    url: Backand.getApiUrl() + '/1/objects/binLocations',
+        //    params: {
+        //        pageSize: 1000,
+        //        pageNumber: 1,
+        //        sort: [],
+        //        //fields: ['LatLng','DateTime'],
+        //        filter: {
+        //            "q": {
+        //                "LatLng" : {"$withinKilometers":[[lat,lng],dist]}
+        //            }
+        //        }
 
-            }
-        });
+        //    }
+        //});
+        var str = "?fields=['id','LatLng','DateTime','Votes']&pageSize=1000&pageNumber=1&filter=[{'fieldName':'Votes','operator':'greaterThan','value':'-5'}]&'filter':{'q':{'LatLng':{'$withinKilometers':[["+lat+","+lng+"],dist]}}}"
+        return $http.get(Backand.getApiUrl() + baseUrl + binLocationsName + str );
+
     };
-		*/
 		
+		/*
 		getEveryBin = function(lat, lng, dist) {
 			return $http({
 					method: 'GET',
@@ -203,7 +231,8 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
 					}
 			});
 		};
-		
+		*/
+    
     addBin = function(bin) {
         return $http.post(getBinUrl(), bin);
     }
@@ -246,9 +275,9 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
         // because we set app token att app.js
     }
 
-    service.socialSignIn = function(provider) {
+    service.socialSignin = function(provider) {
         console.log("inside the service.js for socialSignIn");
-        return Backand.socialSignIn(provider);
+        return Backand.socialSignin(provider);
     };
 
     service.socialSignUp = function(provider) {
@@ -269,6 +298,9 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
     service.signup = function(firstName, lastName, email, password, confirmPassword) {
         return Backand.signup(firstName, lastName, email, password, confirmPassword);
     }
+    service.getUsername = function () {
+        return Backand.user.getUsername();
+    };
 })
 
 .service('AuthService', function($http, Backand) {
@@ -281,7 +313,7 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
     loadUserDetails();
 
     function loadUserDetails() {
-        self.currentUser.name = Backand.getUsername();
+        self.currentUser.name = Backand.user.getUsername();
         if (self.currentUser.name) {
             getCurrentUserInfo()
             .then(function(data) {

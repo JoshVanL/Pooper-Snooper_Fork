@@ -266,6 +266,12 @@
 	height: 100%;
 	padding:30%;
 }
+
+.findingItem {
+    position: relative;
+    text-align: right;
+}
+
 /* ------ ?! ------ */
 .scroll {
 	height: 100%;
