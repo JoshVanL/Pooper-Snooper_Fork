@@ -32,12 +32,15 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
         return $http.get(getFindingsUrl());
     };
 
-    getEveryFinding = function(lat, lng) {
+
+    getEveryFinding = function(lat, lng, dist) {
+
         var time = new Date();
         str = time.toJSON();
         str = str.substring(0, str.length - 1);
         var timeToDecay = new Date(Date.now() - 1.814e+9); //3 weeks
         console.log(JSON.stringify(time));
+
         var fields = ['LatLng', 'DateTime'];
         var str = "['LatLng','DateTime']";
         //return $http({
@@ -50,15 +53,41 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
         //        //fields: ['LatLng','DateTime'],
         //        filter: {
         //            "q":{ 
-        //                "LatLng" : {"$withinKilometers":[[lat,lng],200]},
+        //                "LatLng" : {"$withinKilometers":[[lat,lng],dist]},
         //            }
         //        }
         //    }
         //});
-        var str = "?fields=['id','LatLng','DateTime','Cleaned']&pageSize=1001&pageNumber=1&'filter'=[{'q':{'LatLng':{'$withinKilometers':[["+lat+","+lng+"],200]}}},{'fieldName':'DateTime','operator':'greaterThan','value':'"+timeToDecay.toJSON()+"'}]"
+        var str = "?fields=['id','LatLng','DateTime','Cleaned']&pageSize=1001&pageNumber=1&'filter'=[{'q':{'LatLng':{'$withinKilometers':[["+lat+","+lng+"],dist]}}},{'fieldName':'DateTime','operator':'greaterThan','value':'"+timeToDecay.toJSON()+"'}]"
         return $http.get(Backand.getApiUrl() + baseUrl + dogFindingsName + str );
-    };
 
+    };
+		
+		/*
+		getEveryFinding = function(lat, lng, dist) {
+			
+			var time = new Date();
+			str = time.toJSON();
+			str = str.substring(0, str.length - 1);
+			var timeToDecay = new Date(Date.now() - 1.814e+9); //3 weeks
+			//console.log(JSON.stringify(time));
+			
+			return $http({
+					method: 'GET',
+					url: Backand.getApiUrl() + '/1/objects/dogFindings',
+					params: {
+							pageSize: 1000,
+							pageNumber: 1,
+							sort: [],
+							filter: {
+									"q":{ 
+											"LatLng" : { "$withinMiles" : [[lat,lng], dist]} 
+									}
+							}
+					}
+			});
+		};
+    */
 
 
     getUserFindings = function(id) {
@@ -147,8 +176,22 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
     getBins = function() {
         return $http.get(Backand.getApiUrl() + baseUrl + binLocationsName + '?pageSize=200&filter=[{"fieldName":"Votes","operator":"greaterThan","value":"-5"}]');
     };
-
+	
+		
     getEveryBin = function(lat, lng) {
+        return $http({
+            method: 'GET',
+            url: Backand.getApiUrl() + '/1/objects/binLocations',
+            params: {
+                pageSize: 1000,
+                pageNumber: 1,
+                sort: [],
+                filter: {
+                    "q": {
+                        "LatLng" : {"$withinKilometers":[[lat,lng],200]}
+                    }
+                }
+    getEveryBin = function(lat, lng, dist) {
         //return $http({
         //    method: 'GET',
         //    url: Backand.getApiUrl() + '/1/objects/binLocations',
@@ -159,16 +202,37 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
         //        //fields: ['LatLng','DateTime'],
         //        filter: {
         //            "q": {
-        //                "LatLng" : {"$withinKilometers":[[lat,lng],200]}
+        //                "LatLng" : {"$withinKilometers":[[lat,lng],dist]}
         //            }
         //        }
 
         //    }
         //});
-        var str = "?fields=['id','LatLng','DateTime','Votes']&pageSize=1000&pageNumber=1&filter=[{'fieldName':'Votes','operator':'greaterThan','value':'-5'}]&'filter':{'q':{'LatLng':{'$withinKilometers':[["+lat+","+lng+"],200]}}}"
+        var str = "?fields=['id','LatLng','DateTime','Votes']&pageSize=1000&pageNumber=1&filter=[{'fieldName':'Votes','operator':'greaterThan','value':'-5'}]&'filter':{'q':{'LatLng':{'$withinKilometers':[["+lat+","+lng+"],dist]}}}"
         return $http.get(Backand.getApiUrl() + baseUrl + binLocationsName + str );
-    };
 
+    };
+		
+		/*
+		getEveryBin = function(lat, lng, dist) {
+			return $http({
+					method: 'GET',
+					url: Backand.getApiUrl() + '/1/objects/binLocations',
+					params: {
+							pageSize: 1000,
+							pageNumber: 1,
+							sort: [],
+							filter: {
+									"q": {
+											"LatLng" : { "$withinMiles" : [[lat,lng], dist]} 
+									}
+							}
+
+					}
+			});
+		};
+		*/
+    
     addBin = function(bin) {
         return $http.post(getBinUrl(), bin);
     }
