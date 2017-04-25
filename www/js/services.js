@@ -177,20 +177,6 @@ angular.module('PooperSnooper.services', ['ionic', 'backand', 'ngCordova'])
         return $http.get(Backand.getApiUrl() + baseUrl + binLocationsName + '?pageSize=200&filter=[{"fieldName":"Votes","operator":"greaterThan","value":"-5"}]');
     };
 	
-		
-    getEveryBin = function(lat, lng) {
-        return $http({
-            method: 'GET',
-            url: Backand.getApiUrl() + '/1/objects/binLocations',
-            params: {
-                pageSize: 1000,
-                pageNumber: 1,
-                sort: [],
-                filter: {
-                    "q": {
-                        "LatLng" : {"$withinKilometers":[[lat,lng],200]}
-                    }
-                }
     getEveryBin = function(lat, lng, dist) {
         //return $http({
         //    method: 'GET',
