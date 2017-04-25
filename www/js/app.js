@@ -84,10 +84,7 @@ angular.module('PooperSnooper', ['ionic', 'backand', 'PooperSnooper.controllers'
 
     // if none of the above states are matched, use this as the fall back
 
-
-
-    $urlRouterProvider.otherwise('/app/map');
-    //$urlRouterProvider.otherwise('/app/welcome');
+    $urlRouterProvider.otherwise('/app/welcome');
     $httpProvider.interceptors.push('APIInterceptor');
   })
 
