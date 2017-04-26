@@ -414,20 +414,9 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         $scope.signUpData.errorMessage = '';
         if ($scope.signUpData.password.length >= 6) {
             LoginService.signup($scope.signUpData.firstName, $scope.signUpData.lastName, $scope.signUpData.email, $scope.signUpData.password, $scope.signUpData.again)
-            .then(function(response) {
-                //getting invalid grant - username or password is incorrect for some reason
-                // success
+            .then(onValidLogin,onErrorInLogin) 
 
-                var signedUpPopup = $ionicPopup.alert({
-                    title: 'Signed Up!',
-                    template: $scope.signUpData.email
-                });
-                signedUpPopup.then(function(res) {
-                    onLogin($scope.signUpData.email);
-                    $scope.signUpModal.hide();
-                });
-
-            }, function(reason) {
+            , function(reason) {
                 console.log(JSON.stringify(reason));
                 if (reason.data != undefined) {
                     console.log('reason.data!= undefined');
@@ -479,10 +468,11 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                     //              $scope.signUpData.errorMessage = JSON.stringify(reason.error_description);
                     console.log($scope.signUpData.errorMessage);
                 };
-            });
+            };
         } else {
             $scope.signUpData.errorMessage = 'Password must be at least 6 characters';
         }
+        $scope.signUpModal.hide();
     };
 
     function closePopUpAuto (popup){ //close popup automatically
