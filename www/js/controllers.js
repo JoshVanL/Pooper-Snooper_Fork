@@ -229,9 +229,11 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     }
 
     $scope.addFinding = function() {
+      console.log("inside add finding");
         return new Promise(function(resolve, reject) {
             backandService.addFinding($scope.input)
             .then(function(result) {
+               console.log("returned from addfinding");
                 console.log(JSON.stringify(result));
                 $scope.input = {};
                 $scope.id = result.data.__metadata.id;
@@ -241,8 +243,13 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                 //    title: 'Record Created',
                 //    template: 'Your finding has been added!'
                 //});
-                resolve();
-            });
+                resolve()
+              }
+                ,function(error){
+                  console.log("error");
+                  console.log(JSON.stringify(error));
+                }
+            );
         });
     }
 
@@ -414,7 +421,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         $scope.signUpData.errorMessage = '';
         if ($scope.signUpData.password.length >= 6) {
             LoginService.signup($scope.signUpData.firstName, $scope.signUpData.lastName, $scope.signUpData.email, $scope.signUpData.password, $scope.signUpData.again)
-            .then(onValidLogin,onErrorInLogin) 
+            .then(onValidLogin,onErrorInLogin)
 
             , function(reason) {
                 console.log(JSON.stringify(reason));
