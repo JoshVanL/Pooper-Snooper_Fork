@@ -3,15 +3,15 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 // ----------------------------------------- >
 // ------------ App Controller ------------ >
 // --------------------------------------- >
-.controller('AppCtrl', function($scope, $state, Backand, $ionicModal, ConnectivityMonitor,
- $timeout, $ionicPopup, $q, backandService, $ionicLoading, LoginService, AuthService, $cordovaSocialSharing) {
 
+.controller('AppCtrl', function ($scope, $state, Backand, $ionicModal, ConnectivityMonitor, $timeout, $ionicPopup, $q, backandService, $ionicLoading, LoginService, AuthService, $cordovaSocialSharing) {
 
     // With the new view caching in Ionic, Controllers are only called
     // when they are recreated or on app start, instead of every page change.
     // To listen for when this page is active (for example, to refresh data),
     // listen for the $ionicView.enter event:
-    // $scope.$on('$ionicView.enter', function(e))
+    //$scope.$on('$ionicView.enter', function(e))
+    //
 
     $scope.findings = [];
     $scope.bins = [];
@@ -25,49 +25,52 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
     loadUserDetails();
 
-
     function loadUserDetails() {
-        var data = Backand.user.getUserDetails();
+        var data = Backand.getUserDetails();
         if (data.$$state.value) {
             console.log("User already logged in!");
             console.log(JSON.stringify(data));
             $scope.userData = data.$$state.value;
             console.log(JSON.stringify($scope.userData));
             $scope.loggedIn = 1;
+            getUserFindings($scope.userData.userId);
+            getUserBins($scope.userData.userId);
         }
     }
 
-    $scope.getAllFindings = function() {
-        backandService.getEveryFinding()
-        .then(function(result) {
-            $scope.findings = result.data.data;
-            // console.log(JSON.stringify(result));
-        });
+    $scope.queryFindings = function () {
+        return $scope.userFindings;
     }
 
-    $scope.getUserFindings = function(id) {
+    $scope.queryBins = function () {
+        return $scope.userBins;
+    }
+
+    $scope.getUserFindings = function (id) {
         backandService.getUserFindings(id)
-        .then(function(result) {
+        .then(function (result) {
             $scope.userFindings = result.data.data;
-            for(var i=0; i < $scope.userFindings.length; i++) {
+            for (var i = 0; i < $scope.userFindings.length; i++) {
                 $scope.userFindings[i].date = JSON.stringify($scope.userFindings[i].DateTime).substring(1, 11);
                 $scope.userFindings[i].time = JSON.stringify($scope.userFindings[i].DateTime).substring(12, 17);
                 console.log($scope.userFindings[0].date);
             }
-
+            $scope.displayFindings = $scope.userFindings;
         });
     }
 
-    $scope.getUserBins = function(id) {
+    $scope.getUserBins = function (id) {
         backandService.getUserBins(id)
-        .then(function(result) {
+        .then(function (result) {
             $scope.userBins = result.data.data;
-            for(var i=0; i < $scope.userBins.length; i++) {
+            for (var i = 0; i < $scope.userBins.length; i++) {
                 $scope.userBins[i].date = JSON.stringify($scope.userBins[i].DateTime).substring(1, 11);
                 $scope.userBins[i].time = JSON.stringify($scope.userBins[i].DateTime).substring(12, 17);
             }
+            $scope.displayBins = $scope.userBins;
         });
     }
+
 
 
     // Attempts to load the map
@@ -77,7 +80,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         });
 
         //This function will be called once the SDK has been loaded
-        window.getGoogleMaps = function() {
+        window.getGoogleMaps = function () {
             getGoogleMaps();
         };
 
@@ -96,19 +99,26 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
     function moveMap() {
         var lat = ($scope.selectedRec.LatLng[0]);
-        var long =($scope.selectedRec.LatLng[1]);
+        var long = ($scope.selectedRec.LatLng[1]);
         console.log(lat, long);
         var latLng = new google.maps.LatLng(lat, long);
-        var poop_icon = {
-            url: "img/Assets/poop_small.png",
-            scaledSize: new google.maps.Size(20, 20)
-        };
+        if (!$scope.selectedRec.type) {
+            var marker_icon = {
+                url: "img/Assets/poop_small.png",
+                scaledSize: new google.maps.Size(20, 20)
+            };
+        } else {
+            var marker_icon = {
+                url: "img/Assets/dog_bin_small.png",
+                scaledSize: new google.maps.Size(20, 20)
+            };
+        }
         if ($scope.mapRecMarker) $scope.mapRecMarker.setMap(null);
         $scope.mapRecMarker = new google.maps.Marker({
             map: $scope.mapRec,
             //animation: google.maps.Animation.DROP,
             zIndex: 100,
-            icon: poop_icon,
+            icon: marker_icon,
             position: latLng
         });
         $scope.mapRec.setCenter(latLng);
@@ -122,72 +132,88 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             console.log("google maps sdk loaded, need modal map.");
             //This function will be called once the SDK has been loaded
             //window.moveMap = function() {
-                var lat = ($scope.selectedRec.LatLng[0]);
-                var long =($scope.selectedRec.LatLng[1]);
-                var latLng = new google.maps.LatLng(lat, long);
-                var mapOptions = {
-                    center: latLng,
-                    zoom: 15,
-                    draggable: false,
-                    mapTypeId: google.maps.MapTypeId.ROADMAP,
-                    mapTypeControl: false,
-                    fullscreenControl: false,
-                    streetViewControl: false
-                };
-                $scope.mapRec = new google.maps.Map(document.getElementById("mapRec"), mapOptions);
-                moveMap();
-                //};
-
-                // //Create a script element to insert into the page
-                //document.createElement("script");
-                // $scope.script = document.createElement("script");
-                // $scope.script.type = "text/javascript";
-                // $scope.script.id = "googleMaps";
-                //
-                // //Note the callback function in the URL is the one we created above
-                // $scope.script.src = 'http://maps.google.com/maps/api/js?key=' + apiKey +
-                    //   '&callback=moveMap';
-                // //console.log(JSON.stringify($scope.script));
-                // document.body.appendChild($scope.script);
-                //moveMap();
-
+            var lat = ($scope.selectedRec.LatLng[0]);
+            var long = ($scope.selectedRec.LatLng[1]);
+            var latLng = new google.maps.LatLng(lat, long);
+            var mapOptions = {
+                center: latLng,
+                zoom: 15,
+                draggable: false,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                mapTypeControl: false,
+                fullscreenControl: false,
+                streetViewControl: false
+            };
+            $scope.mapRec = new google.maps.Map(document.getElementById("mapRec"), mapOptions);
+            moveMap();
         } else {
             console.log("sdk and modal map exist");
             moveMap();
         }
     }
 
-    $scope.selectFinding = function(id, viewModal) {
+    $scope.selectFinding = function (id, viewModal, inRecLogs) {
+        if (inRecLogs) $scope.showMap = 1;
+        else $scope.showMap = 0;
         backandService.selectFinding(id)
-        .then(function(result) {
+        .then(function (result) {
             console.log("Selected finding");
             $scope.selectedRec = result.data;
             $scope.selectedRec.type = 0; //finding
             $scope.ownRecord = 0;
-
             $scope.selectedRec.date = JSON.stringify($scope.selectedRec.DateTime).substring(1, 11);
             $scope.selectedRec.time = JSON.stringify($scope.selectedRec.DateTime).substring(12, 17);
-            console.log("Here");
-            if ($scope.loggedIn) if (result.data.user == $scope.userData.userId) $scope.ownRecord = 1;
-            console.log("Here2");
+            if ($scope.showMap && typeof google == "undefined") getGoogleMaps();
+            if (result.data.user == $scope.userData.userId) $scope.ownRecord = 1;
             console.log(JSON.stringify($scope.selectedRec));
-            if($scope.showMap) getGoogleMaps();
-
             viewModal.show();
             $ionicLoading.hide();
+            if ($scope.showMap && !(typeof google == "undefined")) getGoogleMaps();
         });
     }
 
-    $scope.checkAbleToVote = function(id) {
+    $scope.selectBin = function (id, viewModal, isRecLogs) {
+        if (isRecLogs) $scope.showMap = 1;
+        else $scope.showMap = 0;
+        backandService.selectBin(id)
+        .then(function (result) {
+            console.log("Selected bin");
+            $scope.selectedRec = result.data;
+            $scope.selectedRec.type = 1; //bin
+            $scope.ownRecord = 0;
+            $scope.selectedRec.date = JSON.stringify($scope.selectedRec.DateTime).substring(1, 11);
+            $scope.selectedRec.time = JSON.stringify($scope.selectedRec.DateTime).substring(12, 17);
+            $scope.selectedRec.canValidate = $scope.selectedRec.canReport = 0;
+            if ($scope.showMap && typeof google == "undefined") getGoogleMaps();
+            if ($scope.loggedIn) {
+                $scope.checkAbleToVote(id).then(function (res) {
+                    if (result.data.user == $scope.userData.userId) {
+                        $scope.ownRecord = 1;
+                        $scope.selectedRec.canValidate = $scope.selectedRec.canReport = 0;
+                    }
+                    console.log(JSON.stringify($scope.selectedRec));
+                    viewModal.show();
+                    $ionicLoading.hide();
+                    if ($scope.showMap && !(typeof google == "undefined")) getGoogleMaps();
+                });
+            } else {
+                console.log(JSON.stringify($scope.selectedRec));
+                viewModal.show();
+                $ionicLoading.hide();
+            }
+        });
+    }
+
+    $scope.checkAbleToVote = function (id) {
         var defer = $q.defer();
         backandService.filterBinValidations($scope.userData.userId, id)
-        .then(function(result) {
-            if(result.data.totalRows ==0)  {
+        .then(function (result) {
+            if (result.data.totalRows == 0) {
                 console.log(JSON.stringify(result));
                 console.log("User has not validated");
                 backandService.filterBinReports($scope.userData.userId, id)
-                .then(function(result2) {
-                    if(result2.data.totalRows ==0) {
+                .then(function (result2) {
+                    if (result2.data.totalRows == 0) {
                         console.log("User has not reported");
                         $scope.selectedRec.canValidate = $scope.selectedRec.canReport = 1;
                         return 0;
@@ -199,41 +225,10 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         return defer.promise;
     };
 
-    $scope.selectBin = function(id, viewModal) {
-        backandService.selectBin(id)
-        .then(function(result) {
-            console.log("Selected bin");
-            $scope.selectedRec = {};
-            $scope.selectedRec = result.data;
-            $scope.selectedRec.type = 1; //bin
-            $scope.ownRecord = 0;
-            $scope.selectedRec.date = JSON.stringify($scope.selectedRec.DateTime).substring(1, 11);
-            $scope.selectedRec.time = JSON.stringify($scope.selectedRec.DateTime).substring(12, 17);
-            $scope.selectedRec.canValidate = $scope.selectedRec.canReport = 0;
-            if($scope.loggedIn) {
-                $scope.checkAbleToVote(id).then(function(res) {
-                    if (result.data.user == $scope.userData.userId){
-                        $scope.ownRecord = 1;
-                        $scope.selectedRec.canValidate = $scope.selectedRec.canReport = 0;
-                    }
-                    console.log(JSON.stringify($scope.selectedRec));
-                    viewModal.show();
-                    $ionicLoading.hide();
-                });
-            } else {
-                console.log(JSON.stringify($scope.selectedRec));
-                viewModal.show();
-                $ionicLoading.hide();
-            }
-        });
-    }
-
-    $scope.addFinding = function() {
-      console.log("inside add finding");
-        return new Promise(function(resolve, reject) {
+    $scope.addFinding = function () {
+        return new Promise(function (resolve, reject) {
             backandService.addFinding($scope.input)
-            .then(function(result) {
-               console.log("returned from addfinding");
+            .then(function (result) {
                 console.log(JSON.stringify(result));
                 $scope.input = {};
                 $scope.id = result.data.__metadata.id;
@@ -243,47 +238,42 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                 //    title: 'Record Created',
                 //    template: 'Your finding has been added!'
                 //});
-                resolve()
-              }
-                ,function(error){
-                  console.log("error");
-                  console.log(JSON.stringify(error));
-                }
-            );
+                resolve();
+            });
         });
     }
 
-    $scope.deleteFinding = function(id) {
+    $scope.deleteFinding = function (id) {
         backandService.deleteFinding(id)
-        .then(function(result) {
+        .then(function (result) {
             console.log("Finding deleted");
             console.log(JSON.stringify(result));
         });
     }
 
-    $scope.updateFinding = function(id, data) {
+    $scope.updateFinding = function (id, data) {
         backandService.updateFinding(id, data)
-        .then(function(result) {
+        .then(function (result) {
             console.log(JSON.stringify(result));
         });
     }
 
-    $scope.updateBin = function(id, data, type) {
+    $scope.updateBin = function (id, data, type) {
         $ionicLoading.show({
             template: '<p>Submitting Vote</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
         });
         backandService.updateBin(id, data)
-        .then(function(result) {
+        .then(function (result) {
             console.log(JSON.stringify(result));
             var valData = {
                 user: $scope.userData.userId,
                 bin: $scope.selectedRec.id
             };
             backandService.addUser_binValidation(valData)
-            .then(function(result2) {
+            .then(function (result2) {
                 $ionicLoading.hide();
                 console.log(JSON.stringify(result2));
-                if(type){
+                if (type) {
                     var validatedPopup = $ionicPopup.alert({
                         title: 'Validated!',
                         template: 'This bin has been confirmed by you!'
@@ -298,14 +288,14 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         });
     }
 
-    $scope.validateBin = function() {
-        if($scope.loggedIn){
+    $scope.validateBin = function () {
+        if ($scope.loggedIn) {
             var validateQuery = $ionicPopup.confirm({
                 title: 'Validate?',
                 template: 'Validating cannot be undone'
             });
-            validateQuery.then(function(res) {
-                if(res) {
+            validateQuery.then(function (res) {
+                if (res) {
                     $scope.selectedRec.Votes += 1;
                     $scope.selectedRec.canValidate = 0;
                     $scope.selectedRec.canReport = 0;
@@ -321,13 +311,13 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
     }
     // This should be made dry
-    $scope.reportBin = function() {
-        if($scope.loggedIn){
+    $scope.reportBin = function () {
+        if ($scope.loggedIn) {
             var reportQuery = $ionicPopup.confirm({
                 title: 'Report?',
                 template: 'Report cannot be undone'
             });
-            reportQuery.then(function(res) {
+            reportQuery.then(function (res) {
                 $scope.selectedRec.Votes -= 1;
                 $scope.selectedRec.canReport = 0;
                 $scope.selectedRec.canValidate = 0;
@@ -341,18 +331,18 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         }
     }
 
-    $scope.getAllBins = function() {
+    $scope.getAllBins = function () {
         backandService.getEveryBin()
-        .then(function(result) {
+        .then(function (result) {
             $scope.bins = result.data.data;
 
         });
     }
 
-    $scope.addBin = function() {
-        return new Promise(function(resolve, reject) {
+    $scope.addBin = function () {
+        return new Promise(function (resolve, reject) {
             backandService.addBin($scope.input)
-            .then(function(result) {
+            .then(function (result) {
                 console.log(JSON.stringify(result));
                 $scope.id = result.data.__metadata.id;
                 console.log($scope.id);
@@ -362,9 +352,9 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         });
     }
 
-    $scope.deleteBin = function(id) {
+    $scope.deleteBin = function (id) {
         backandService.deleteBin(id)
-        .then(function(result) {
+        .then(function (result) {
             console.log(result);
             initMap();
         });
@@ -377,12 +367,12 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     // Create the login modal that we will use later
     $ionicModal.fromTemplateUrl('templates/login.html', {
         scope: $scope
-    }).then(function(modal) {
+    }).then(function (modal) {
         $scope.modal = modal;
     });
 
     // Create and load the Modal
-    $ionicModal.fromTemplateUrl('templates/modal/signUp-modal.html', function(modal) {
+    $ionicModal.fromTemplateUrl('templates/modal/signUp-modal.html', function (modal) {
         $scope.signUpModal = modal;
     }, {
         scope: $scope,
@@ -390,18 +380,18 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     });
 
     // Triggered in the login modal to close it
-    $scope.closeLogin = function() {
+    $scope.closeLogin = function () {
         $scope.modal.hide();
     };
 
     // Open the login modal
-    $scope.login = function() {
+    $scope.login = function () {
         $scope.loginData = {};
         $scope.modal.show();
     };
 
     // Triggered in the signUp modal to close it
-    $scope.closeSignUp = function() {
+    $scope.closeSignUp = function () {
         $scope.signUpModal.hide();
         $scope.signUpData = {};
         $scope.signUpData.password = '';
@@ -409,36 +399,48 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     };
 
     //Open the signUp modal
-    $scope.signUp = function() {
+    $scope.signUp = function () {
         $scope.signUpData = {};
         $scope.signUpData.password = '';
         $scope.modal.hide();
         $scope.signUpModal.show();
     };
 
-    $scope.doSignUp = function() {
+    $scope.doSignUp = function () {
 
         $scope.signUpData.errorMessage = '';
         if ($scope.signUpData.password.length >= 6) {
             LoginService.signup($scope.signUpData.firstName, $scope.signUpData.lastName, $scope.signUpData.email, $scope.signUpData.password, $scope.signUpData.again)
-            .then(onValidLogin,onErrorInLogin)
+            .then(function (response) {
+                //getting invalid grant - username or password is incorrect for some reason
+                // success
 
-            , function(reason) {
+                var signedUpPopup = $ionicPopup.alert({
+                    title: 'Signed Up!',
+                    template: $scope.signUpData.email
+                });
+                signedUpPopup.then(function (res) {
+                    onLogin($scope.signUpData.email);
+                    $scope.signUpModal.hide();
+                });
+
+            }, function (reason) {
                 console.log(JSON.stringify(reason));
                 if (reason.data != undefined) {
                     console.log('reason.data!= undefined');
                     $scope.signUpData.errorMessage = reason.data;
-                    if (reason.data.error_description == "The user is already signed up to this app"){
-                        $scope.open = function(){}
+                    if (reason.data.error_description == "The user is already signed up to this app") {
+                        $scope.open = function () { }
                         var emailAlreadyExistsPopUp = $ionicPopup.show({
                             template: '',
                             title: 'The email address,<br>' + $scope.signUpData.email + ',<br>is already in use',
                             subTitle: 'Did you forget your password?',
                             scope: $scope,
                             buttons: [
-                                {text: '<b>Try \n different\n email</b>',
+                                {
+                                    text: '<b>Try \n different\n email</b>',
                                     type: 'button-energized',
-                                    onTap: function(e){
+                                    onTap: function (e) {
                                         emailAlreadyExistsPopUp.close();
                                     }
                                 },
@@ -448,16 +450,17 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                                         //						   			console.log('redirect to login');
                                         //						  		  }
                                         //						   },
-                                        {text: '<b>Reset<br>password</b>',
+                                        {
+                                            text: '<b>Reset<br>password</b>',
                                             type: 'button-assertive',
-                                            onTap: function(e){
+                                            onTap: function (e) {
                                                 $scope.resetPwd($scope.signUpData.email);
                                                 $scope.closeSignUp();
                                                 var emailSentPopUp = $ionicPopup.show({
                                                     title: 'Email<br>with instructions<br>was sent to<br>' + $scope.signUpData.email //why??
                                                 });
                                                 closePopUpAuto(emailSentPopUp);
-                                                emailSentPopUp.then(function(res) {
+                                                emailSentPopUp.then(function (res) {
                                                     console.log('Does the menu button respond now?Yes');
                                                 });
                                             }
@@ -465,7 +468,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                             ]
                         });
 
-                        emailAlreadyExistsPopUp.then(function(res) {
+                        emailAlreadyExistsPopUp.then(function (res) {
                             console.log('Does the menu button respond now?Yes');
                         });
                     }
@@ -475,21 +478,20 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
                     //              $scope.signUpData.errorMessage = JSON.stringify(reason.error_description);
                     console.log($scope.signUpData.errorMessage);
                 };
-            };
+            });
         } else {
             $scope.signUpData.errorMessage = 'Password must be at least 6 characters';
         }
-        $scope.signUpModal.hide();
     };
 
-    function closePopUpAuto (popup){ //close popup automatically
-        $timeout(function() {
+    function closePopUpAuto(popup) { //close popup automatically
+        $timeout(function () {
             popup.close(); //close the popup after 2 seconds
         }, 3000);
     };
 
-/*Reset password button*/
-   $scope.resetPw = function () {
+    /*Reset password button*/
+    $scope.resetPw = function () {
         var resetPopup = $ionicPopup.show({
             title: 'Enter your username',
             template: '<input type = "username">',
@@ -517,70 +519,108 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
     }
 
-    $scope.resetPwd = function(email){
+    $scope.resetPwd = function (email) {
         console.log("reset password request for " + email);
         AuthService.requestResetPassword(email)
-        .then(function(response){
+        .then(function (response) {
             console.log("The response is " + JSON.stringify(response));
-        }, function(rejection){
-            console.log("rejected + "+JSON.stringify(rejection))
+        }, function (rejection) {
+            console.log("rejected + " + JSON.stringify(rejection))
         });
 
     }
+    $scope.socialSignUp = function (provider) {
+        LoginService.socialSignUp(provider)
+        .then(onValidLogin, onErrorInLogin);
 
-	$scope.socialSignIn = function(provider) {
-        LoginService.socialSignin(provider)
+    }
+    $scope.socialSignIn = function (provider) {
+        LoginService.socialSignIn(provider)
         .then(onValidLogin, onErrorInLogin);
     };
 
-    onValidLogin = function(response) {
+    onValidLogin = function (response) {
         onLogin();
-        $scope.userData = response.data || $scope.userData;
-//		console.log( "User Data is " + JSON.stringify($scope.userData));
-        var loginPopup = $ionicPopup.alert({
-            title: 'Hi, ' + $scope.userData.fullName + ' :)'
-        })
-        loginPopup.then(function(res) {
-            $scope.closeLogin();
-        });
+        $scope.userData.username = response.data || $scope.userData.username;
+        //		console.log( "User Data is " + JSON.stringify($scope.userData));
+        //var loginPopup = $ionicPopup.alert({
+        //    title: 'Hi, ' + $scope.userData.fullName + ' :)'
+        //})
+        //loginPopup.then(function (res) {
+        //    $scope.closeLogin();
+        //});
+
     }
 
-    onErrorInLogin = function(rejection) {
+    onErrorInLogin = function (rejection) {
         console.log("rejection");
         console.log(JSON.stringify(rejection));
     }
 
     function onLogin(username) {
-        var data = Backand.user.getUserDetails();
+        var data = Backand.getUserDetails();
         $scope.userData = data.$$state.value;
-//        console.log("!!!!userdata is: ");
-//        console.log("!!!! " + JSON.stringify($scope.userData));
+        //        console.log("!!!!userdata is: ");
+        //        console.log("!!!! " + JSON.stringify($scope.userData));
+        var loginPopup = $ionicPopup.alert({
+            title: 'Hi, ' + $scope.userData.fullName + ' :)'
+        })
+        loginPopup.then(function (res) {
+            $scope.closeLogin();
+        });
+        $scope.closeSignUp();
         $scope.loggedIn = 1;
-        $scope.getUserFindings($scope.userData);
-        $scope.getUserBins($scope.userData);
+        $scope.getUserFindings($scope.userData.userId);
+        $scope.getUserBins($scope.userData.userId);
     }
 
     // Perform the login action when the user submits the login form
-    $scope.doLogin = function() {
+    $scope.doLogin = function () {
         if (ConnectivityMonitor.isOnline()) {
 
-            // $ionicLoading.show({
-            //     template: '<p>Logging in</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
-            // });
+            $ionicLoading.show({
+                template: '<p>Logging in</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
+            });
 
             console.log('Doing login > ' + $scope.loginData.email + ' ' + $scope.loginData.password);
             LoginService.signin($scope.loginData.email, $scope.loginData.password)
-            .then(onValidLogin, onErrorInLogin);
+            .then(function (res) {
+                var loggedInPopup = $ionicPopup.alert({
+                    title: 'Logged in!',
+                    template: res.username
+                });
+                console.log(JSON.stringify(res));
+
+
+                $scope.userData = res;
+                $ionicLoading.hide();
+                loggedInPopup.then(function (res) {
+                    onLogin($scope.userData.username);
+                    $scope.closeLogin();
+                });
+            }, function (error) {
+                console.log(JSON.stringify(error));
+                $ionicLoading.hide();
+                var alertPopup = $ionicPopup.alert({
+                    title: 'Can\'t Login',
+                    template: error.error_description
+                });
+            })
+        } else {
+            var alertPopup = $ionicPopup.alert({
+                title: 'Can\'t Login',
+                template: 'Internet connection is needed to login'
+            });
         }
     };
 
 
-    $scope.doLogout = function() {
+    $scope.doLogout = function () {
         if (ConnectivityMonitor.isOnline()) {
             $ionicLoading.show({
                 template: '<p>Logging out</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
             });
-            LoginService.signout().then(function() {
+            LoginService.signout().then(function () {
                 $ionicLoading.hide();
                 $scope.loggedIn = 0;
                 $scope.userFindings = null;
@@ -593,8 +633,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
             })
             $state.reload();
             $scope.userData.username = '';
-        }
-        else {
+        } else {
             var alertPopup = $ionicPopup.alert({
                 title: 'Can\'t Logout',
                 template: 'Internet connection is needed to logout'
@@ -602,12 +641,12 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         }
     };
 
-    $scope.requireLogin = function(text) {
+    $scope.requireLogin = function (text) {
         var confirmPopup = $ionicPopup.confirm({
             title: 'Not logged in',
             template: text
         });
-        confirmPopup.then(function(res) {
+        confirmPopup.then(function (res) {
             if (res) {
                 console.log('Pressed OK');
                 $scope.login();
@@ -618,7 +657,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
     };
 
-    $scope.isOverRecordLimit = function() {
+
+    $scope.isOverRecordLimit = function () {
         //console.log(JSON.stringify($scope.userFindings));
         var testTime = new Date(Date.now() - (24 * 60 * 60 * 1000)); // 24 hours ago
         var recentRecs = 0;
@@ -636,9 +676,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         return false;
     };
 
-
     //	change the link to the app link
-    $scope.shareRecord = function() {
+    $scope.shareRecord = function () {
         var phrase = "Look at this poop! ";
         if ($scope.selectedRec.type) phrase = "Check out this bin! ";
         $cordovaSocialSharing.share(phrase, phrase, $scope.selectedRec.ImageURI, "http://www.natural-apptitude.co.uk");
@@ -647,7 +686,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
 
     //$scope.getAllFindings();
     //$scope.getAllBins();
-
     //
     //	$scope.username = '';
     //	onLogin();

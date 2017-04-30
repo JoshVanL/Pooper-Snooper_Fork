@@ -47,9 +47,15 @@
           <button class="button button-block button-stable" type="submit">
             SignUp
           </button>
-          <ion-item nav-clear menu-close class="dark-bg light item-icon-left" ng-click="doSocSignUp('facebook')">
+          <ion-item nav-clear menu-close class="dark-bg light item-icon-left" ng-click="socialSignUp('facebook')">
             <i class="icon ion-social-facebook"></i> Signup with Facebook
           </ion-item>
+            <ion-item nav-clear menu-close class="dark-bg light item-icon-left" ng-click="socialSignUp('google')">
+                <i class="icon ion-social-googleplus"></i> Signup with google+
+            </ion-item>
+            <ion-item nav-clear menu-close class="dark-bg light item-icon-left" ng-click="socialSignUp('twitter')">
+                <i class="icon ion-social-twitter"></i> Signup with Twitter
+            </ion-item>
         </div>
     </form>
     </div>
