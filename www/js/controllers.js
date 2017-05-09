@@ -558,6 +558,11 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         .then(onValidLogin, onErrorInLogin);
     };
 
+    $scope.socialSignUp = function(provider) {
+          LoginService.socialSignUp(provider)
+          .then(onValidLogin, onErrorInLogin);
+      };
+
     onValidLogin = function(response) {
         onLogin();
         $scope.userData.username = response.data || $scope.userData.username;
