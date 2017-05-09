@@ -7,5 +7,20 @@
 		<div id="welcomeImageDiv">
 			<img id="welcomeImage" src="img/Assets/PS-logo2.png" alt="Pooper-snooper logo"></img>
 		</div>
+
+		<div id="binIconDiv" ng-show="loggedIn">
+			<img id="binImage" src="img/Assets/dog_bin.png" alt="Pooper-snooper bin"></img>{{queryBins().length}}
+		</div>
+
+        <div id="poopIconDiv" ng-show="loggedIn">
+            <img id="poopImage" src="img/Assets/poop.png" alt="Pooper-snooper bin"></img>
+            {{queryFindings().length}}
+        </div>
+        <div id ="usernameTextWel"> 
+            {{userData.username}} 
+        </div>
+
+
+
   </ion-content>
 </ion-view>

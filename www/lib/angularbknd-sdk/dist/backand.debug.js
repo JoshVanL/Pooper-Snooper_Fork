@@ -1,11 +1,3 @@
-/*
- * Angular SDK to use with backand
- * @version 1.8.11 - 2016-09-30
- * @link https://www.backand.com
- * @author Itay Herskovits
- * @license MIT License, http://www.opensource.org/licenses/MIT
- */
-
 (function () {
 var BKStorage = (function () {
     'use strict';
@@ -102,15 +94,11 @@ var socialProviders = {
     twitter: {name: 'twitter', label: 'Twitter', url: 'www.twitter.com', css: 'twitter', id: 4}
 };
 
-function getSocialUrl(providerName, isSignup, isAutoSignUp) {
+function getSocialUrl(providerName, isSignup) {
     var provider = socialProviders[providerName];
     var action = isSignup ? 'up' : 'in';
-    var autoSignUpParam = '';
-    if (!isSignup && isAutoSignUp) {
-        autoSignUpParam = "&signupIfNotSignedIn=true";
-    }
     return 'user/socialSign' + action +
-        '?provider=' + provider.label + autoSignUpParam +
+        '?provider=' + provider.label +
         '&response_type=token&client_id=self&redirect_uri=' + provider.url +
         '&state=';
 }
@@ -229,8 +217,9 @@ angular.module('backand', [])
                 return socialProviders;
             };
 
-            self.socialSignin = function (provider, spec, isAutoSignUp) {
-                return BackandAuthService.socialSignin(provider, spec, isAutoSignUp)
+            self.socialSignin = function (provider, spec) {
+			    console.log("inside backand.debug.js for socialSignin");
+                return BackandAuthService.socialSignin(provider, spec)
             };
 
             self.socialSignup = function (provider, parameters, spec, email) {
@@ -239,11 +228,7 @@ angular.module('backand', [])
 
             self.socialSignInToken = function(provider, token){
                 return BackandAuthService.socialSigninWithToken(provider, token)
-            };
-
-            self.socialSignUpToken = function (provider, token) {
-                return BackandAuthService.socialSigninWithToken(provider, token, true)
-            };
+            }
 
             self.socialSignInCode = function(provider, code){
                 var returnUrl = window.location.origin;
@@ -470,9 +455,9 @@ function BackandAuthService($q, $rootScope, BackandHttpBufferService, BackandSoc
         })
     };
 
-    // social authentication
-    self.socialSignin = function (provider, spec, isAutoSignUp) {
-        return socialAuth(provider, false, spec, null, isAutoSignUp);
+    self.socialSignin = function (provider, spec) {
+        console.log("inside BackandAuthService for socialSignIn ");
+        return socialAuth(provider, false, spec);
     };
 
     self.socialSignup = function (provider, parameters, spec, email) {
@@ -594,15 +579,12 @@ function BackandAuthService($q, $rootScope, BackandHttpBufferService, BackandSoc
         })
     }
 
-    self.socialSigninWithToken = function (provider, token, isAutoSignUp) {
+    self.socialSigninWithToken = function (provider, token) {
         if (authenticating) {
             return;
         }
 
         var url = config.apiUrl + urls.socialLoginWithToken.replace('PROVIDER', provider) + "?accessToken=" + encodeURIComponent(token) + "&appName=" + encodeURI(config.appName);
-        if (isAutoSignUp) {
-            url = url + "&signupIfNotSignedIn=true";
-        }
         console.log(url);
         authenticating = true;
         BKStorage.token.clear();
@@ -644,11 +626,13 @@ function BackandAuthService($q, $rootScope, BackandHttpBufferService, BackandSoc
         }).finally(function () {
             authenticating = false;
         });
-    };
+    }
 
     function mobileSocialLoginInner(ref, isSignUp, provider, spec) {
         ref.addEventListener('loadstart', function (e) {
                 if (e.url.indexOf(dummyReturnAddress) == 0) { // mean startWith
+
+					console.log('user is already registered so log in');
 
                     try {
                         ref.close();
@@ -682,6 +666,8 @@ function BackandAuthService($q, $rootScope, BackandHttpBufferService, BackandSoc
                         };
 
                         rejection.error_description = rejection.data;
+//						console.log("The rejection is: ");
+//						console.log(JSON.stringify(rejection.error_description));
                         self.loginPromise.reject(rejection);
                         return;
                     }
@@ -697,11 +683,14 @@ function BackandAuthService($q, $rootScope, BackandHttpBufferService, BackandSoc
                     }
                     signinWithToken(userData);
                 }
+				else {
+
+				}
             }
         );
     }
 
-    function socialAuth(provider, isSignUp, spec, email, isAutoSignUp) {
+    function socialAuth(provider, isSignUp, spec, email) {
 
         if (!socialProviders[provider]) {
             throw Error('Unknown Social Provider');
@@ -712,29 +701,33 @@ function BackandAuthService($q, $rootScope, BackandHttpBufferService, BackandSoc
         else
             self.signUpPromise = $q.defer();
 
-        if (true) {
 
+        if (true) { // should be config.ismobile but for some reason it is false when running on a smartphone so for now set to true
             var ref = window.open(
                 config.apiUrl + '/1/'
-                + getSocialUrl(provider, isSignUp, isAutoSignUp)
+                + getSocialUrl(provider, isSignUp)
                 + '&appname=' + config.appName + (email ? ("&email=" + email) : '')
                 + '&returnAddress=' + dummyReturnAddress,
                 'id1',
                 spec || 'left=1, top=1, width=600, height=600');
-
+			  console.log('before mobileSocialLoginInner');
             mobileSocialLoginInner(ref, isSignUp, provider, spec);
+			console.log('returned from mobilesociallogin');
         }
         else {
+			        console.log("not config.ismobile");
             self.socialAuthWindow = window.open(
                 config.apiUrl + '/1/'
-                + getSocialUrl(provider, isSignUp, isAutoSignUp)
+                + getSocialUrl(provider, isSignUp)
                 + '&appname=' + config.appName + (email ? ("&email=" + email) : '')
                 + '&returnAddress=',
                 'id1',
                 spec || 'left=1, top=1, width=600, height=600');
-
+			      console.log("in between");
             window.addEventListener('message', (function (provider, spec) {
-                return function (e) {
+                    console.log("before removing");
+				            return function (e) {
+                    console.log("inside closure");
                     window.removeEventListener('message', arguments.callee);
                     setUserDataFromToken(e, provider, spec)
                 }
@@ -744,7 +737,8 @@ function BackandAuthService($q, $rootScope, BackandHttpBufferService, BackandSoc
     }
 
     function setUserDataFromToken(event, provider, spec) {
-        console.log(event, provider, spec);
+        console.log("inside setUserDataFromToken");
+		console.log(event, provider, spec);
         self.socialAuthWindow.close();
         self.socialAuthWindow = null;
 
@@ -1015,6 +1009,7 @@ function BackandUserService ($q) {
     var self = this;
 
     self.getUserDetails = function (force) {
+		console.log("inside get user details");
         var deferred = $q.defer();
         if (force) {
             http({
@@ -1022,12 +1017,15 @@ function BackandUserService ($q) {
                 url: config.apiUrl + '/api/account/profile'
             })
                 .success(function (profile) {
+					console.log("force == true");
                     BKStorage.user.set(angular.extend(BKStorage.user.get(), profile));
                     deferred.resolve(BKStorage.user.get());
                 })
         } else {
+			console.log("force == false");
             deferred.resolve(BKStorage.user.get());
         }
+		console.log("deferred promise is " + JSON.stringify(deferred.promise));
         return deferred.promise;
     };
 

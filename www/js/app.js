@@ -26,12 +26,15 @@ angular.module('PooperSnooper', ['ionic', 'backand', 'PooperSnooper.controllers'
 
   // Navigate through page states
   .config(function($stateProvider, $urlRouterProvider, BackandProvider, $httpProvider) {
+    //BackandProvider.setAppName('poopersnoop');
+    //BackandProvider.setSignUpToken('a04c4d71-2b7e-4a72-8f11-d3a4e4c13623');
+    //BackandProvider.setAnonymousToken('f0d16a81-c04c-448b-90e6-5b4b1c62d204');
+  	BackandProvider.runSocket(true);
     BackandProvider.setAppName('poopersnoop');
     BackandProvider.setSignUpToken('a04c4d71-2b7e-4a72-8f11-d3a4e4c13623');
     BackandProvider.setAnonymousToken('f0d16a81-c04c-448b-90e6-5b4b1c62d204');
 
-	BackandProvider.runSocket(true);
-	
+
     $stateProvider
 
       .state('app', {
@@ -213,17 +216,17 @@ angular.module('PooperSnooper', ['ionic', 'backand', 'PooperSnooper.controllers'
 
   //Service between Droppable and the MapCtrl to convert screen coordinate data into latLng
   .factory('GlobalService', [function() {
-    
+
 		//Map Marker placing variables
 		var onScreenX = '';				//X coordinate of where pin has been dropped on the map element
     var onScreenY = '';				//Y coordinate of where pin has been dropped on the map element
     var activeIcon = '';			//True when a pin has been selected
     var iconType = '';				//Type of Icon which has been selected - Poop/Bin/Man
-   
+
 		// ------------------------- >
 		// --- RETURN FUNCTIONS --- >
 		// ----------------------- >
-		
+
     return {
       get_onScreenX: function() {
         return onScreenX;

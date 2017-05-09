@@ -1,0 +1,62 @@
+<!-- Modal Page when adding a Doggy/Bin Record via the Map page (by dropping Pins on the map) -->
+
+<div class="modal">
+
+	<!-- Modal header bar -->
+	<ion-header-bar class="bar-secondary">
+		<h1 class="title">
+			{{recordModal.phrase}}
+			<i class="icon ion-trash-b"></i>
+		</h1>
+		<button class="button button-clear button-positive" ng-click="closeNewRecord()" side="right">Cancel</button>
+	</ion-header-bar>
+
+	<!-- Modal content area -->
+	<ion-content>
+
+		<form name="newRecord" ng-submit="createRecord()">
+			<div class="list">
+				<label class="item item-input">
+					<span class="input-label">Date</span>
+					{{record.dateTime.getDate()}}/{{record.dateTime.getMonth()+1}}/{{record.dateTime.getFullYear()}}
+				</label>
+				<label class="item item-input">
+					<span class="input-label">Time</span>
+					{{record.time}}
+				</label>
+				<label>
+					<img ng-show="record.imageURI === undefined" ng-src="img/Assets/poop_small.png" class="center">
+					<img ng-show="record.imageURI !== undefined" ng-src="{{record.imageURI}}" class="center">
+				</label>
+				<div class="button-bar">
+					<button id="brownButton" type="button" class="button  button-balanced" ng-click="takePicture()">
+						<i class="icon ion-camera"></i>
+						Take Photo
+					</button>
+				</div>
+<<<<<<< HEAD
+				<label class="item item-input">
+					<span class="input-label">Lat</span>
+					{{record.lat}}
+				</label>
+				<label class="item item-input">
+					<span class="input-label">Long</span>
+					{{record.long}}
+				</label>
+=======
+>>>>>>> ssup
+
+			</div>
+			<div class="padding">
+				<p ng-show="newRecord.location.$error.required">* Location is required</p>
+			</div>
+			<div class="padding">
+				<button type="submit" class="button button-block button-positive" ng-disabled="!createEnabled">
+					Create record
+				</button>
+			</div>
+		</form>
+
+	</ion-content>
+
+</div>

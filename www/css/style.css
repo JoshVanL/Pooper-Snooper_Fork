@@ -9,14 +9,58 @@
 #welcomeImageDiv{
 	position: fixed;
 	top: 25%;
-	left: 9%;
+	left: 0%;
 	width: 100%;
 	height: 56.2%;
 }
 
 #welcomeImage{
-	width: 80%;
+	width: 90%;
 	height: 80%;
+}
+
+#binIconDiv{
+	position: fixed;
+	top: 70%;
+	left: 20%;
+	width: 20%;
+	height: 20%;
+    color: #a35c0d;
+    text-indent: -23px;
+    font-size: 26pt;
+    font-weight: bold;
+}
+
+#binImage{
+	width: 90%;
+	height: 65%;
+}
+
+#poopIconDiv{
+	position: fixed;
+	top: 70%;
+	left: 70%;
+	width: 20%;
+	height: 20%;
+    color: #a35c0d;
+    text-indent: -26px;
+    font-size: 26pt;
+    font-weight: bold;
+}
+
+#poopImage{
+	width: 85%;
+	height: 65%;
+}
+
+#usernameTextWel {
+	position: fixed;
+	top: 90%;
+	left: 5%;
+	width: 100%;
+	height: 100%;
+    color: white;
+    font-size: 15pt;
 }
 
 .background.scroll-content {
@@ -54,6 +98,13 @@
 /* Create record buttons */
 #brownButton {
 		background: #D2691E;
+}
+
+/* Drop down list */
+#filterModal {
+    position: fixed;
+    width: 100%;
+    height: 40%;
 }
 
 /*----------------------------*/
@@ -204,29 +255,6 @@
 	z-Index: 2;
 }
 
-
-/*---------------------------*/
-/*------TUTORIAL MODALS------*/
-/*---------------------------*/
-
-.map-help-Modal{
-	min-height: 0;
-	border-radius: 10px;
-	width: 80%;
-	height: 60%;
-	top: 20%;
-	bottom: 20%;
-	left: 10%;
-	right: 10%;
-	text-align: center;
-}
-
-#map-model-close{
-	position: fixed;
-	top: -80%;
-	right: -8%;
-	z-Index: 1;
-}
 /*---------------------------*/
 /*-----------OTHER-----------*/
 /*---------------------------*/
@@ -364,20 +392,65 @@
 	width: 95%;
 }
 
+
+/* ------ Tutorial images ------ */
+
+.map-help-Modal{
+	min-height: 0;
+	border-radius: 10px;
+	width: 90%;
+	height: 70%;
+	top: 17%;
+	bottom: 10%;
+	left: 5%;
+	right: 5%;
+	text-align: center;
+	border: 1.5px solid #D2691E;
+}
+
+.records-help-Modal{
+	min-height: 0;
+	border-radius: 10px;
+	width: 85%;
+	height: 80%;
+	top: 17%;
+	bottom: 10%;
+	left: 4%;
+	right: 6%;
+	text-align: center;
+	border: 1.5px solid #D2691E;
+
+}
+
+#map-model-close{
+	position: fixed;
+	top: -80%;
+	right: -8%;
+	z-Index: 1;
+}
+
+.customh2 {
+    display: block;
+    font-size: 1.5em;
+    margin-top: 0.83em;
+    margin-bottom: 0.83em;
+    margin-left: 0;
+    margin-right: 0;
+    font-weight: bold;
+}
+
 .helper1{
-    font-family : "Ionicons";
+    font-family : Cambria, Georgia, serif;
     font-size : 17px;
-    text-align: center;
+    text-align: left;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
-.helper2{
-    font-family : "Ionicons";
-    font-size : 17px;
-    text-align: center;
-}
-
-.helper3{
-    font-family : "Ionicons";
-    font-size : 17px;
-    text-align: center;
+.Tutorial{
+	display: block;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	margin-left: auto;
+	margin-right: auto;
 }

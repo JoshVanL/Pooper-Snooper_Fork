@@ -5,7 +5,7 @@
     <!-- Modal header bar -->
     <ion-header-bar class="bar-secondary">
     <h1 class="title">
-        Doggy finding record
+        Record
         <i class="icon ion-trash-b"></i>
     </h1>
     <button id="brownFont" class="button button-clear button-positive" ng-click="closeViewRecord()" side="right">Close</button>
@@ -21,9 +21,9 @@
                 <span class="input-label">Time</span>
                 {{selectedRec.time}}
             </label>
-            <!---<fieldset>
-                <div id="mapRec" show="showMap"></div>
-            </fieldset> --> 
+            <fieldset ng-show="showMap">
+                <div id="mapRec" ng-show="showMap"></div>
+            </fieldset>
             <label>
                 <img id="viewIm" ng-src="{{selectedRec.ImageURI}}" class="center"/>
             </label>

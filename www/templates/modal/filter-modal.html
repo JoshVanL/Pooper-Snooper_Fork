@@ -1,0 +1,40 @@
+<div id="filterModal">
+<div class = "modal">
+  <ion-header-bar class="bar-secondary">
+    <h1 class="title">
+      Filter Records
+    </h1>
+  </ion-header-bar>
+  <ion-content scroll="false">
+  <div class = "list">
+     <label class = "item item-input item-select">
+        <div class = "input-label">
+           Record Type
+        </div>
+  		
+        <select ng-model="filterType" ng-change="onFilterChangeT(filterType)">
+           <option >All</option>
+           <option >Findings</option>
+           <option >Bins</option>
+        </select>
+  		
+     </label>
+  
+     <label class = "item item-input item-select">
+        <div class = "input-label">
+           Record Age
+        </div>
+  		
+        <select ng-model="filterAge" ng-change="onFilterChangeA(filterAge)">
+           <option >All</option>
+           <option >Last 24 hrs</option>
+           <option >Last 3 weeks</option>
+        </select>
+     </label>
+   <button id="brownButton" type="button" class="button button-block button-balanced" ng-click="applyFilter()">
+     <i class="icon ion-ios-search"></i>
+     Apply Filter
+   </button>
+     </div>
+ </ion-content>
+ </div>

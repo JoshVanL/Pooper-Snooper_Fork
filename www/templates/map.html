@@ -8,45 +8,44 @@
 
 	<ion-content scroll="false">
 		<div id="pinpointHolder" class="animated bounceInLeft"></div>
-		<button id="pinpoint" class="button button-icon animated bounceInLeft"
+		<button id="pinpoint" class="button button-icon animated bounceInLeft" 
 		 ng-mouseup="refreshMap()">
 				<i class="icon ion-pinpoint"></i>
 		</button>
-
+		
 		<div id="nearestBinHolder" class="animated bounceInLeft"></div>
-		<button id="nearestBin" class="button button-icon animated bounceInLeft"
+		<button id="nearestBin" class="button button-icon animated bounceInLeft" 
 		 ng-mouseup="findNearestBin(userMarker)">
 				<i class="icon ion-search"></i>
 		</button>
-
+		
 		<div id="cancelButtonHolder" class="animated bounceInLeft"></div>
 		<button id="cancelButton" class="button button-icon animated bounceInLeft" 
 		 ng-mouseup="cancelNearestBin()">
 				<i class="icon ion-ios-undo"></i>
 		</button>
 		
-
 		<div id="map" droppable data-tap-disabled="true" click="handleIconPress()"></div>
-
+	
 		<div id="panelOpenHolder" class="animated bounceInRight"></div>
-		<button id="panelOpen" class="button button-icon animated bounceInRight"
+		<button id="panelOpen" class="button button-icon animated bounceInRight" 
 		 ng-mouseup="showIconPanel()">
 				<i class="icon ion-location"></i>
 		</button>
-
+	
 		<div id="panelMinimizeHolder"></div>
 		<button id="panelMinimize" class="button button-icon" ng-mouseup="minimizePanel()">
 				<i class="icon ion-minus-round"></i>
 		</button>
-
+		
 		<div id="iconPanel"></div>
-
+		
 		<img id="poopDraggable" draggable src="img/Assets/poop.png">
 
 		<img id="binDraggable" draggable src="img/Assets/dog_bin.png">
 
 		<img id="manDraggable" draggable src="img/Assets/man-walking-dog.png">
-
+		
   </ion-content>
-
+	
 </ion-view>

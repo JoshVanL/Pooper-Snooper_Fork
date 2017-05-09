@@ -1,6 +1,13 @@
 <ion-view view-title="<b>Doggy records</b>">
+
 	<ion-nav-buttons side="right">
-		<button class="button button-icon" ng-click="newRecord('Add new finding')">
+		<button class="button button-icon" ng-click="tutorialStart()">
+			<i class="icon ion-ios-information-outline"></i>
+		</button>
+		<button class="button button-icon" ng-click="filterRecord()">
+			<i class="icon ion-search"></i>
+    	</button>
+		<button menu-toggle="right" class="button button-icon" ng-click="newRecord('Add new finding')">
 			<i class="icon ion-compose"></i>
 		</button>
 	</ion-nav-buttons>
@@ -12,11 +19,11 @@
 		on-refresh="doRefresh()">
 	</ion-refresher>
 	<ion-list>
-		<ion-item ng-repeat="finding in userFindings" ng-click="selectRecord(finding.id)">
+		<ion-item ng-repeat="finding in displayFindings" ng-click="selectRecord(finding.id, 1)" ng-show="showFindings">
         <img ng-src="img/Assets/poop_small.png" class="left" style = "width:16px;height:16px">
            {{finding.date}}      |     {{finding.time}}
  		</ion-item>
-		<ion-item ng-repeat = "location in userBins" ng-click = "selectBin(location.id, viewRecordModal)">
+		<ion-item ng-repeat = "location in displayBins" ng-click = "selectBin(location.id, viewRecordModal, 1)" ng-show="showBins">
           <i class="icon ion-trash-b"></i>
            {{location.date}}     |         {{location.time}}
 		</ion-item>
