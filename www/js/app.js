@@ -30,9 +30,9 @@ angular.module('PooperSnooper', ['ionic', 'backand', 'PooperSnooper.controllers'
     //BackandProvider.setSignUpToken('a04c4d71-2b7e-4a72-8f11-d3a4e4c13623');
     //BackandProvider.setAnonymousToken('f0d16a81-c04c-448b-90e6-5b4b1c62d204');
   	BackandProvider.runSocket(true);
-    BackandProvider.setAppName('poopersnoop');
-    BackandProvider.setSignUpToken('a04c4d71-2b7e-4a72-8f11-d3a4e4c13623');
-    BackandProvider.setAnonymousToken('f0d16a81-c04c-448b-90e6-5b4b1c62d204');
+    BackandProvider.setAppName('poopersnooperapp');
+    BackandProvider.setSignUpToken('bd7cfd8e-4c62-405b-943a-457a7b31b5fa');
+    BackandProvider.setAnonymousToken('f855688d-f723-4706-ac50-ffb2bd6d3883');
 
 
     $stateProvider
