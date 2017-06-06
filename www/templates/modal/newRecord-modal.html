@@ -30,7 +30,7 @@
 				</label>
 				<div class="button-bar">
 					<button id="brownButton" type="button" class="button  button-balanced" ng-click="takePicture()">
-						<i class="icon ion-camera"></i>
+						<i id="takePic" class="icon ion-camera"></i>
 						Take Photo
 					</button>
 				</div>
@@ -39,7 +39,7 @@
 					{{myLocation}}
 				</label>
 				<div class="padding">
-					<button id="brownButton" type="button" class="button button-block button-balanced" ng-click="findLocation()">
+					<button id="brownButton2" type="button" class="button button-block button-balanced" ng-click="findLocation()">
 						<i class="icon ion-ios-search"></i>
 						Find my location
 					</button>
@@ -50,7 +50,7 @@
 				<p ng-show="newRecord.location.$error.required">* Location is required</p>
 			</div>
 			<div class="padding">
-				<button type="submit" class="button button-block button-positive">
+				<button id="sumbitBut" type="submit" class="button button-block button-positive">
 					Create record
 				</button>
 			</div>
@@ -58,4 +58,48 @@
 
 	</ion-content>
 
+    <walkthrough
+        wid="Demo3"
+        is-round=true
+        walkthrough-type="transparency"
+        main-caption="{{demoCaption3}}"
+        force-caption-location="BOTTOM"
+        icon-padding-left="0"
+        icon-padding-top="0"
+        is-active="isActive3"
+        on-walkthrough-hide="nextTutorial()"
+        focus-element-selector="#brownButton"
+        force-caption-location="BOTTOM"
+        use-button=false>
+    </walkthrough>
+
+    <walkthrough
+        wid="Demo4"
+        is-round=true
+        walkthrough-type="transparency"
+        main-caption="{{demoCaption4}}"
+        force-caption-location="BOTTOM"
+        icon-padding-left="0"
+        icon-padding-top="0"
+        is-active="isActive4"
+        on-walkthrough-hide="nextTutorial()"
+        focus-element-selector="#brownButton2"
+        force-caption-location="BOTTOM"
+        use-button=false>
+    </walkthrough>
+
+    <walkthrough
+        wid="Demo5"
+        is-round=true
+        walkthrough-type="transparency"
+        main-caption="{{demoCaption5}}"
+        force-caption-location="TOP"
+        icon-padding-left="0"
+        icon-padding-top="0"
+        is-active="isActive5"
+        on-walkthrough-hide="nextTutorial()"
+        focus-element-selector="#sumbitBut"
+        force-caption-location="BOTTOM"
+        use-button=false>
+    </walkthrough>
 </div>

@@ -1,4 +1,4 @@
-angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
+angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'ng-walkthrough'])
 
 // ----------------------------------------- >
 // ------------ App Controller ------------ >
@@ -731,6 +731,87 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         lat: "",
         long: ""
     }
+
+    //Tutorial Functions
+    $scope.demoCaption0 = "\nClick here to create a new doggy record"
+    $scope.demoCaption1 = "\nWhen your records log is too full and you want to filter them, simply filter them here!"
+    $scope.demoCaption2 = "\nSelect which record you would like to add"
+    $scope.demoCaption3 = "\nTake a picture of your record!"
+    $scope.demoCaption4 = "\nMake sure to find your location"
+    $scope.demoCaption5 = "\nFinally submit your record!"
+
+    $scope.tutorialStart = function() {
+        $scope.tutNum = 0;
+        $scope.isActive0 = true;
+    }
+
+    $scope.nextTutorial = function() {
+        switch ($scope.tutNum) {
+            case 0:
+                $scope.tutNum++;
+                $scope.isActive0 = false;
+                $scope.isActive1 = true;
+                break;
+
+            case 1:
+                $scope.tutNum++;
+                $scope.isActive1 = false;
+                $scope.isActive2 = true;
+                $scope.selectPopupTut = $ionicPopup.show({
+                    title: 'Select record type to add!',
+                    scope: $scope,
+                    buttons: [
+                        {
+                            text: '<b">Doggy Finding</b>',
+                            type: 'button icon-left button-energized',
+                        },
+                        {
+                            text: '<b>Bin Location</b>',
+                            type: 'button icon-left button-energized',
+                        }
+                    ]
+                });
+                break;
+
+
+            case 2:
+                $scope.selectPopupTut.close();
+                $scope.recordModal.phrase = 'Add new finding';
+                $scope.recordModal.type = 0; //finding = 0, bin = 1
+                $scope.record.dateTime = new Date();
+                $scope.record.time = ($scope.record.dateTime.getHours() < 10 ? '0' : '') + ($scope.record.dateTime.getHours() + ":" +
+                    ($scope.record.dateTime.getMinutes() < 10 ? '0' : '') + $scope.record.dateTime.getMinutes());
+                $scope.recordModalTut.show();
+                $scope.tutNum++;
+                $scope.isActive2 = false;
+                $scope.isActive3 = true;
+                break;
+
+            case 3:
+                $scope.tutNum++;
+                $scope.isActive3 = false;
+                $scope.isActive4 = true;
+                break;
+
+            case 4:
+                $scope.tutNum++;
+                $scope.isActive4 = false;
+                $scope.isActive5 = true;
+                break;
+
+            case 5:
+                $scope.recordModalTut.hide();
+                $scope.isActive5 = false;
+                $scope.tutNum = -1;
+                break;
+
+            default:
+                break;
+        }
+    }
+
+
+
     $scope.myLocation = "* No Location *";
     $scope.createEnabled = false;
 
@@ -747,6 +828,13 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         animation: 'slide-in-up'
     });
 
+    $ionicModal.fromTemplateUrl('templates/modal/newRecord-modal.html', function(modal) {
+        $scope.recordModalTut = modal;
+    }, {
+        scope: $scope,
+        animation: 'none'
+    });
+
     $ionicModal.fromTemplateUrl('templates/modal/record-modal.html', function(modal) {
         $scope.viewRecordModal = modal;
     }, {
@@ -755,11 +843,21 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
     });
 
     $ionicModal.fromTemplateUrl('templates/modal/filter-modal.html', function(modal) {
-         $scope.filterModal = modal;
-     }, {
-         scope: $scope,
-         animation: 'slide-in-up'
-     });
+        $scope.filterModal = modal;
+        // Shows Tutorial if this is the users first visit to the page!
+        if(localStorage.getItem("firstRecVisit") == undefined){
+            $scope.tutorialStart();
+
+            localStorage.setItem("firstRecVisit", 1);
+        } else {
+            console.log("here");
+            $scope.doRefresh();
+        }
+
+    }, {
+        scope: $scope,
+        animation: 'slide-in-up'
+    });
 
 
     $scope.doRefresh = function() {
@@ -833,8 +931,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         $scope.filterType = change;
     }
 
-
-    $scope.doRefresh();
 
     // Called when the form is submitted
     $scope.createRecord = function() {
@@ -1066,55 +1162,6 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova'])
         });
     };
 
-    //Tutorial Functions
-
-    $ionicModal.fromTemplateUrl('templates/modal/tutorial/records-help-modal.html',
-        function(modal) {
-            $scope.recTutorialModal = modal;
-
-            // Shows Tutorial if this is the users first visit to the page!
-            if(localStorage.getItem("firstRecVisit") == undefined){
-                $scope.tutorialStart();
-                localStorage.setItem("firstRecVisit", 1);
-            }
-
-        }, {
-        scope: $scope,
-        animation: 'slide-in-left'
-    });
-
-    // Tutorial modal open
-    $scope.tutorialStart = function() {
-        $scope.recTutorialModal.show();
-
-        $scope.data = {};
-
-        var setupSlider = function() {
-            //some options to pass to our slider
-            $scope.data.sliderOptions = {
-                loop: false,
-                effect: 'fade',
-                speed: 300,
-            };
-
-            $scope.$on("$ionicSlides.sliderInitialized", function(event, data) {
-                $scope.slider = data.slider;
-            });
-
-            $scope.$on("$ionicSlides.slideChangeStart", function(event, data) {});
-
-            $scope.$on("$ionicSlides.slideChangeEnd", function(event, data) {
-                $scope.activeIndex = data.slider.activeIndex;
-                $scope.previousIndex = data.slider.previousIndex;
-            });
-        };
-        setupSlider();
-    }
-
-    // Tutorial modal close
-    $scope.tutorialEnd = function() {
-        $scope.recTutorialModal.hide();
-    }
 
 
 })

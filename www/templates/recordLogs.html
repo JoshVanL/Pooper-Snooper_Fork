@@ -4,10 +4,10 @@
 		<button class="button button-icon" ng-click="tutorialStart()">
 			<i class="icon ion-ios-information-outline"></i>
 		</button>
-		<button class="button button-icon" ng-click="filterRecord()">
+		<button id="filterBut" class="button button-icon" ng-click="filterRecord()">
 			<i class="icon ion-search"></i>
     	</button>
-		<button menu-toggle="right" class="button button-icon" ng-click="newRecord('Add new finding')">
+		<button id="newRecBut" menu-toggle="right" class="button button-icon" ng-click="newRecord('Add new finding')">
 			<i class="icon ion-compose"></i>
 		</button>
 	</ion-nav-buttons>
@@ -28,6 +28,53 @@
            {{location.date}}     |         {{location.time}}
 		</ion-item>
 	</ion-list>
+
+    <walkthrough
+        wid="Demo0"
+        is-round=true
+        walkthrough-type="transparency"
+        focus-element-selector="#newRecBut"
+        icon="arrow"
+        main-caption="{{demoCaption0}}"
+        has-glow=true
+        force-caption-location="BOTTOM"
+        icon-padding-left="0"
+        icon-padding-top="0"
+        is-active="isActive0"
+        on-walkthrough-hide="nextTutorial()"
+        use-button=false>
+    </walkthrough>
+
+    <walkthrough
+        wid="Demo1"
+        is-round=true
+        walkthrough-type="transparency"
+        focus-element-selector="#filterBut"
+        has-glow=true
+        force-caption-location="BOTTOM"
+        icon="arrow"
+        main-caption="{{demoCaption1}}"
+        force-caption-location="BOTTOM"
+        icon-padding-left="0"
+        icon-padding-top="0"
+        is-active="isActive1"
+        on-walkthrough-hide="nextTutorial()"
+        use-button=false>
+    </walkthrough>
+
+    <walkthrough
+        wid="Demo2"
+        is-round=false
+        walkthrough-type="tip"
+        tip-color="BLACK"
+        main-caption="{{demoCaption2}}"
+        force-caption-location="BOTTOM"
+        icon-padding-left="0"
+        icon-padding-top="0"
+        is-active="isActive2"
+        on-walkthrough-hide="nextTutorial()"
+        use-button=false>
+    </walkthrough>
 
 </ion-content>
 </ion-view>
