@@ -28,7 +28,7 @@
 		<div id="map" droppable data-tap-disabled="true" click="handleIconPress()"></div>
 	
 		<div id="panelOpenHolder" class="animated bounceInRight"></div>
-		<button id="panelOpen" class="button button-icon animated bounceInRight" 
+		<button id="panelOpen" class="button button-icon animated bounceInLeft" 
 		 ng-mouseup="showIconPanel()">
 				<i class="icon ion-location"></i>
 		</button>
@@ -47,4 +47,114 @@
 		<img id="manDraggable" draggable src="img/Assets/man-walking-dog.png">
 		
   </ion-content>
+
+    <walkthrough
+        wid="Demo0"
+        is-round=true
+        walkthrough-type="transparency"
+        focus-element-selector="#panelOpen"
+        icon="arrow"
+        main-caption="{{demoMapCaption0}}"
+        has-glow=true
+        force-caption-location="BOTTOM"
+        icon-padding-left="0"
+        icon-padding-top="0"
+        is-active="isMapActive0"
+        on-walkthrough-hide="nextTutorial()"
+        use-button=false>
+    </walkthrough>
+
+    <walkthrough
+        wid="Demo1"
+        is-round=true
+        walkthrough-type="transparency"
+        focus-element-selector="#poopDraggable"
+        icon="arrow"
+        main-caption="{{demoMapCaption1}}"
+        has-glow=true
+        force-caption-location="BOTTOM"
+        icon-padding-left="0"
+        icon-padding-top="0"
+        is-active="isMapActive1"
+        on-walkthrough-hide="nextTutorial()"
+        use-button=false>
+    </walkthrough>
+
+    <walkthrough
+        wid="Demo2"
+        is-round=false
+        walkthrough-type="tip"
+        tip-color="BLACK"
+        main-caption="{{demoMapCaption2}}"
+        force-caption-location="BOTTOM"
+        icon-padding-left="0"
+        icon-padding-top="0"
+        is-active="isMapActive2"
+        on-walkthrough-hide="nextTutorial()"
+        use-button=false>
+    </walkthrough>
+
+    <walkthrough
+        wid="Demo3"
+        is-round=true
+        walkthrough-type="transparency"
+        focus-element-selector="#manDraggable"
+        icon="arrow"
+        main-caption="{{demoMapCaption3}}"
+        has-glow=true
+        force-caption-location="BOTTOM"
+        icon-padding-left="0"
+        icon-padding-top="0"
+        is-active="isMapActive3"
+        on-walkthrough-hide="nextTutorial()"
+        use-button=false>
+    </walkthrough>
+
+    <walkthrough
+        wid="Demo4"
+        is-round=true
+        walkthrough-type="transparency"
+        focus-element-selector="#nearestBin"
+        icon="arrow"
+        main-caption="{{demoMapCaption4}}"
+        has-glow=true
+        force-caption-location="TOP"
+        icon-padding-left="0"
+        icon-padding-top="0"
+        is-active="isMapActive4"
+        on-walkthrough-hide="nextTutorial()"
+        use-button=false>
+    </walkthrough>
+
+    <walkthrough
+        wid="Demo5"
+        is-round=true
+        walkthrough-type="transparency"
+        focus-element-selector="#cancelButton"
+        icon="arrow"
+        main-caption="{{demoMapCaption5}}"
+        has-glow=true
+        force-caption-location="TOP"
+        icon-padding-left="0"
+        icon-padding-top="0"
+        is-active="isMapActive5"
+        on-walkthrough-hide="nextTutorial()"
+        use-button=false>
+    </walkthrough>
+
+    <walkthrough
+        wid="Demo6"
+        is-round=true
+        walkthrough-type="transparency"
+        focus-element-selector="#pinpointHolder"
+        icon="arrow"
+        main-caption="{{demoMapCaption6}}"
+        has-glow=true
+        force-caption-location="BOTTOM"
+        icon-padding-left="0"
+        icon-padding-top="0"
+        is-active="isMapActive6"
+        on-walkthrough-hide="nextTutorial()"
+        use-button=false>
+    </walkthrough>
 </ion-view>

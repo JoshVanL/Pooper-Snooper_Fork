@@ -733,12 +733,12 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
     }
 
     //Tutorial Functions
-    $scope.demoCaption0 = "\nClick here to create a new doggy record"
-    $scope.demoCaption1 = "\nWhen your records log is too full and you want to filter them, simply filter them here!"
-    $scope.demoCaption2 = "\nSelect which record you would like to add"
-    $scope.demoCaption3 = "\nTake a picture of your record!"
-    $scope.demoCaption4 = "\nMake sure to find your location"
-    $scope.demoCaption5 = "\nFinally submit your record!"
+    $scope.demoCaption0 = "\nClick here to create a new doggy record";
+    $scope.demoCaption1 = "\nWhen your records log is too full and you want to filter them, simply filter them here!";
+    $scope.demoCaption2 = "Select which record you would like to add";
+    $scope.demoCaption3 = "\nTake a picture of your record!";
+    $scope.demoCaption4 = "\n\n\n\n\n\nMake sure to find your location";
+    $scope.demoCaption5 = "\n\n\n\n\n\n\nFinally submit your record!";
 
     $scope.tutorialStart = function() {
         $scope.tutNum = 0;
@@ -1683,6 +1683,11 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
 
     function enableMap() {
         $ionicLoading.hide();
+        // Shows Tutorial if this is the users first visit to the page!
+        if(localStorage.getItem("firstMapVisit") == undefined){
+            $scope.tutorialStart();
+            localStorage.setItem("firstMapVisit", 1);
+        }
     }
 
     function disableMap() {
@@ -2430,12 +2435,73 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
 
     }
 
+    $scope.showIconPanelTut = function() {
+
+        document.getElementById("panelOpenHolder").style.visibility = "hidden";
+        document.getElementById("panelOpenHolder").className = "";
+        document.getElementById("panelOpen").style.visibility = "hidden";
+        document.getElementById("panelOpen").className = "button button-icon";
+
+        document.getElementById("panelMinimizeHolder").style.visibility = "visible";
+        document.getElementById("panelMinimizeHolder").className = "animated non";
+        document.getElementById("panelMinimize").style.visibility = "visible";
+        document.getElementById("panelMinimize").className = "button button-icon animated non";
+
+        document.getElementById("iconPanel").style.visibility = "visible";
+        document.getElementById("iconPanel").className = "animated none";
+        document.getElementById("poopDraggable").style.visibility = "visible";
+        document.getElementById("poopDraggable").className = "animated none";
+        document.getElementById("binDraggable").style.visibility = "visible";
+        document.getElementById("binDraggable").className = "animated none";
+        document.getElementById("manDraggable").style.visibility = "visible";
+        document.getElementById("manDraggable").className = "animated none";
+
+    }
+
     // Minimizes icon Panel
     $scope.minimizePanel = function() {
         document.getElementById("panelOpenHolder").style.visibility = "visible";
         document.getElementById("panelOpenHolder").className = "animated slideInRight";
         document.getElementById("panelOpen").style.visibility = "visible";
         document.getElementById("panelOpen").className = "button button-icon animated slideInRight";
+
+        document.getElementById("panelMinimizeHolder").style.visibility = "hidden";
+        document.getElementById("panelMinimizeHolder").className = "";
+        document.getElementById("panelMinimize").style.visibility = "hidden";
+        document.getElementById("panelMinimize").className = "";
+        document.getElementById("iconPanel").style.visibility = "hidden";
+        document.getElementById("iconPanel").className = "";
+        document.getElementById("poopDraggable").style.visibility = "hidden";
+        document.getElementById("poopDraggable").className = "";
+        document.getElementById("binDraggable").style.visibility = "hidden";
+        document.getElementById("binDraggable").className = "";
+        document.getElementById("manDraggable").style.visibility = "hidden";
+        document.getElementById("manDraggable").className = "";
+
+        if (GlobalService.get_activeIcon() == true) {
+            var poopItem = document.getElementById("poopDraggable");
+            var binItem = document.getElementById("binDraggable");
+            var manItem = document.getElementById("manDraggable");
+
+            if (GlobalService.get_iconType() == "poopDraggable") {
+                poopItem.classList.remove('iconSelected');
+            } else if (GlobalService.get_iconType() == "binDraggable") {
+                binItem.classList.remove('iconSelected');
+            } else if (GlobalService.get_iconType() == "manDraggable") {
+                manItem.classList.remove('iconSelected');
+            }
+
+            GlobalService.set_activeIcon(false);
+            GlobalService.set_iconType('');
+        }
+
+    }
+
+    $scope.minimizePanelTut = function() {
+        document.getElementById("panelOpenHolder").style.visibility = "visible";
+        document.getElementById("panelOpenHolder").className = "animated none";
+        document.getElementById("panelOpen").style.visibility = "visible";
+        document.getElementById("panelOpen").className = "button button-icon animated none";
 
         document.getElementById("panelMinimizeHolder").style.visibility = "hidden";
         document.getElementById("panelMinimizeHolder").className = "";
@@ -2701,54 +2767,73 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
     //---------------------------->
     //---- Tutorial Functions ---->
     //--------------------------->
+    //
 
-    $ionicModal.fromTemplateUrl('templates/modal/tutorial/map-help-modal.html',
-        function(modal) {
-            $scope.mapTutorialModal = modal;
 
-            // Shows Tutorial if this is the users first visit to the page!
-            if(localStorage.getItem("firstMapVisit") == undefined){
-                $scope.tutorialStart();
-                localStorage.setItem("firstMapVisit", 1);
-            }
+    $scope.nextTutorial = function() {
+        switch ($scope.tutNum) {
+            case 0:
+                $scope.showIconPanelTut();
+                $scope.tutNum++;
+                $scope.isMapActive1 = true;
+                $scope.isMapActive0 = false;
+                break;
 
-        }, {
-        scope: $scope,
-        animation: 'slide-in-left'
-    });
+            case 1:
+                $scope.tutNum++;
+                $scope.isMapActive2 = true;
+                $scope.isMapActive1 = false;
+                break;
+            
+            case 2:
+                $scope.tutNum++;
+                $scope.isMapActive3 = true;
+                $scope.isMapActive2 = false;
+                break;
 
+            case 3:
+                $scope.tutNum++;
+                $scope.minimizePanelTut();
+                $scope.isMapActive4 = true;
+                $scope.isMapActive3 = false;
+                break;
+
+            case 4:
+                $scope.tutNum++;
+                $scope.isMapActive5 = true;
+                $scope.isMapActive4 = false;
+                break;
+
+            case 5:
+                $scope.tutNum++;
+                $scope.isMapActive5 = false;
+                $scope.isMapActive6 = true;
+                break;
+
+            case 6:
+                $scope.tutNum = -1;
+                $scope.isMapActive6 = false;
+                break;
+
+            default:
+                break;
+        }
+    }
 
     // Tutorial modal open
     $scope.tutorialStart = function() {
-        $scope.mapTutorialModal.show();
 
-        $scope.data = {};
+        $scope.demoMapCaption0 = "\nClick here to place new markers on the map";
+        $scope.demoMapCaption1 = "\nHere you can add new record markers.\nSimply click where on the map you would like to add to on the map";
+        $scope.demoMapCaption2 = "Viola! You have created your first record and placed your first Marker!";
+        $scope.demoMapCaption3 = "\nYou can also drop the man marker to find the nearest bin from any location!";
+        $scope.demoMapCaption4 = "\n\n\n\n\n\n\nClick here to find your nearest bin marker to you";
+        $scope.demoMapCaption5 = "\n\n\n\n\n\n\nThen click the back button to revert the action";
+        $scope.demoMapCaption6 = "\nRememebr you can click here to reset the the view to your location";
 
-        var setupSlider = function() {
-            //some options to pass to our slider
-            $scope.data.sliderOptions = {
-                loop: false,
-                effect: 'fade',
-                speed: 300,
-            };
-
-            $scope.$on("$ionicSlides.sliderInitialized", function(event, data) {
-                $scope.slider = data.slider;
-            });
-
-            $scope.$on("$ionicSlides.slideChangeStart", function(event, data) {});
-
-            $scope.$on("$ionicSlides.slideChangeEnd", function(event, data) {
-                $scope.activeIndex = data.slider.activeIndex;
-                $scope.previousIndex = data.slider.previousIndex;
-            });
-        };
-        setupSlider();
-    }
-
-    // Tutorial modal close
-    $scope.tutorialEnd = function() {
-        $scope.mapTutorialModal.hide();
+        $scope.minimizePanelTut();
+        $scope.isMapActive0 = true;
+        $scope.tutNum = 0;
     }
 
 
