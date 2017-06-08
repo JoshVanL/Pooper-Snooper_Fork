@@ -33,24 +33,30 @@
 						<i id="takePic" class="icon ion-camera"></i>
 						Take Photo
 					</button>
-				</div>
-				<label class="item item-input">
-					<span class="input-label">Location</span>
-					{{myLocation}}
-				</label>
-				<div class="padding">
-					<button id="brownButton2" type="button" class="button button-block button-balanced" ng-click="findLocation()">
-						<i class="icon ion-ios-search"></i>
-						Find my location
-					</button>
-				</div>
-
-			</div>
+                </div>
+                <div>
+                    <label class="item item-input">
+                        <span class="input-label">Location</span>
+                        {{myLocation}}
+                    </label>
+                </div>
+				<div class="button-bar">
+					<button id="brownButton2" type="button" class="button button-balanced" ng-click="findLocation()">
+                        <i class="icon ion-ios-search"></i>
+                        Find my location
+                    </button>
+                </div>
+                <div>
+                    <ion-item>
+                        <ion-textarea placeholder="Enter a comment"></ion-textarea>
+                    </ion-item>
+                </div>
+            </div>
 			<div class="padding">
 				<p ng-show="newRecord.location.$error.required">* Location is required</p>
 			</div>
 			<div class="padding">
-				<button id="sumbitBut" type="submit" class="button button-block button-positive">
+				<button id="sumbitBut" type="submit" class="button button-block button-positive" ng-disabled="!createEnabled">
 					Create record
 				</button>
 			</div>
