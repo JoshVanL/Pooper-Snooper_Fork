@@ -729,7 +729,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
         dateTime: "",
         time: "",
         lat: "",
-        long: ""
+        long: "",
+        comment: ""
     }
 
     //Tutorial Functions
@@ -944,6 +945,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
         $scope.input.Cleaned = false;
         $scope.input.Cleanedby = null;
         $scope.input.user = $scope.userData.userId;
+        $scope.input.Comment = $scope.record.comment;
         //$scope.userFindings.push($scope.input);
         if($scope.recordModal.type){
             //bin
@@ -982,6 +984,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
         $scope.record.long = 0;
         $scope.record.fileName = 'No Image';
         $scope.record.imageURI = undefined;
+        $scope.record.comment  = "";
 
         $scope.record.dateTime = new Date();
         $scope.record.time = ($scope.record.dateTime.getHours() < 10 ? '0' : '') + ($scope.record.dateTime.getHours() + ":" +
@@ -990,8 +993,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
     // Open our new record modal
     $scope.newRecord = function(phrase, type) {
         $scope.record.dateTime = new Date();
-        $scope.record.time = ($scope.record.dateTime.getHours() < 10 ? '0' : '') + ($scope.record.dateTime.getHours() + ":" +
-            ($scope.record.dateTime.getMinutes() < 10 ? '0' : '') + $scope.record.dateTime.getMinutes());
+        $scope.record.time = ($scope.record.dateTime.getHours() < 10 ? '0' : '') + ($scope.record.dateTime.getHours() + ":" + ($scope.record.dateTime.getMinutes() < 10 ? '0' : '') + $scope.record.dateTime.getMinutes());
+        $scope.record.comment = "";
         if ($scope.loggedIn) {
             if ($scope.isOverRecordLimit()) {
                 var limitRecsPopup = $ionicPopup.alert({
@@ -2560,7 +2563,8 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
         dateTime: "",
         time: "",
         lat: "",
-        long: ""
+        long: "",
+        comment: ""
     }
 
 	$scope.createEnabled = false;
@@ -2589,17 +2593,16 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
         $scope.record.long = null;
         $scope.record.fileName = 'No Image';
         $scope.record.imageURI = undefined;
+        $scope.record.comment = "";
 
         $scope.record.dateTime = new Date();
-        $scope.record.time = ($scope.record.dateTime.getHours() < 10 ? '0' : '') + ($scope.record.dateTime.getHours() + ":" +
-            ($scope.record.dateTime.getMinutes() < 10 ? '0' : '') + $scope.record.dateTime.getMinutes());
+        $scope.record.time = ($scope.record.dateTime.getHours() < 10 ? '0' : '') + ($scope.record.dateTime.getHours() + ":" + ($scope.record.dateTime.getMinutes() < 10 ? '0' : '') + $scope.record.dateTime.getMinutes());
     };
 
     // Open our new record modal
     $scope.newRecord = function(phrase, type) {
         $scope.record.dateTime = new Date();
-        $scope.record.time = ($scope.record.dateTime.getHours() < 10 ? '0' : '') + ($scope.record.dateTime.getHours() + ":" +
-            ($scope.record.dateTime.getMinutes() < 10 ? '0' : '') + $scope.record.dateTime.getMinutes());
+        $scope.record.time = ($scope.record.dateTime.getHours() < 10 ? '0' : '') + ($scope.record.dateTime.getHours() + ":" + ($scope.record.dateTime.getMinutes() < 10 ? '0' : '') + $scope.record.dateTime.getMinutes());
         clearRecord();
         $scope.createEnabled = false;
         console.log(JSON.stringify(iconLatLng.lat()));
@@ -2729,6 +2732,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
         $scope.input.LatLng = [$scope.record.lat, $scope.record.long];
         $scope.input.DateTime = $scope.record.dateTime;
         $scope.input.ImageURI = $scope.record.imageURI;
+        $scope.input.Comment = $scope.record.comment;
         $scope.input.Username = $scope.userData.username;
         $scope.input.user = $scope.userData.userId;
         if($scope.recordModal.type){

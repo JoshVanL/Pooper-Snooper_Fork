@@ -31,20 +31,28 @@
 				<div class="button-bar">
 					<button id="brownButton" type="button" class="button  button-balanced" ng-click="takePicture()">
 						<i class="icon ion-camera"></i>
-						Take Photo
-					</button>
-				</div>
+                        Take Photo
+                    </button>
+                </div>
 
-			</div>
-			<div class="padding">
-				<p ng-show="newRecord.location.$error.required">* Location is required</p>
-			</div>
-			<div class="padding">
-				<button type="submit" class="button button-block button-positive" ng-disabled="!createEnabled">
-					Create record
-				</button>
-			</div>
-		</form>
+            </div>
+            <div>
+                <p ng-show="newRecord.location.$error.required">* Location is required</p>
+            </div>
+            <div>
+                <div class="item item-input-inset">
+                    <label class="item item-input-wrapper">
+                        <i class="icon ion-edit placeholder-icon"></i>
+                        <input type="text" placeholder="Comment . . ." ng-model="record.comment">
+                    </label>
+                </div>
+            </div>
+            <div class="padding">
+                <button type="submit" class="button button-block button-positive" ng-disabled="!createEnabled">
+                    Create record
+                </button>
+            </div>
+        </form>
 
 	</ion-content>
 
