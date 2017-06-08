@@ -749,17 +749,18 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
         switch ($scope.tutNum) {
             case 0:
                 $scope.tutNum++;
-                $scope.isActive0 = false;
                 $scope.isActive1 = true;
+                $scope.isActive0 = false;
                 break;
 
             case 1:
                 $scope.tutNum++;
-                $scope.isActive1 = false;
                 $scope.isActive2 = true;
+                $scope.isActive1 = false;
                 $scope.selectPopupTut = $ionicPopup.show({
                     title: 'Select record type to add!',
                     scope: $scope,
+                    cssClass: 'myPopupClass',
                     buttons: [
                         {
                             text: '<b">Doggy Finding</b>',
@@ -783,20 +784,20 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
                     ($scope.record.dateTime.getMinutes() < 10 ? '0' : '') + $scope.record.dateTime.getMinutes());
                 $scope.recordModalTut.show();
                 $scope.tutNum++;
-                $scope.isActive2 = false;
                 $scope.isActive3 = true;
+                $scope.isActive2 = false;
                 break;
 
             case 3:
                 $scope.tutNum++;
-                $scope.isActive3 = false;
                 $scope.isActive4 = true;
+                $scope.isActive3 = false;
                 break;
 
             case 4:
                 $scope.tutNum++;
-                $scope.isActive4 = false;
                 $scope.isActive5 = true;
+                $scope.isActive4 = false;
                 break;
 
             case 5:
@@ -2823,7 +2824,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
     // Tutorial modal open
     $scope.tutorialStart = function() {
 
-        $scope.demoMapCaption0 = "\nClick here to place new markers on the map";
+        $scope.demoMapCaption0 = "\n\nClick here to place new markers on the map\n\n\n";
         $scope.demoMapCaption1 = "\nHere you can add new record markers.\nSimply click where on the map you would like to add to on the map";
         $scope.demoMapCaption2 = "Viola! You have created your first record and placed your first Marker!";
         $scope.demoMapCaption3 = "\nYou can also drop the man marker to find the nearest bin from any location!";

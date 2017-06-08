@@ -5,6 +5,8 @@
     box-shadow: 0 0 36px #FFFF66 !important;
     -webkit-appearance: none;
     box-sizing: border-box;
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
 }
 
 .walkthrough-background {
@@ -22,6 +24,8 @@
     opacity:0;
     height: 0;
     overflow: hidden;
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
     z-index: 1000;
 }
 
@@ -31,6 +35,8 @@
     -webkit-box-shadow: 0 0 0 1997px rgba(0, 0, 0, .8);
     box-shadow: 0 0 0 1997px rgba(0, 0, 0, .8);
     -webkit-appearance: none;
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
 }
 
 .walkthrough-element.walkthrough-text{
@@ -38,6 +44,8 @@
     width: 50%;
     color: #fff;
     text-align: center;
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
 }
 
 .walkthrough-element.walkthrough-done-button{
@@ -48,27 +56,37 @@
     display: inline-block;
     right: 30px;
     margin: 0 auto;
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
 }
 
 .walkthrough-button-positive{
     border-color: #0c63ee;
     background-color: #387ef5;
     color: #fff;
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
 }
 
 .walkthrough-button-positive:hover {
     color: #fff;
     text-decoration: none;
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
 }
 
 .walkthrough-button-positive.active {
     border-color: #0c63ee;
     background-color: #0c63ee;
     box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.1);
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
 }
 
 .walkthrough-element.walkthrough-icon {
     height: 200px;
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
 }
 
 .walkthrough-element.walkthrough-arrow{
@@ -78,6 +96,8 @@
     left: 0;
     right: 0;
     bottom: 0;
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
 }
 
 .walkthrough-element{
@@ -85,6 +105,8 @@
     position:relative;
     margin-left: auto;
     margin-right: auto;
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
 }
 
 .walkthrough-background.walkthrough-active{
@@ -96,6 +118,8 @@
     opacity:1;
     height: 100%;
     pointer-events: all;
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
 }
 
 .walkthrough-transclude{
@@ -103,10 +127,14 @@
     z-index: 2;
     width: 100%;
     height: 100%;
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
 }
 
 .walkthrough-hole-round{
     border-radius: 200px;
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
 }
 
 .walkthrough-tip-text-box {
@@ -117,6 +145,8 @@
     border: 2px solid;
     border-radius: 35px;
     padding: 14px;
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
     /*margin-top: 0;*/
     /*margin-bottom: 0;*/
 }
@@ -126,42 +156,60 @@
     position: relative;
     height: 100%;
     width: 100%;
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
 }
 
 .walkthrough-inner{
     position: fixed;
     z-index: 3;
     width: 100%;
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
 }
 
 .walkthrough-container-transparency > .walkthrough-inner{
     height: 100%;
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
 }
 
 .walkthrough-text-container{
     position: absolute;
     width: 100%;
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
 }
 
 .walkthrough-container-tip .walkthrough-top, .walkthrough-container-transparency .walkthrough-top {
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
     top: 15px;
 }
 
 .walkthrough-container-tip .walkthrough-bottom {
-    bottom: 0;
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
+    bottom: 10;
 }
 
 /* take 'done' button into consideration */
 .walkthrough-container-transparency .walkthrough-bottom {
     bottom: 70px;
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
 }
 
 .walkthrough-tip-icon-image-front{
     z-index: 1002;
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
 }
 
 .walkthrough-tip-icon-image-back{
     z-index: 999;
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
 }
 
 .walkthrough-tip-icon-text-box {
@@ -170,6 +218,8 @@
     position: relative;
     margin-bottom: -32px;
     margin-right: -250px;
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
     /*bottom: 70px;*/
 }
 
@@ -180,32 +230,44 @@
     z-index: 1002;
     /*right: -7px;*/
     margin-top: 107px;
-    background-color: transparent;
+    background-color: #D2691E transparent;
     border: 0;
     float: right;
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
 }
 
 .walkthrough-tip-done-button-no-icon{
     margin-top: -13px !important;
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
 }
 
 .walkthrough-tip-button-image-text-box{
     width: 42px;
     height: 42px;
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
 }
 
 .walkthrough-tip-text-box-color-black {
-    border-color: #ffffff;
-    background-color: #000000;
-    color: #ffffff;
+    border-color:     #D2691E;
+    background-color: #D2691E;
+    color: #000000;
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
 }
 
 .walkthrough-tip-text-box-color-white {
     border-color: #000000;
     background-color: #ffffff;
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
 
 }
 
 .walkthrough-hero-image{
     margin-top: 15px;
+	font-family: 'Amatica SC', sans-serif;
+	font-size: 18px;
 }
