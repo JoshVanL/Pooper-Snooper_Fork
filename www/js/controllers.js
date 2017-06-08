@@ -246,15 +246,10 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
         return new Promise(function(resolve, reject) {
             backandService.addFinding($scope.input)
             .then(function(result) {
-                //console.log(JSON.stringify(result));
                 $scope.input = {};
                 $scope.id = result.data.__metadata.id;
                 console.log($scope.id);
                 $scope.input = {};
-                //var createdFindingPopup = $ionicPopup.alert({
-                //    title: 'Record Created',
-                //    template: 'Your finding has been added!'
-                //});
                 resolve();
             });
         });

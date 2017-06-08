@@ -28,15 +28,19 @@
                 <img id="viewIm" ng-src="{{selectedRec.ImageURI}}" class="center"/>
             </label>
             <label class="item item-input">
-                <span class="input-label">Created by : </span>
+                <span class="input-label">Comment</span>
+                {{selectedRec.Comment}}
+            </label>
+            <label class="item item-input">
+                <span class="input-label">Created by </span>
                 {{selectedRec.Username}}
             </label>
             <label class="item item-input" ng-show="selectedRec.Cleaned">
-                <span class="input-label">Cleaned up by : </span>
+                <span class="input-label">Cleaned up by</span>
                 {{selectedRec.Cleanedby}}
             </label>
             <label class="input item-input" ng-show="selectedRec.type">
-                <span class="input-label">Votes :</span>
+                <span class="input-label">Votes</span>
                 {{selectedRec.Votes}}
             </label>
         </div>
