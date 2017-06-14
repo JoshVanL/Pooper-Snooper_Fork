@@ -1457,7 +1457,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
                     zIndex: 100,
                     icon: circle_icon,
                     position: latLng,
-										id: 99999999
+					id: 99999999
                 });
                 $scope.userMarker = marker;
 
@@ -1515,7 +1515,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
             });
 
             // Call the Update() function every 1 seconds
-            setTimeout(Update, 1000);
+            setTimeout(Update, 10000);
         }
     }
 
