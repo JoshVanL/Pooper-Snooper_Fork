@@ -505,7 +505,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
     function closePopUpAuto (popup){ //close popup automatically
         $timeout(function() {
             popup.close(); //close the popup after 2 seconds
-        }, 3000);
+        }, 1500);
     };
 
     /*Reset password button*/
@@ -1120,7 +1120,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
             template: '<p>Finding Location</p><ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
         });
         var options = {
-            timeout: 10000,
+            timeout: 5000,
             enableHighAccuracy: true
         };
         $cordovaGeolocation.getCurrentPosition(options).then(function(position) {
@@ -1377,6 +1377,10 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
         console.warn("online");
     } else {
         console.warn("offline");
+        var alertPopup = $ionicPopup.alert({
+            title: 'Connection not found.',
+            template: 'You must be connected to the Internet to view this map.'
+        });
     }
 
     if (typeof google == "undefined" || typeof google.maps == "undefined") {
@@ -1385,7 +1389,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
 
         //disableMap();
         var options = {
-            timeout: 10000,
+            timeout: 5000,
             enableHighAccuracy: true
         };
 
@@ -1406,7 +1410,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
     // Initialises Map element and gets current location
     function initMap() {
         var options = {
-            timeout: 10000,
+            timeout: 5000,
             enableHighAccuracy: true
         };
 
@@ -1495,7 +1499,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
 		if (autoUpdate && !appInBackground) {
 
             var options = {
-                timeout: 10000,
+                timeout: 5000,
                 enableHighAccuracy: true
             };
 
@@ -1514,7 +1518,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
 
             });
 
-            // Call the Update() function every 1 seconds
+            // Call the Update() function every 10 seconds
             setTimeout(Update, 10000);
         }
     }
@@ -1523,7 +1527,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
     $scope.refreshMap = function() {
 
         var options = {
-            timeout: 10000,
+            timeout: 5000,
             enableHighAccuracy: true
         };
 
