@@ -1381,6 +1381,7 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
             title: 'Connection not found.',
             template: 'You must be connected to the Internet to view this map.'
         });
+        $scope.wasOffline = true;
     }
 
     if (typeof google == "undefined" || typeof google.maps == "undefined") {
@@ -1498,6 +1499,12 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
 
 		if (autoUpdate && !appInBackground) {
 
+            if ($scope.wasOffline) {
+                $scope.wasOffline = 0;
+                clearAllMarkers();
+                $scope.loadMarkers();
+            }
+
             var options = {
                 timeout: 5000,
                 enableHighAccuracy: true
@@ -1508,13 +1515,9 @@ angular.module('PooperSnooper.controllers', ['ionic', 'backand', 'ngCordova', 'n
                 var updateLatLng = new google.maps.LatLng(position.coords.latitude,
                 position.coords.longitude);
 
-                // Simulating movement by changing the latLng
-                // var updateLatLng =  new google.maps.LatLng($scope.userMarker.getPosition().lat()+((Math.random()/4)-0.1)*0.0001,
-                // $scope.userMarker.getPosition().lng()+((Math.random()/4)-0.1)*0.0001);
 
                 $scope.userMarker.setPosition(updateLatLng);
 
-                //$scope.map.panTo(updateLatLng);
 
             });
 
