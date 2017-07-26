@@ -7,13 +7,32 @@
         "files": {}
     },
     "installed_plugins": {
-        "cordova-plugin-camera": {
-            "PACKAGE_NAME": "com.ionicframework.poopersnooper472892"
-        },
         "cordova-plugin-compat": {
             "PACKAGE_NAME": "com.ionicframework.poopersnooper472892"
         },
-        "cordova-plugin-device": {
+        "cordova-plugin-inappbrowser": {
+            "PACKAGE_NAME": "com.ionicframework.poopersnooper472892"
+        },
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "com.ionicframework.poopersnooper472892"
+        },
+        "ionic-plugin-keyboard": {
+            "PACKAGE_NAME": "com.ionicframework.poopersnooper472892"
+        },
+        "cordova-plugin-x-socialsharing": {
+            "PACKAGE_NAME": "com.ionicframework.poopersnooper472892"
+        },
+        "cordova-plugin-googlemaps": {
+            "API_KEY_FOR_ANDROID": "AIzaSyD1-OU4tSucidW9oHkB5CCpLqSUT5fcl-E",
+            "PACKAGE_NAME": "com.ionicframework.poopersnooper472892"
+        },
+        "cordova-plugin-network-information": {
+            "PACKAGE_NAME": "com.ionicframework.poopersnooper472892"
+        },
+        "cordova-plugin-geolocation": {
+            "PACKAGE_NAME": "com.ionicframework.poopersnooper472892"
+        },
+        "cordova-plugin-camera": {
             "PACKAGE_NAME": "com.ionicframework.poopersnooper472892"
         },
         "cordova-plugin-facebook4": {
@@ -21,34 +40,19 @@
             "APP_NAME": "Pooper Snooper",
             "PACKAGE_NAME": "com.ionicframework.poopersnooper472892"
         },
-        "cordova-plugin-geolocation": {
+        "cordova-plugin-statusbar": {
             "PACKAGE_NAME": "com.ionicframework.poopersnooper472892"
         },
-        "cordova-plugin-googlemaps": {
-            "API_KEY_FOR_ANDROID": "AIzaSyD1-OU4tSucidW9oHkB5CCpLqSUT5fcl-E",
+        "cordova-plugin-device": {
             "PACKAGE_NAME": "com.ionicframework.poopersnooper472892"
         },
         "cordova-plugin-image-picker": {
             "PACKAGE_NAME": "com.ionicframework.poopersnooper472892"
-        },
-        "cordova-plugin-inappbrowser": {
-            "PACKAGE_NAME": "com.ionicframework.poopersnooper472892"
-        },
-        "cordova-plugin-network-information": {
-            "PACKAGE_NAME": "com.ionicframework.poopersnooper472892"
-        },
-        "cordova-plugin-statusbar": {
-            "PACKAGE_NAME": "com.ionicframework.poopersnooper472892"
-        },
-        "cordova-plugin-whitelist": {
-            "PACKAGE_NAME": "com.ionicframework.poopersnooper472892"
-        },
-        "cordova-plugin-x-socialsharing": {
-            "PACKAGE_NAME": "com.ionicframework.poopersnooper472892"
-        },
-        "ionic-plugin-keyboard": {
-            "PACKAGE_NAME": "com.ionicframework.poopersnooper472892"
         }
     },
-    "dependent_plugins": {}
+    "dependent_plugins": {
+        "es6-promise-plugin": {
+            "PACKAGE_NAME": "com.ionicframework.poopersnooper472892"
+        }
+    }
 }
